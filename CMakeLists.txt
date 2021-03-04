@@ -6,4 +6,6 @@ cmake_minimum_required (VERSION 3.8)
 project ("PA199_project")
 
 # Include sub-projects.
+add_subdirectory ("Dependencies/lodepng")
+add_subdirectory ("Dependencies/glfw")
 add_subdirectory ("src")
