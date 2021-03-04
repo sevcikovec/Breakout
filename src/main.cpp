@@ -5,7 +5,7 @@
 #include <GLFW/glfw3.h>
 #include "lodepng.h"
 #include "main.h"
-#include "renderer/shader.h"
+#include "Renderer/Shader.h"
 
 using namespace std;
 
@@ -37,16 +37,15 @@ int main(void)
 
 
     // load image, jsut for testing purposes
-    const char* filename = "E:/Honza/PA199/pa199_project/resources/Lenna.png";
-    //const char* filename = "/../../../../resources/Lenna.png";
+    const char* filename = "..\\..\\..\\..\\resources\\Lenna.png";
     std::vector<unsigned char> image;
     unsigned width, height;
     unsigned error = lodepng::decode(image, width, height, filename);
     
     std::cout << error << std::endl;
 
-    const char* vertexShader = "E:/Honza/PA199/pa199_project/resources/shaders/vert.glsl";
-    const char* fragmentShader = "E:/Honza/PA199/pa199_project/resources/shaders/frag.glsl";
+    const char* vertexShader = "..\\..\\..\\..\\resources\\shaders\\vert.glsl";
+    const char* fragmentShader = "..\\..\\..\\..\\resources\\shaders\\frag.glsl";
     Shader testShader(vertexShader, fragmentShader);
 
    
