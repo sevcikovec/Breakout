@@ -1,7 +1,8 @@
 ﻿cmake_minimum_required (VERSION 3.8)
 
 # Add source to this project's executable.
-add_executable (PA199_project "main.cpp" "main.h")
+add_executable (PA199_project "main.cpp" "main.h" "renderer/shader.h" "renderer/shader.cpp")
+
 
 # gind OPENGL
 find_package(OpenGL REQUIRED)
