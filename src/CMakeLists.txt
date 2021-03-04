@@ -1,7 +1,10 @@
 ﻿cmake_minimum_required (VERSION 3.8)
 
 # Add source to this project's executable.
-add_executable (PA199_project "main.cpp" "main.h" "renderer/shader.h" "renderer/shader.cpp")
+add_executable (PA199_project 
+"main.cpp" "main.h" 
+"Renderer/Shader.h" "Renderer/Shader.cpp"
+"Math/Vec3.h" "Math/Vec3.cpp")
 
 
 # gind OPENGL
