@@ -1,7 +1,9 @@
 #pragma once
 #include <ostream>
+
 struct Vec3 {
 public:
+	Vec3();
 	Vec3(float x, float y, float z);
 	
 	Vec3(float num);
@@ -29,6 +31,12 @@ public:
 	Vec3 operator+(const Vec3& other);
 
 	Vec3 operator-(const Vec3& other);
+
+	Vec3 operator*(const float& other);
+
+	float operator[](int) const;
+
+	float& operator[](int);
 
 	static float Dot(const Vec3& a, const Vec3& b);
 

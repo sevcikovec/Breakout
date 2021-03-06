@@ -2,6 +2,10 @@
 #include <math.h>
 #include <iostream>
 
+Vec3::Vec3()
+{
+}
+
 Vec3::Vec3(float x, float y, float z)
 {
 	this->x = x;
@@ -91,6 +95,45 @@ Vec3 Vec3::operator-(const Vec3& other)
 	Vec3 res(*this);
 	res.Sub(other);
 	return res;
+}
+
+Vec3 Vec3::operator*(const float& other)
+{
+	Vec3 res(*this);
+	res.Mul(other);
+	return res;
+}
+
+float Vec3::operator[](int index) const
+{
+	switch (index)
+	{
+	case 0:
+		return x;
+	case 1:
+		return y;
+	case 2:
+		return z;
+	default:
+		throw std::out_of_range("Index out of range");
+		break;
+	}
+}
+
+float& Vec3::operator[](int index)
+{
+	switch (index)
+	{
+	case 0:
+		return x;
+	case 1:
+		return y;
+	case 2:
+		return z;
+	default:
+		throw std::out_of_range("Index out of range");
+		break;
+	}
 }
 
 float Vec3::Dot(const Vec3& a, const Vec3& b)

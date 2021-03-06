@@ -4,14 +4,12 @@
 add_executable (PA199_project 
 "main.cpp" "main.h" 
 "Renderer/Shader.h" "Renderer/Shader.cpp"
-"Math/Vec3.h" "Math/Vec3.cpp")
+"Math/Vec3.h" "Math/Vec3.cpp"
+"Math/Mat3.h" "Math/Mat3.cpp")
 
 
-# gind OPENGL
+# find OPENGL
 find_package(OpenGL REQUIRED)
-
-
-
 
 
 # add glew as static lib
