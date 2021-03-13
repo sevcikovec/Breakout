@@ -14,8 +14,12 @@ set (SOURCES
 
     "src/Renderer/Shader.cpp"
 
-    "src/Application.cpp"
-    )
+    "src/Core/Application.cpp"
+    "src/Core/Window.cpp"
+
+     "src/Scene/Scene.cpp"
+     "src/Scene/Entity.cpp"
+     )
 
 set (API 
     "src/Math/Mat3.h"
@@ -23,8 +27,15 @@ set (API
 
     "src/Renderer/Shader.h"
 
-    "src/Application.h"
-    )
+    "src/Core/Application.h"
+    "src/Core/Window.h"
+
+     "src/Scene/Scene.h"
+     "src/Scene/Entity.h"
+     "src/Scene/Components.h"
+     "src/Scene/ECS.h"
+     "src/Scene/ScriptableEntity.h"
+     )
 
 add_library(Engine STATIC ${SOURCES} ${API})
 
