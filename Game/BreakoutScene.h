@@ -11,10 +11,16 @@ public:
 
 	void OnUpdate(float frameTimeMS);
 
+	void SwapVAs();
+
 private:
 	Engine::Shader* shader;
 
-	Engine::Ref<Engine::VertexArray> va;
+	Engine::Ref<Engine::VertexArray> firstVA;
+
+	Engine::Ref<Engine::VertexArray> secondVA;
+
+	bool firstActive;
 
 	Engine::Renderer renderer;
 };

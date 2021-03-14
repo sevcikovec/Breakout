@@ -22,12 +22,12 @@ namespace Engine {
 	struct ScriptComponent {
 		ScriptableEntity* Instance = nullptr;
 
-		ScriptableEntity* (*InstantiateScript)();
+		void (*InstantiateScript)(ScriptComponent*);
 		void (*DestroyScript)(ScriptComponent*);
 
 		template<typename T>
 		void Bind() {
-			InstantiateScript = []() { return static_cast<ScriptableEntity*>(new T()); };
+			InstantiateScript = [](ScriptComponent* nsc) { nsc->Instance = static_cast<ScriptableEntity*>(new T()); };
 			DestroyScript = [](ScriptComponent* nsc) { delete nsc->Instance; nsc->Instance = nullptr; };
 		}
 	};

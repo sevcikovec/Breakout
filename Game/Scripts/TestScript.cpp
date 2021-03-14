@@ -1,6 +1,9 @@
 #pragma once
 #include <iostream>
 #include "Scene/ScriptableEntity.h"
+#include "Renderer/VertexArray.h"
+#include <Renderer\Renderer.h>
+#include <functional>
 
 class TestScript : public Engine::ScriptableEntity {
 public:
@@ -17,8 +20,12 @@ public:
 		if (currentTimer <= 0) {
 			currentTimer = printAfterSeconds;
 			std::cout << "completed count of " << printAfterSeconds << " seconds" << "(" << (totalTimer) << "s total)" << std::endl;
+			if (OnStateChanged != nullptr) OnStateChanged();
 		}
 	}
+
+	std::function<void()> OnStateChanged = nullptr;
+
 private:
 	float currentTimer;
 	float printAfterSeconds;

@@ -26,7 +26,7 @@ namespace Engine {
 		//std::cout << deltaTime << std::endl;
 		for (auto& scriptComponent : ecs.GetComponentIterator<ScriptComponent>()) {
 			if (!scriptComponent.Instance) {
-				scriptComponent.Instance = scriptComponent.InstantiateScript();
+				scriptComponent.InstantiateScript(&scriptComponent);
 				// TODO set entity of the component
 				//scriptComponent.Instance->entity = Entity{ entity, this };
 				scriptComponent.Instance->OnCreate();

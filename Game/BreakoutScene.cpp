@@ -14,22 +14,46 @@ BreakoutScene::BreakoutScene() : Engine::Scene("Main scene")
 		CreateEntity(test + std::to_string(i));
 	}*/
 
-	entity.AddComponent<Engine::ScriptComponent>().Bind<TestScript>();
+	auto& scriptComponent = entity.AddComponent<Engine::ScriptComponent>();
+	scriptComponent.Bind<TestScript>();
+	scriptComponent.InstantiateScript(&scriptComponent);
+
+	auto testScript = static_cast<TestScript*>(scriptComponent.Instance);
+	testScript->OnCreate();
+	
+	testScript->OnStateChanged = [this]() {
+		std::cout << " Callback on state changed" << std::endl;
+		SwapVAs();
+	};
 
 	
 	const char* vertexShader = "..\\..\\..\\..\\Engine\\resources\\shaders\\vert.glsl";
 	const char* fragmentShader = "..\\..\\..\\..\\Engine\\resources\\shaders\\frag.glsl";
 	shader = new Engine::Shader(vertexShader, fragmentShader);
 	
-	float vertices[] = {
+	float vertices1[] = {
 		-0.5, -0.5,			1.0, 0.0, 0.0,
 		0.5, -0.5,			1.0, 0.0, 0.0,
 		0.5, 0.5,			0.0, 0.0, 1.0,
 		-0.5, 0.5,			0.0, 0.0, 1.0
 	};
+
+	float vertices2[] = {
+		-0.5, -0.5,			0.0, 0.0, 1.0,
+		0.5, -0.5,			0.0, 0.0, 1.0,
+		0.5, 0.5,			1.0, 0.0, 0.0,
+		-0.5, 0.5,			1.0, 0.0, 0.0
+	};
 	
-	auto vb = Engine::VertexBuffer::Create(vertices, 5*4);
-	vb->SetLayout(
+	auto vb1 = Engine::VertexBuffer::Create(vertices1, 5 * 4);
+	vb1->SetLayout(
+		{
+			{ Engine::LayoutShaderType::Float2 },
+			{ Engine::LayoutShaderType::Float3 }
+		});
+
+	auto vb2 = Engine::VertexBuffer::Create(vertices2, 5 * 4);
+	vb2->SetLayout(
 		{
 			{ Engine::LayoutShaderType::Float2 },
 			{ Engine::LayoutShaderType::Float3 }
@@ -42,9 +66,13 @@ BreakoutScene::BreakoutScene() : Engine::Scene("Main scene")
 
 	auto ib = Engine::IndexBuffer::Create(indices, 6);
 
-	va = Engine::VertexArray::Create();
-	va->SetVertexBuffer(vb);
-	va->SetIndexBuffer(ib);
+	firstVA = Engine::VertexArray::Create();
+	firstVA->SetVertexBuffer(vb1);
+	firstVA->SetIndexBuffer(ib);
+
+	secondVA = Engine::VertexArray::Create();
+	secondVA->SetVertexBuffer(vb2);
+	secondVA->SetIndexBuffer(ib);
 
 }
 
@@ -54,6 +82,12 @@ void BreakoutScene::OnUpdate(float frameTimeMS)
 
 	renderer.Clear();
 
-	renderer.Submit(*shader, va);
+	if (firstActive) renderer.Submit(*shader, firstVA);
+	else renderer.Submit(*shader, secondVA);
 	
+}
+
+void BreakoutScene::SwapVAs()
+{
+	firstActive = !firstActive;
 }
