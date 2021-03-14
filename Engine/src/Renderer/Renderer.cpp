@@ -2,23 +2,13 @@
 #include <iostream>
 
 namespace Engine {
-	void Renderer::Submit(const Shader& shader, const VertexBuffer& vb, const IndexBuffer& ib)
+	void Renderer::Submit(const Shader& shader, Ref<VertexArray> va)
 	{
 		shader.Bind();
-		vb.Bind();
-		ib.Bind();
+		va->Bind();
 
-		glEnableVertexAttribArray(0);
-		glVertexAttribPointer(
-			0,                  // attribute 0. No particular reason for 0, but must match the layout in the shader.
-			2,                  // size
-			GL_FLOAT,           // type
-			GL_FALSE,           // normalized?
-			0,                  // stride
-			nullptr	            // array buffer offset
-		);
-
-		glDrawElements(GL_TRIANGLES, ib.GetCount(), GL_UNSIGNED_INT, nullptr);
+		uint32_t count = va->GetIndexBuffer()->GetCount();
+		glDrawElements(GL_TRIANGLES, count, GL_UNSIGNED_INT, nullptr);
 		
 	}
 	void Renderer::Clear() const

@@ -18,6 +18,11 @@ namespace Engine {
 	}
 
 
+	Ref<VertexBuffer> VertexBuffer::Create(float* vertices, uint32_t size) {
+		return CreateRef<VertexBuffer>(vertices, size);
+	}
+
+
 
 	IndexBuffer::IndexBuffer(uint32_t* indices, uint32_t count) : count(count)
 	{
@@ -36,5 +41,9 @@ namespace Engine {
 	uint32_t IndexBuffer::GetCount() const
 	{
 		return count;
+	}
+
+	Ref<IndexBuffer> IndexBuffer::Create(uint32_t* indices, uint32_t size) {
+		return CreateRef<IndexBuffer>(indices, size);
 	}
 }

@@ -14,8 +14,7 @@ public:
 private:
 	Engine::Shader* shader;
 
-	Engine::VertexBuffer* vb;
-	Engine::IndexBuffer* ib;
+	Engine::Ref<Engine::VertexArray> va;
 
 	Engine::Renderer renderer;
 };

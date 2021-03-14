@@ -15,6 +15,7 @@ set (SOURCES
     "src/Renderer/Shader.cpp"
     "src/Renderer/Renderer.cpp"
     "src/Renderer/VertexBuffer.cpp"
+    "src/Renderer/VertexArray.cpp"
 
     "src/Core/Application.cpp"
     "src/Core/Window.cpp"
@@ -24,12 +25,15 @@ set (SOURCES
      )
 
 set (API 
+    "src/Utils.h"
+
     "src/Math/Mat3.h"
     "src/Math/Vec3.h"
 
     "src/Renderer/Shader.h"
     "src/Renderer/Renderer.h"
     "src/Renderer/VertexBuffer.h"
+    "src/Renderer/VertexArray.h"
 
     "src/Core/Application.h"
     "src/Core/Window.h"

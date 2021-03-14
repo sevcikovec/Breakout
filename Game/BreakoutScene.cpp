@@ -22,21 +22,29 @@ BreakoutScene::BreakoutScene() : Engine::Scene("Main scene")
 	shader = new Engine::Shader(vertexShader, fragmentShader);
 	
 	float vertices[] = {
-		-0.5, -0.5,
-		0.5, -0.5,
-		0.5, 0.5,
-		-0.5, 0.5
+		-0.5, -0.5,			1.0, 0.0, 0.0,
+		0.5, -0.5,			1.0, 0.0, 0.0,
+		0.5, 0.5,			0.0, 0.0, 1.0,
+		-0.5, 0.5,			0.0, 0.0, 1.0
 	};
 	
-	vb = new Engine::VertexBuffer(vertices, 6*2);
-	
+	auto vb = Engine::VertexBuffer::Create(vertices, 5*4);
+	vb->SetLayout(
+		{
+			{ Engine::LayoutShaderType::Float2 },
+			{ Engine::LayoutShaderType::Float3 }
+		});
 
 	unsigned int indices[] = {
 		0, 1, 2,
 		2, 3, 0
 	};
 
-	ib = new Engine::IndexBuffer(indices, 6);
+	auto ib = Engine::IndexBuffer::Create(indices, 6);
+
+	va = Engine::VertexArray::Create();
+	va->SetVertexBuffer(vb);
+	va->SetIndexBuffer(ib);
 
 }
 
@@ -46,6 +54,6 @@ void BreakoutScene::OnUpdate(float frameTimeMS)
 
 	renderer.Clear();
 
-	renderer.Submit(*shader, *vb, *ib);
+	renderer.Submit(*shader, va);
 	
 }
