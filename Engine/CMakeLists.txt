@@ -13,6 +13,8 @@ set (SOURCES
     "src/Math/Vec3.cpp"
 
     "src/Renderer/Shader.cpp"
+    "src/Renderer/Renderer.cpp"
+    "src/Renderer/VertexBuffer.cpp"
 
     "src/Core/Application.cpp"
     "src/Core/Window.cpp"
@@ -26,6 +28,8 @@ set (API
     "src/Math/Vec3.h"
 
     "src/Renderer/Shader.h"
+    "src/Renderer/Renderer.h"
+    "src/Renderer/VertexBuffer.h"
 
     "src/Core/Application.h"
     "src/Core/Window.h"

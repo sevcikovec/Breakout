@@ -8,7 +8,7 @@ namespace Engine {
 	public:
 		Shader(const std::string& vertexFilePath, const std::string& fragmentFilePath);
 
-		void Bind();
+		void Bind() const;
 
 		void SetUniformFloat4(const std::string& name, const float& x, const float& y, const float& z, const float& w);
 

@@ -18,7 +18,7 @@ namespace Engine {
 
 	}
 
-	void Shader::Bind()
+	void Shader::Bind() const
 	{
 		glUseProgram(programID);
 	}
