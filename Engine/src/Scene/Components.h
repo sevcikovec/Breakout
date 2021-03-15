@@ -14,7 +14,7 @@ namespace Engine {
 		Vec3 scale{ 0.f };
 	};
 
-	struct RendererComponent {
+	struct MeshComponent {
 
 	};
 

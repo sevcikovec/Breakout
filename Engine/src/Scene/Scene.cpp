@@ -3,9 +3,14 @@
 #include "Components.h"
 
 namespace Engine {
+		
 	Scene::Scene(const std::string& name) : name(name)
 	{
-
+		renderingSystem = ecs.RegisterSystem<RenderingSystem>();
+		Signature signature;
+		signature.set(ecs.GetComponentType<TransformComponent>());
+		signature.set(ecs.GetComponentType<MeshComponent>());
+		ecs.SetSystemSignature<RenderingSystem>(signature);
 	}
 
 	Entity Scene::CreateEntity(const std::string& name)
@@ -22,7 +27,7 @@ namespace Engine {
 	}
 
 
-	void Scene::OnUpdate(float deltaTime)
+	void Scene::OnUpdate(float ts)
 	{
 		//std::cout << deltaTime << std::endl;
 		for (auto& scriptComponent : ecs.GetComponentIterator<ScriptComponent>()) {
@@ -32,10 +37,10 @@ namespace Engine {
 				//scriptComponent.Instance->entity = Entity{ entity, this };
 				scriptComponent.Instance->OnCreate();
 			}
-			scriptComponent.Instance->OnUpdate(deltaTime);
+			scriptComponent.Instance->OnUpdate(ts);
 		}
 
-		// destroy entities at the end of the frame
+		// destroy entities
 		for (auto& entity : entitiesToDestroy){
 		
 			if (ecs.HasComponent<ScriptComponent>(entity.id)) 
@@ -48,5 +53,9 @@ namespace Engine {
 			ecs.EntityDestroyed(entity.id);
 		}
 		entitiesToDestroy.clear();
+
+
+		renderingSystem->Update(ts);
+
 	}
 }

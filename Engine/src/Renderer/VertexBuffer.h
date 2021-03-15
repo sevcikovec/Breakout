@@ -116,7 +116,7 @@ namespace Engine {
 		}
 
 		std::vector<BufferElement> elements;
-		uint32_t stride;
+		size_t stride;
 	};
 
 

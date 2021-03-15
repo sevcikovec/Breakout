@@ -5,6 +5,17 @@
 #include <unordered_set>
 
 namespace Engine {
+	class RenderingSystem : public System {
+	public:
+		void Update(float TS)
+		{
+			for (auto& entity : entities)
+			{
+				//auto& transform = ecs->GetComponent<TransformComponent>(entity);
+				//auto& mesh = ecs->GetComponent<MeshComponent>(entity);
+			}
+		}
+	};
 
 	class Scene {
 	public:
@@ -21,7 +32,9 @@ namespace Engine {
 
 		std::string name;
 
-		ECS ecs;
+		ECS ecs{};
+
+		Ref<RenderingSystem> renderingSystem;
 
 		std::unordered_set<Entity> entitiesToDestroy;
 	};

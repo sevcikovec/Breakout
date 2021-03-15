@@ -4,13 +4,20 @@
 #include <cassert>
 #include <unordered_map>
 #include <memory>
-
+#include <bitset>
+#include <set>
+#include "../Utils.h"
 //
 // Inspired by https://austinmorlan.com/posts/entity_component_system/
 //
 namespace Engine {
 
+	using ComponentType = std::uint8_t;
+	const ComponentType MAX_COMPONENT_COUNT = 32;
+
 	using EntityID = uint32_t;
+
+	using Signature = std::bitset<MAX_COMPONENT_COUNT>;
 
 	class IComponentPool
 	{
@@ -74,21 +81,131 @@ namespace Engine {
 	private:
 		std::vector<T> componentVector;
 
-		std::unordered_map<EntityID, size_t> entityToIndexMap;
-		std::unordered_map<size_t, EntityID> indexToEntityMap;
+		std::unordered_map<EntityID, size_t> entityToIndexMap{};
+		std::unordered_map<size_t, EntityID> indexToEntityMap{};
 	};
 
-	class ECS {
+
+	class System {
+	public:
+		std::set<EntityID> entities{};
+	};
+
+
+	class SystemManager {
+	public:
+		template<typename T>
+		Ref<T> RegisterSystem()
+		{
+			const char* typeName = typeid(T).name();
+			assert(systems.find(typeName) == systems.end());
+
+			auto system = CreateRef<T>();
+			systems.insert({ typeName, system });
+			return system;
+		}
+
+		template<typename T>
+		void SetSignature(Signature signature)
+		{
+			const char* typeName = typeid(T).name();
+
+			signatures.insert({ typeName, signature });
+		}
+
+		void EntityDestroyed(EntityID entity)
+		{
+			for (auto const& pair : systems)
+			{
+				auto const& system = pair.second;
+
+				system->entities.erase(entity);
+			}
+		}
+
+		void EntitySignatureChanged(EntityID entity, Signature entitySignature)
+		{
+			for (auto const& pair : systems)
+			{
+				auto const& system = pair.second;
+				auto const& type = pair.first;
+				auto const& systemSignature = signatures[type];
+
+				system->entities.erase(entity);
+
+				// new signature matches system signature
+				if ((entitySignature & systemSignature) == systemSignature)
+				{
+					system->entities.insert(entity);
+				}
+				// new signature does not match system signature
+				else
+				{
+					system->entities.erase(entity);
+				}
+			}
+		}
+
+	private:
+		std::unordered_map<const char*, Ref<System>> systems{};
+		std::unordered_map<const char*, Signature> signatures{};
+	};
+	
+	
+	class EntityManager {
 	public:
 		EntityID CreateEntity() {
-			return currentID++;
+
+			EntityID id = nextEntityID++;
+			SetEntitySignature(id, Signature());
+			return id;
+		}
+
+		void DestroyEntity(EntityID entity) {
+			entitySignatures.erase(entity);
+		}
+
+
+		Signature GetEntitySignature(EntityID entity) {
+			assert(entitySignatures.find(entity) != entitySignatures.end());
+
+			return entitySignatures[entity];
+		}
+
+		void SetEntitySignature(EntityID entity, Signature signature) {
+			entitySignatures[entity] = signature;
+		}
+		
+
+	private:
+		EntityID nextEntityID{};
+		std::unordered_map<EntityID, Signature> entitySignatures{};
+	};
+	
+
+	class ComponentManager {
+	public:
+		template<typename T>
+		void RegisterComponent() {
+			const char* typeName = typeid(T).name();
+			assert(componentPools.find(typeName) == componentPools.end());
+			
+			componentPools.insert({ typeName, CreateRef<ComponentPool<T>>() });
+			componentTypes.insert({ typeName, nextComponentType++ });
+		}
+
+		template<typename T>
+		bool IsComponentRegistered() {
+			const char* typeName = typeid(T).name();
+			return componentPools.find(typeName) != componentPools.end();
 		}
 
 		template<typename T>
 		T& AddComponent(EntityID entity) {
 			const char* typeName = typeid(T).name();
 			if (componentPools.find(typeName) == componentPools.end()) {
-				componentPools.insert({ typeName, std::make_shared<ComponentPool<T>>() });
+				componentPools.insert({ typeName, CreateRef<ComponentPool<T>>() });
+				componentTypes.insert({ typeName, nextComponentType++ });
 			}
 			return GetComponentPool<T>()->CreateComponent(entity);
 		}
@@ -119,19 +236,26 @@ namespace Engine {
 		}
 
 		template<typename T>
-		std::vector<T>& GetComponentIterator(){
+		std::vector<T>& GetComponentIterator() {
 			const char* typeName = typeid(T).name();
-			componentPools.insert({ typeName, std::make_shared<ComponentPool<T>>() });
+			componentPools.insert({ typeName, CreateRef<ComponentPool<T>>() });
 			return GetComponentPool<T>()->GetComponents();
 		}
 
-	private:
-		EntityID currentID;
+		template<typename T>
+		ComponentType GetComponentType() {
+			const char* typeName = typeid(T).name();
+			return componentTypes.find(typeName)->second;
+		}
 
-		std::unordered_map<const char*, std::shared_ptr<IComponentPool>> componentPools{};
+	private:
+		std::unordered_map<const char*, Ref<IComponentPool>> componentPools{};
+		std::unordered_map<const char*, ComponentType> componentTypes{};
+		ComponentType nextComponentType{};
+
 
 		template<typename T>
-		std::shared_ptr<ComponentPool<T>> GetComponentPool()
+		Ref<ComponentPool<T>> GetComponentPool()
 		{
 			const char* typeName = typeid(T).name();
 
@@ -139,5 +263,80 @@ namespace Engine {
 
 			return std::static_pointer_cast<ComponentPool<T>>(componentPools[typeName]);
 		}
+	};
+	
+
+	class ECS {
+	public:
+		EntityID CreateEntity() {
+			return entityManager.CreateEntity();
+		}
+
+		template<typename T>
+		Ref<T> RegisterSystem() {	
+			return systemManager.RegisterSystem<T>();
+		}
+
+		template<typename T>
+		void SetSystemSignature(Signature signature){
+			systemManager.SetSignature<T>(signature);
+		}
+
+		template<typename T>
+		ComponentType GetComponentType() {
+			if (!componentManager.IsComponentRegistered<T>())
+				componentManager.RegisterComponent<T>();
+			return componentManager.GetComponentType<T>();
+		}
+
+		template<typename T>
+		T& AddComponent(EntityID entity) {
+			T& newComponent = componentManager.AddComponent<T>(entity);
+
+			Signature signature = entityManager.GetEntitySignature(entity);
+			signature.set(componentManager.GetComponentType<T>(), true);
+			entityManager.SetEntitySignature(entity, signature);
+
+			systemManager.EntitySignatureChanged(entity, signature);
+
+			return newComponent;
+		}
+
+		void EntityDestroyed(EntityID entity) {
+			componentManager.EntityDestroyed(entity);
+			systemManager.EntityDestroyed(entity);
+			entityManager.DestroyEntity(entity);
+		}
+
+		template<typename T>
+		void RemoveComponent(EntityID entity) {
+			T& newComponent = componentManager.AddComponent<T>(entity);
+
+			Signature signature = entityManager.GetEntitySignature(entity);
+			signature.set(componentManager.GetComponentType<T>(), false);
+			entityManager.SetEntitySignature(entity, signature);
+
+			systemManager.EntitySignatureChanged(entity, signature);
+		}
+
+		template<typename T>
+		T& GetComponent(EntityID entity) {
+			return componentManager.GetComponent<T>(entity);
+		}
+
+		template<typename T>
+		bool HasComponent(EntityID entity) {
+			return componentManager.HasComponent<T>(entity);
+		}
+
+		template<typename T>
+		std::vector<T>& GetComponentIterator() {
+			return componentManager.GetComponentIterator<T>();
+		}
+
+	private:
+		SystemManager systemManager;
+		EntityManager entityManager;
+		ComponentManager componentManager;
 	};
 }
