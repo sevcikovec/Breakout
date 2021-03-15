@@ -3,17 +3,18 @@
 #include <cstdio>
 #include "Scripts/TestScript.cpp"
 #include <Scene\Components.h>
+
 BreakoutScene::BreakoutScene() : Engine::Scene("Main scene")
 {
 	// initialize scene
-	Engine::Entity entity = CreateEntity("Test entity");
-
+	
 	/*
 	std::string test = "test string";
 	for (int i = 0; i < 100; i++) {
 		CreateEntity(test + std::to_string(i));
 	}*/
 
+	/*
 	auto& scriptComponent = entity.AddComponent<Engine::ScriptComponent>();
 	scriptComponent.Bind<TestScript>();
 	scriptComponent.InstantiateScript(&scriptComponent);
@@ -23,14 +24,13 @@ BreakoutScene::BreakoutScene() : Engine::Scene("Main scene")
 	
 	testScript->OnStateChanged = [this, entity]() {
 		std::cout << " Callback on state changed" << std::endl;
-		SwapVAs();
 		DestroyEntity(entity);
 	};
-
+	*/
 	
 	const char* vertexShader = "..\\..\\..\\..\\Engine\\resources\\shaders\\vert.glsl";
 	const char* fragmentShader = "..\\..\\..\\..\\Engine\\resources\\shaders\\frag.glsl";
-	shader = new Engine::Shader(vertexShader, fragmentShader);
+	auto shader = Engine::CreateRef<Engine::Shader>(vertexShader, fragmentShader);
 	
 	float vertices1[] = {
 		-0.5, -0.5,			1.0, 0.0, 0.0,
@@ -38,23 +38,9 @@ BreakoutScene::BreakoutScene() : Engine::Scene("Main scene")
 		0.5, 0.5,			0.0, 0.0, 1.0,
 		-0.5, 0.5,			0.0, 0.0, 1.0
 	};
-
-	float vertices2[] = {
-		-0.5, -0.5,			0.0, 0.0, 1.0,
-		0.5, -0.5,			0.0, 0.0, 1.0,
-		0.5, 0.5,			1.0, 0.0, 0.0,
-		-0.5, 0.5,			1.0, 0.0, 0.0
-	};
 	
 	auto vb1 = Engine::VertexBuffer::Create(vertices1, 5 * 4);
 	vb1->SetLayout(
-		{
-			{ Engine::LayoutShaderType::Float2 },
-			{ Engine::LayoutShaderType::Float3 }
-		});
-
-	auto vb2 = Engine::VertexBuffer::Create(vertices2, 5 * 4);
-	vb2->SetLayout(
 		{
 			{ Engine::LayoutShaderType::Float2 },
 			{ Engine::LayoutShaderType::Float3 }
@@ -67,28 +53,21 @@ BreakoutScene::BreakoutScene() : Engine::Scene("Main scene")
 
 	auto ib = Engine::IndexBuffer::Create(indices, 6);
 
-	firstVA = Engine::VertexArray::Create();
-	firstVA->SetVertexBuffer(vb1);
-	firstVA->SetIndexBuffer(ib);
+	auto vao = Engine::VertexArray::Create();
+	vao->SetIndexBuffer(ib);
+	vao->SetVertexBuffer(vb1);
 
-	secondVA = Engine::VertexArray::Create();
-	secondVA->SetVertexBuffer(vb2);
-	secondVA->SetIndexBuffer(ib);
+	Engine::Entity entity = CreateEntity("Test entity");
+	auto& transform = entity.AddComponent<Engine::TransformComponent>();
 
+	auto& mesh = entity.AddComponent<Engine::MeshComponent>();
+
+	mesh.shader = shader;
+	mesh.vao = vao;
 }
 
 void BreakoutScene::OnUpdate(float frameTimeMS)
 {
 	Engine::Scene::OnUpdate(frameTimeMS);
-
-	renderer.Clear();
-
-	if (firstActive) renderer.Submit(*shader, firstVA);
-	else renderer.Submit(*shader, secondVA);
-	
 }
 
-void BreakoutScene::SwapVAs()
-{
-	firstActive = !firstActive;
-}

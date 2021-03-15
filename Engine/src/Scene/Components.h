@@ -15,7 +15,8 @@ namespace Engine {
 	};
 
 	struct MeshComponent {
-
+		Ref<VertexArray> vao;
+		Ref<Shader> shader;
 	};
 
 

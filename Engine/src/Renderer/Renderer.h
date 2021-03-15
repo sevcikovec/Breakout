@@ -7,8 +7,8 @@
 namespace Engine {
 	class Renderer {
 	public:
-		void Submit(const Shader& shader, Ref<VertexArray> va);
+		static void Submit(const Ref<Shader> shader, const Ref<VertexArray> va);
 
-		void Clear() const;
+		static void Clear();
 	};
 }

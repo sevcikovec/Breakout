@@ -21,6 +21,7 @@ set (SOURCES
     "src/Core/Window.cpp"
 
      "src/Scene/Scene.cpp"
+     "src/Scene/Systems.cpp"
      "src/Scene/Entity.cpp"
      )
 
@@ -41,6 +42,7 @@ set (API
      "src/Scene/Scene.h"
      "src/Scene/Entity.h"
      "src/Scene/Components.h"
+     "src/Scene/Systems.h"
      "src/Scene/ECS.h"
      "src/Scene/ScriptableEntity.h"
      )

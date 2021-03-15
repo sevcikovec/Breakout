@@ -16,6 +16,7 @@ namespace Engine {
 		T& GetComponent()
 		{
 			T& component = scene->ecs.GetComponent<T>(id);
+			return component;
 		}
 
 		template<typename T>
@@ -48,7 +49,6 @@ namespace Engine {
 		EntityID id;
 
 		Scene* scene = nullptr;
-		
 	};
 }
 

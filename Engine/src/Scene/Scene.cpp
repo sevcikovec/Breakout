@@ -6,11 +6,7 @@ namespace Engine {
 		
 	Scene::Scene(const std::string& name) : name(name)
 	{
-		renderingSystem = ecs.RegisterSystem<RenderingSystem>();
-		Signature signature;
-		signature.set(ecs.GetComponentType<TransformComponent>());
-		signature.set(ecs.GetComponentType<MeshComponent>());
-		ecs.SetSystemSignature<RenderingSystem>(signature);
+		InitRenderingSystem();
 	}
 
 	Entity Scene::CreateEntity(const std::string& name)
@@ -24,6 +20,11 @@ namespace Engine {
 	void Scene::DestroyEntity(Entity entity)
 	{
 		entitiesToDestroy.insert(entity);
+	}
+
+	Entity Scene::GetEntity(EntityID entityID)
+	{
+		return { entityID, this };
 	}
 
 
@@ -57,5 +58,15 @@ namespace Engine {
 
 		renderingSystem->Update(ts);
 
+	}
+	void Scene::InitRenderingSystem()
+	{
+		renderingSystem = ecs.RegisterSystem<RenderingSystem>();
+		Signature signature;
+		signature.set(ecs.GetComponentType<TransformComponent>());
+		signature.set(ecs.GetComponentType<MeshComponent>());
+		ecs.SetSystemSignature<RenderingSystem>(signature);
+
+		renderingSystem->SetContext(this);
 	}
 }

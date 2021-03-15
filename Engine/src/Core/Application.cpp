@@ -18,6 +18,8 @@ namespace Engine {
         if (GLEW_OK != glewInit()) {
             std::cout << "Error while calling glewInit() " << std::endl;
         }
+
+
     }
 
     void Application::Run()

@@ -1,22 +1,11 @@
 #pragma once
 #include <string>
-#include "Entity.h"
-#include "ECS.h"
 #include <unordered_set>
+#include "ECS.h"
+#include "Systems.h"
+#include "../Renderer/Renderer.h"
 
 namespace Engine {
-	class RenderingSystem : public System {
-	public:
-		void Update(float TS)
-		{
-			for (auto& entity : entities)
-			{
-				//auto& transform = ecs->GetComponent<TransformComponent>(entity);
-				//auto& mesh = ecs->GetComponent<MeshComponent>(entity);
-			}
-		}
-	};
-
 	class Scene {
 	public:
 		Scene(const std::string& name);
@@ -25,17 +14,21 @@ namespace Engine {
 
 		void DestroyEntity(Entity entity);
 
+		Entity GetEntity(EntityID entityID);
+
 		virtual void OnUpdate(float deltaTime);
 
 	private:
-		friend class Entity;
-
 		std::string name;
 
+	private:
+		friend class Entity;
+		
 		ECS ecs{};
 
-		Ref<RenderingSystem> renderingSystem;
-
 		std::unordered_set<Entity> entitiesToDestroy;
+		
+		void InitRenderingSystem();
+		Ref<RenderingSystem> renderingSystem;
 	};
 }
