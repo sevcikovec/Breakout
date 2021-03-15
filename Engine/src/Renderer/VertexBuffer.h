@@ -80,7 +80,7 @@ namespace Engine {
 
 	struct BufferElement {
 		uint32_t Type;
-		uint32_t Size;
+		size_t Size;
 		size_t Offset;
 		size_t ComponentCount;
 		bool Normalized;

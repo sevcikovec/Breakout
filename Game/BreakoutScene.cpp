@@ -21,9 +21,10 @@ BreakoutScene::BreakoutScene() : Engine::Scene("Main scene")
 	auto testScript = static_cast<TestScript*>(scriptComponent.Instance);
 	testScript->OnCreate();
 	
-	testScript->OnStateChanged = [this]() {
+	testScript->OnStateChanged = [this, entity]() {
 		std::cout << " Callback on state changed" << std::endl;
 		SwapVAs();
+		DestroyEntity(entity);
 	};
 
 	

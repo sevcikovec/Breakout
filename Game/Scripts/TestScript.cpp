@@ -24,6 +24,10 @@ public:
 		}
 	}
 
+	void OnDestroy() override {
+		std::cout << "destroyed Test Script " << std::endl;
+	}
+
 	std::function<void()> OnStateChanged = nullptr;
 
 private:

@@ -18,6 +18,7 @@ namespace Engine {
 
 	void Scene::DestroyEntity(Entity entity)
 	{
+		entitiesToDestroy.insert(entity);
 	}
 
 
@@ -33,5 +34,19 @@ namespace Engine {
 			}
 			scriptComponent.Instance->OnUpdate(deltaTime);
 		}
+
+		// destroy entities at the end of the frame
+		for (auto& entity : entitiesToDestroy){
+		
+			if (ecs.HasComponent<ScriptComponent>(entity.id)) 
+			{
+				auto& script = ecs.GetComponent<ScriptComponent>(entity.id);
+				script.Instance->OnDestroy();
+				script.DestroyScript(&script);
+			}
+
+			ecs.EntityDestroyed(entity.id);
+		}
+		entitiesToDestroy.clear();
 	}
 }

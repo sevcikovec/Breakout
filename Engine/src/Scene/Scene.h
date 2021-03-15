@@ -2,6 +2,7 @@
 #include <string>
 #include "Entity.h"
 #include "ECS.h"
+#include <unordered_set>
 
 namespace Engine {
 
@@ -21,5 +22,7 @@ namespace Engine {
 		std::string name;
 
 		ECS ecs;
+
+		std::unordered_set<Entity> entitiesToDestroy;
 	};
 }

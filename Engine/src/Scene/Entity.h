@@ -30,6 +30,13 @@ namespace Engine {
 			scene->ecs.RemoveComponent<T>(entity);
 		}
 
+		size_t operator==(const Entity& other) const {
+			return id == other.id;
+		}
+
+		EntityID GetID() const {
+			return id;
+		}
 
 	private:
 		friend class Scene;
@@ -42,5 +49,15 @@ namespace Engine {
 
 		Scene* scene = nullptr;
 		
+	};
+}
+
+namespace std {
+	template<>
+	struct hash<Engine::Entity> {
+		size_t operator()(const Engine::Entity& t) const
+		{
+			return t.GetID();
+		}
 	};
 }

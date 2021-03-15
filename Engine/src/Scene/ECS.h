@@ -25,10 +25,12 @@ namespace Engine {
 		T& CreateComponent(EntityID entityID) {
 			assert(entityToIndexMap.find(entityID) == entityToIndexMap.end());
 
-			size_t newIndex = size++;
+			componentVector.emplace_back();
+
+			size_t newIndex = componentVector.size() - 1;
 			entityToIndexMap[entityID] = newIndex;
 			indexToEntityMap[newIndex] = entityID;
-			componentVector.emplace_back();
+
 			return componentVector[newIndex];
 		}
 
@@ -36,18 +38,17 @@ namespace Engine {
 			assert(entityToIndexMap.find(entityID) != entityToIndexMap.end());
 
 			size_t index = entityToIndexMap[entityID];
+			size_t lastIndex = componentVector.size() - 1;
+			
+			componentVector[index] = componentVector[lastIndex];
+			componentVector.pop_back();
 
-			componentVector[index] = componentVector[size - 1];
-
-
-			EntityID movedEntity = indexToEntityMap[size - 1];
-			indexToEntityMap.erase(size - 1);
+			EntityID movedEntity = indexToEntityMap[lastIndex];
+			indexToEntityMap.erase(lastIndex);
 			indexToEntityMap[index] = entityID;
 
 			entityToIndexMap.erase(entityID);
 			entityToIndexMap[movedEntity] = index;
-
-			--size;
 		}
 
 		T& GetComponent(EntityID entityID) {
@@ -56,7 +57,7 @@ namespace Engine {
 			return componentVector[entityToIndexMap[entityID]];
 		}
 
-		T& ContainsComponent(EntityID entityID) {
+		bool ContainsComponent(EntityID entityID) {
 			return entityToIndexMap.find(entityID) != entityToIndexMap.end();
 		}
 
@@ -75,8 +76,6 @@ namespace Engine {
 
 		std::unordered_map<EntityID, size_t> entityToIndexMap;
 		std::unordered_map<size_t, EntityID> indexToEntityMap;
-
-		size_t size;
 	};
 
 	class ECS {
@@ -107,16 +106,16 @@ namespace Engine {
 		}
 
 		template<typename T>
-		void GetComponent(EntityID entity) {
-			return GetComponentPool<T>().GetComponent(entity);
+		T& GetComponent(EntityID entity) {
+			return GetComponentPool<T>()->GetComponent(entity);
 		}
 
 		template<typename T>
-		void HasComponent(EntityID entity) {
+		bool HasComponent(EntityID entity) {
 			const char* typeName = typeid(T).name();
 			if (componentPools.find(typeName) == componentPools.end()) return false;
 
-			return GetComponentPool<T>().ContainsComponent(entity);
+			return GetComponentPool<T>()->ContainsComponent(entity);
 		}
 
 		template<typename T>
