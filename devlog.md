@@ -12,3 +12,12 @@ Week 1:
 
     Added basic support for loading, compiling and using shaders
 
+Week 2:
+
+    Updated project structure - engine as lib, added separate Game project.
+
+    Added simple renderer - now supporting VBO, IBO and array objects. Also supports shader data layout.
+
+    Added entity component system supporting basic components - tranform, name ...
+
+    Added scriptable components - possible to add behaviour to entity as component.
