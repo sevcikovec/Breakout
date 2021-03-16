@@ -29,6 +29,14 @@ namespace Engine {
 		glUniform4f(location, x, y, z, w);
 	}
 
+	void Shader::SetUniformMat4(const std::string& name, Mat4& value)
+	{
+		GLint location = glGetUniformLocation(programID, name.c_str());
+		glUniformMatrix4fv(location, 1, GL_FALSE, value.GetPtr());
+	}
+
+	
+
 	bool Shader::Compile(const std::string& code, GLenum shaderType)
 	{
 		GLenum shaderID;

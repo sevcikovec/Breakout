@@ -59,7 +59,9 @@ BreakoutScene::BreakoutScene() : Engine::Scene("Main scene")
 
 	Engine::Entity entity = CreateEntity("Test entity");
 	auto& transform = entity.AddComponent<Engine::TransformComponent>();
-
+	transform.scale = { 0.5, .5f, 1 };
+	transform.position = { .2f,.2f,0.f };
+	transform.rotation= { 0.f,0.0f, 45.f};
 	auto& mesh = entity.AddComponent<Engine::MeshComponent>();
 
 	mesh.shader = shader;

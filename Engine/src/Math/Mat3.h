@@ -1,6 +1,7 @@
 #pragma once
 #include "Vec3.h"
 #include "ostream"
+#include "Quaternion.h"
 
 namespace Engine {
 
@@ -26,6 +27,8 @@ namespace Engine {
 		float operator()(int row, int col) const;
 
 		float& operator()(int row, int col);
+
+		static Mat3 RotationMatrix(const Quaternion& quaterion);
 
 		friend std::ostream& operator<<(std::ostream& os, const Mat3& v) {
 			os << v[0] << ", " << v[3] << ", " << v[6] << std::endl;

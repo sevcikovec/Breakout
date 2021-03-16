@@ -129,4 +129,20 @@ namespace Engine
 		if (row < 0 || row >= 3 || col < 0 || col >= 3) throw std::out_of_range("Index out of range");
 		return collumns[col][row];
 	}
+
+	Mat3 Mat3::RotationMatrix(const Quaternion& quaterion) {
+		Quaternion q = quaterion.Normalized();
+		float qx = q.x;
+		float qy = q.y;
+		float qz = q.z;
+		float qw = q.w;
+
+		
+		Mat3 mat {
+			1.0f - 2.0f * qy * qy - 2.0f * qz * qz, 2.0f * qx * qy - 2.0f * qz * qw, 2.0f * qx * qz + 2.0f * qy * qw,
+			2.0f * qx * qy + 2.0f * qz * qw, 1.0f - 2.0f * qx * qx - 2.0f * qz * qz, 2.0f * qy * qz - 2.0f * qx * qw,
+			2.0f * qx * qz - 2.0f * qy * qw, 2.0f * qy * qz + 2.0f * qx * qw, 1.0f - 2.0f * qx * qx - 2.0f * qy * qy
+		};
+		return mat.Transpose();
+	}
 }

@@ -1,6 +1,7 @@
 #pragma once
 #include "../Vec3.h"
 #include "ScriptableEntity.h"
+#include <../Mat4.h>
 
 namespace Engine {
 
@@ -11,7 +12,15 @@ namespace Engine {
 	struct TransformComponent{
 		Vec3 position{0.f};
 		Vec3 rotation{ 0.f };
-		Vec3 scale{ 0.f };
+		Vec3 scale{ 1.f };
+
+		Mat4 GetModelMatrix() {
+			Quaternion rot = Quaternion::FromEuler(rotation);
+			auto x = Mat4(Mat3::RotationMatrix(rot));
+			Mat4 modelMat = Mat4::GetTranslationMatrix(position) * Mat4(Mat3::RotationMatrix(rot)) * Mat4::GetScaleMatrix(scale);
+			
+			return modelMat;
+		}
 	};
 
 	struct MeshComponent {

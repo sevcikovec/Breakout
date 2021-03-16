@@ -11,6 +11,8 @@ add_subdirectory ("Dependencies/glfw")
 set (SOURCES 
     "src/Math/Mat3.cpp"
     "src/Math/Vec3.cpp"
+    "src/Math/Mat4.cpp"
+    "src/Math/Vec4.cpp"
 
     "src/Renderer/Shader.cpp"
     "src/Renderer/Renderer.cpp"
@@ -30,6 +32,9 @@ set (API
 
     "src/Math/Mat3.h"
     "src/Math/Vec3.h"
+    "src/Math/Vec4.h"
+    "src/Math/Mat4.h"
+    "src/Math/Quaternion.h"
 
     "src/Renderer/Shader.h"
     "src/Renderer/Renderer.h"
