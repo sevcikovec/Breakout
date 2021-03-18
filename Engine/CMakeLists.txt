@@ -16,8 +16,10 @@ set (SOURCES
 
     "src/Renderer/Shader.cpp"
     "src/Renderer/Renderer.cpp"
-    "src/Renderer/VertexBuffer.cpp"
+    "src/Renderer/Buffers.cpp"
+    "src/Renderer/UniformBuffer.cpp"
     "src/Renderer/VertexArray.cpp"
+    "src/Renderer/Camera.cpp"
 
     "src/Core/Application.cpp"
     "src/Core/Window.cpp"
@@ -38,8 +40,10 @@ set (API
 
     "src/Renderer/Shader.h"
     "src/Renderer/Renderer.h"
-    "src/Renderer/VertexBuffer.h"
+    "src/Renderer/Buffers.h"
+    "src/Renderer/UniformBuffer.h"
     "src/Renderer/VertexArray.h"
+    "src/Renderer/Camera.h"
 
     "src/Core/Application.h"
     "src/Core/Window.h"

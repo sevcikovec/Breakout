@@ -1,7 +1,13 @@
 #include "Renderer.h"
-#include <iostream>
 
 namespace Engine {
+
+	Unique<UniformBuffer<CameraUBOData>> Renderer::cameraUBO = nullptr;
+
+	void Renderer::Init(){
+		cameraUBO = CreateUnique<UniformBuffer<CameraUBOData>>();
+	}
+
 	void Renderer::Submit(const Ref<Shader> shader, const Ref<VertexArray> va)
 	{
 		shader->Bind();
@@ -13,6 +19,11 @@ namespace Engine {
 	}
 	void Renderer::Clear()
 	{
-		glClear(GL_COLOR_BUFFER_BIT);
+		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+	}
+
+	void Renderer::SetCamera(CameraUBOData cameraData) {
+		cameraUBO->Bind(0);
+		cameraUBO->SetData(cameraData);
 	}
 }

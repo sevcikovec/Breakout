@@ -28,30 +28,74 @@ BreakoutScene::BreakoutScene() : Engine::Scene("Main scene")
 	};
 	*/
 	
+
+
+	Engine::Entity cameraEntity = CreateEntity("Main camera");
+	
+
+	auto& cameraTransform = cameraEntity.AddComponent<Engine::TransformComponent>();
+	cameraTransform.position = { 0, 0,5.f };
+
+	Engine::Ref<Engine::Camera> camera = Engine::CreateRef<Engine::Camera>();
+	camera->SetPerspective(0.785398f, 0.1f, 100.f);
+	camera->SetViewport(640, 480);
+
+	auto& cameraComponent = cameraEntity.AddComponent<Engine::CameraComponent>();
+	cameraComponent.camera = camera;
+	cameraComponent.primary = true;
+
+
 	const char* vertexShader = "..\\..\\..\\..\\Engine\\resources\\shaders\\vert.glsl";
 	const char* fragmentShader = "..\\..\\..\\..\\Engine\\resources\\shaders\\frag.glsl";
 	auto shader = Engine::CreateRef<Engine::Shader>(vertexShader, fragmentShader);
 	
-	float vertices1[] = {
-		-0.5, -0.5,			1.0, 0.0, 0.0,
-		0.5, -0.5,			1.0, 0.0, 0.0,
-		0.5, 0.5,			0.0, 0.0, 1.0,
-		-0.5, 0.5,			0.0, 0.0, 1.0
-	};
 	
-	auto vb1 = Engine::VertexBuffer::Create(vertices1, 5 * 4);
+	
+
+	float vertices[] = {
+
+		-0.5f,0.5f,-0.5f,   0.0f, 0.0f, 0.0f,//Point A 0
+		-0.5f,0.5f,0.5f,    0.0f, 0.0f, 1.0f,//Point B 1
+		0.5f,0.5f,-0.5f,    0.0f, 1.0f, 0.0f,//Point C 2
+		0.5f,0.5f,0.5f,     0.0f, 1.0f, 1.0f,//Point D 3
+
+		-0.5f,-0.5f,-0.5f,  1.0f, 0.0f, 0.0f,//Point E 4
+		-0.5f,-0.5f,0.5f,   1.0f, 0.0f, 1.0f,//Point F 5
+		0.5f,-0.5f,-0.5f,   1.0f, 1.0f, 0.0f,//Point G 6
+		0.5f,-0.5f,0.5f,    1.0f, 1.0f, 1.0f//Point H 7
+
+	};
+
+	auto vb1 = Engine::VertexBuffer::Create(vertices, 6 * 8);
 	vb1->SetLayout(
 		{
-			{ Engine::LayoutShaderType::Float2 },
+			{ Engine::LayoutShaderType::Float3 },
 			{ Engine::LayoutShaderType::Float3 }
 		});
 
 	unsigned int indices[] = {
-		0, 1, 2,
-		2, 3, 0
+		/*Above ABC,BCD*/
+		0,1,2,
+		1,2,3,
+
+		/*Following EFG,FGH*/
+		4,5,6,
+		5,6,7,
+		/*Left ABF,AEF*/
+		0,1,5,
+		0,4,5,
+		/*Right side CDH,CGH*/
+		2,3,7,
+		2,6,7,
+		/*ACG,AEG*/
+		0,2,6,
+		0,4,6,
+		/*Behind BFH,BDH*/
+		1,5,7,
+		1,3,7
 	};
 
-	auto ib = Engine::IndexBuffer::Create(indices, 6);
+	auto ib = Engine::IndexBuffer::Create(indices, 36);
 
 	auto vao = Engine::VertexArray::Create();
 	vao->SetIndexBuffer(ib);

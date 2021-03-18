@@ -4,6 +4,7 @@
 #include "ECS.h"
 #include "Systems.h"
 #include "../Renderer/Renderer.h"
+#include "../Renderer/UniformBuffer.h"
 
 namespace Engine {
 	class Scene {
@@ -23,12 +24,15 @@ namespace Engine {
 
 	private:
 		friend class Entity;
+		friend class BaseSystem;
 		
 		ECS ecs{};
 
 		std::unordered_set<Entity> entitiesToDestroy;
 		
-		void InitRenderingSystem();
+
+		void InitRenderingSystems();
 		Ref<RenderingSystem> renderingSystem;
+		Ref<MainCameraSetupSystem> mainCameraSetupSystem;
 	};
 }

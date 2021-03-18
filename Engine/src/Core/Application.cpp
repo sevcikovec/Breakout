@@ -19,7 +19,7 @@ namespace Engine {
             std::cout << "Error while calling glewInit() " << std::endl;
         }
 
-
+        Renderer::Init();
     }
 
     void Application::Run()

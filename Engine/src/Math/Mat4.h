@@ -7,6 +7,7 @@ namespace Engine {
 
 	struct Mat4 {
 	public:
+		Mat4();
 		Mat4(const float& i);
 		//Mat4(const Vec4& v0, const Vec4& v1, const Vec4& v2, const Vec4& v3);
 		//Mat4(const Mat4& other);
@@ -21,25 +22,30 @@ namespace Engine {
 			const Mat3& mat3
 		);
 
+		void Translate(const Vec3& translation);
+
 		static Mat4 GetTranslationMatrix(const Vec3& translation);
 
 		//Mat4 Transpose();
-		//Mat4 Inverse();
-		//float Det();
+
+		Mat4 Inverse();
+		float Det();
 		//Mat4 operator+(const Mat4& other);
 		//Mat4 operator-(const Mat4& other);
 		Mat4 operator*(const Mat4& other);
 		//Mat4 operator*(const float& other);
 		float operator[](int) const;
+		float& operator[](int);
 
 		float operator()(int row, int col) const;
 
 		float& operator()(int row, int col);
 
 		friend std::ostream& operator<<(std::ostream& os, const Mat4& v) {
-			os << v[0] << ", " << v[3] << ", " << v[6] << std::endl;
-			os << v[1] << ", " << v[4] << ", " << v[7] << std::endl;
-			os << v[2] << ", " << v[5] << ", " << v[8] << std::endl;
+			os << v[0] << ", " << v[4] << ", " << v[8]  << ", " << v[12] << std::endl;
+			os << v[1] << ", " << v[5] << ", " << v[9]  << ", " << v[13] << std::endl;
+			os << v[2] << ", " << v[6] << ", " << v[10] << ", " << v[14] <<std::endl;
+			os << v[3] << ", " << v[7] << ", " << v[11] << ", " << v[15] <<std::endl;
 			return os;
 		}
 

@@ -1,12 +1,14 @@
 #include <iostream>
 #include "Scene.h"
 #include "Components.h"
+#include "../Renderer/Camera.h"
+#include "../Renderer/UniformBuffer.h"
 
 namespace Engine {
 		
 	Scene::Scene(const std::string& name) : name(name)
 	{
-		InitRenderingSystem();
+		InitRenderingSystems();
 	}
 
 	Entity Scene::CreateEntity(const std::string& name)
@@ -14,6 +16,7 @@ namespace Engine {
 		Entity entity(ecs.CreateEntity(), this);
 		TagComponent& tag = entity.AddComponent<TagComponent>();
 		tag.name = name;
+
 		return entity;
 	}
 
@@ -30,6 +33,7 @@ namespace Engine {
 
 	void Scene::OnUpdate(float ts)
 	{
+
 		//std::cout << deltaTime << std::endl;
 		for (auto& scriptComponent : ecs.GetComponentIterator<ScriptComponent>()) {
 			if (!scriptComponent.Instance) {
@@ -40,6 +44,8 @@ namespace Engine {
 			}
 			scriptComponent.Instance->OnUpdate(ts);
 		}
+
+		
 
 		// destroy entities
 		for (auto& entity : entitiesToDestroy){
@@ -55,18 +61,37 @@ namespace Engine {
 		}
 		entitiesToDestroy.clear();
 
+		
 
+		Ref<Camera> camera;
+		TransformComponent cameraTransform;
+		for (auto& cameraComponent : ecs.GetComponentIterator<CameraComponent>())
+		{
+			if (cameraComponent.primary) {
+				camera = cameraComponent.camera;
+			}
+		}
+		
+		mainCameraSetupSystem->Update(ts);
 		renderingSystem->Update(ts);
 
 	}
-	void Scene::InitRenderingSystem()
+	void Scene::InitRenderingSystems()
 	{
 		renderingSystem = ecs.RegisterSystem<RenderingSystem>();
-		Signature signature;
-		signature.set(ecs.GetComponentType<TransformComponent>());
-		signature.set(ecs.GetComponentType<MeshComponent>());
-		ecs.SetSystemSignature<RenderingSystem>(signature);
+		Signature rendererSignature;
+		rendererSignature.set(ecs.GetComponentType<TransformComponent>());
+		rendererSignature.set(ecs.GetComponentType<MeshComponent>());
+		ecs.SetSystemSignature<RenderingSystem>(rendererSignature);
 
 		renderingSystem->SetContext(this);
+
+		mainCameraSetupSystem = ecs.RegisterSystem<MainCameraSetupSystem>();
+		Signature cameraSignature;
+		cameraSignature.set(ecs.GetComponentType<TransformComponent>());
+		cameraSignature.set(ecs.GetComponentType<CameraComponent>());
+		ecs.SetSystemSignature<MainCameraSetupSystem>(cameraSignature);
+		mainCameraSetupSystem->SetContext(this);
+
 	}
 }

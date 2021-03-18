@@ -1,5 +1,5 @@
 #pragma once
-#include "VertexBuffer.h"
+#include "Buffers.h"
 #include <vector>
 #include "../Utils.h"
 

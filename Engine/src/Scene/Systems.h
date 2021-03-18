@@ -16,4 +16,9 @@ namespace Engine {
 	public:
 		void Update(float ts);
 	};
+
+	class MainCameraSetupSystem : public BaseSystem {
+	public:
+		void Update(float ts);
+	};
 }
