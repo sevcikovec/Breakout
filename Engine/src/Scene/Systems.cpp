@@ -1,7 +1,6 @@
 #include "Systems.h"
 #include "ECS.h"
 #include "Scene.h"
-#include "Components.h"
 #include <iostream>
 #include "../Mat4.h"
 #include "../Renderer/Camera.h"

@@ -24,7 +24,6 @@ namespace Engine {
 
 	private:
 		friend class Entity;
-		friend class BaseSystem;
 		
 		ECS ecs{};
 

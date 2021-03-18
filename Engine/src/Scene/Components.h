@@ -1,8 +1,10 @@
 #pragma once
-#include "../Vec3.h"
 #include "ScriptableEntity.h"
+#include "../Vec3.h"
 #include <../Mat4.h>
 #include <../Renderer/Camera.h>
+#include <../Renderer/Shader.h>
+#include <../Renderer/VertexArray.h>
 
 namespace Engine {
 

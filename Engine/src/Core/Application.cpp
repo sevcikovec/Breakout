@@ -44,43 +44,6 @@ namespace Engine {
     void Application::AddScene(Scene* scene) {
         scenes.push_back(scene);
     }
-       
-
-
-        /*
-
-        Vec3 color(1, 0, 0);
-        double startTime = glfwGetTime();
-        double currentTime = startTime;
-
-        double frameTime = 0;
-        while (!glfwWindowShouldClose(window))
-        {
-            frameTime = glfwGetTime() - currentTime;
-            currentTime = glfwGetTime();
-
-            // animate color
-            color.x = sin(currentTime) / 2.f + .5f;
-            color.y = cos(currentTime) / 2.f + .5f;
-
-
-            glClear(GL_COLOR_BUFFER_BIT);
-
-            // test shader uniform binding
-            testShader.Bind();
-            testShader.SetUniformFloat4("color", color.x, color.y, color.z, 1);
-
-            glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
-
-            // Swap front and back buffers
-            glfwSwapBuffers(window);
-
-            // Poll for and process events 
-            glfwPollEvents();
-        }
-
-        glfwTerminate();
-        return 0;
-        */
+        
    
 }

@@ -79,18 +79,19 @@ namespace Engine {
 	void Scene::InitRenderingSystems()
 	{
 		renderingSystem = ecs.RegisterSystem<RenderingSystem>();
-		Signature rendererSignature;
+		/*Signature rendererSignature;
 		rendererSignature.set(ecs.GetComponentType<TransformComponent>());
 		rendererSignature.set(ecs.GetComponentType<MeshComponent>());
 		ecs.SetSystemSignature<RenderingSystem>(rendererSignature);
-
+		*/
 		renderingSystem->SetContext(this);
-
 		mainCameraSetupSystem = ecs.RegisterSystem<MainCameraSetupSystem>();
+		/*
 		Signature cameraSignature;
 		cameraSignature.set(ecs.GetComponentType<TransformComponent>());
 		cameraSignature.set(ecs.GetComponentType<CameraComponent>());
 		ecs.SetSystemSignature<MainCameraSetupSystem>(cameraSignature);
+		*/
 		mainCameraSetupSystem->SetContext(this);
 
 	}

@@ -86,9 +86,122 @@ namespace Engine {
 	};
 
 
-	class System {
+	class ComponentManager {
+	public:
+		template<typename T>
+		void RegisterComponent() {
+			const char* typeName = typeid(T).name();
+			assert(componentPools.find(typeName) == componentPools.end());
+
+			componentPools.insert({ typeName, CreateRef<ComponentPool<T>>() });
+			componentTypes.insert({ typeName, nextComponentType++ });
+		}
+
+		template<typename T>
+		bool IsComponentRegistered() {
+			const char* typeName = typeid(T).name();
+			return componentPools.find(typeName) != componentPools.end();
+		}
+
+		template<typename T>
+		T& AddComponent(EntityID entity) {
+			const char* typeName = typeid(T).name();
+			if (componentPools.find(typeName) == componentPools.end()) {
+				componentPools.insert({ typeName, CreateRef<ComponentPool<T>>() });
+				componentTypes.insert({ typeName, nextComponentType++ });
+			}
+			return GetComponentPool<T>()->CreateComponent(entity);
+		}
+
+		void EntityDestroyed(EntityID entity) {
+			for (auto const& pair : componentPools) {
+				auto const& component = pair.second;
+				component->EntityDestroyed(entity);
+			}
+		}
+
+		template<typename T>
+		void RemoveComponent(EntityID entity) {
+			GetComponentPool<T>()->RemoveEntityData(entity);
+		}
+
+		template<typename T>
+		T& GetComponent(EntityID entity) {
+			return GetComponentPool<T>()->GetComponent(entity);
+		}
+
+		template<typename T>
+		bool HasComponent(EntityID entity) {
+			const char* typeName = typeid(T).name();
+			if (componentPools.find(typeName) == componentPools.end()) return false;
+
+			return GetComponentPool<T>()->ContainsComponent(entity);
+		}
+
+		template<typename T>
+		std::vector<T>& GetComponentIterator() {
+			const char* typeName = typeid(T).name();
+			componentPools.insert({ typeName, CreateRef<ComponentPool<T>>() });
+			return GetComponentPool<T>()->GetComponents();
+		}
+
+		template<typename T>
+		ComponentType GetComponentType() {
+			const char* typeName = typeid(T).name();
+			if (!IsComponentRegistered<T>())
+				RegisterComponent<T>();
+			return componentTypes.find(typeName)->second;
+		}
+
+	private:
+		std::unordered_map<const char*, Ref<IComponentPool>> componentPools{};
+		std::unordered_map<const char*, ComponentType> componentTypes{};
+		ComponentType nextComponentType{};
+
+
+		template<typename T>
+		Ref<ComponentPool<T>> GetComponentPool()
+		{
+			const char* typeName = typeid(T).name();
+
+			assert(componentPools.find(typeName) != componentPools.end());
+
+			return std::static_pointer_cast<ComponentPool<T>>(componentPools[typeName]);
+		}
+	};
+
+	class ISystem {
 	public:
 		std::set<EntityID> entities{};
+
+		virtual Signature GetSignature(ComponentManager* componentSystem) = 0;
+	};
+
+	template<typename... C>
+	class System : public ISystem{
+	public:
+		virtual Signature GetSignature(ComponentManager* componentSystem) override {
+			return GetSignature<C...>(componentSystem);
+		}
+		
+	private:
+		template<typename... C>
+		Signature GetSignature(ComponentManager* componentSystem) {
+			Signature signature;
+			GetSignatureRec<C...>(componentSystem, signature);
+			return signature;
+		};
+
+		template<typename C1, typename C2, typename... Cx>
+		void GetSignatureRec(ComponentManager* componentSystem, Signature& signature) {
+			GetSignatureRec<C1>(componentSystem, signature);
+			GetSignatureRec<C2, Cx...>(componentSystem, signature);
+		}
+
+		template<typename C>
+		void GetSignatureRec(ComponentManager* componentSystem, Signature& signature) {
+			signature.set(componentSystem->GetComponentType<C>());
+		}
 	};
 
 
@@ -147,7 +260,7 @@ namespace Engine {
 		}
 
 	private:
-		std::unordered_map<const char*, Ref<System>> systems{};
+		std::unordered_map<const char*, Ref<ISystem>> systems{};
 		std::unordered_map<const char*, Signature> signatures{};
 	};
 	
@@ -183,109 +296,23 @@ namespace Engine {
 	};
 	
 
-	class ComponentManager {
-	public:
-		template<typename T>
-		void RegisterComponent() {
-			const char* typeName = typeid(T).name();
-			assert(componentPools.find(typeName) == componentPools.end());
-			
-			componentPools.insert({ typeName, CreateRef<ComponentPool<T>>() });
-			componentTypes.insert({ typeName, nextComponentType++ });
-		}
-
-		template<typename T>
-		bool IsComponentRegistered() {
-			const char* typeName = typeid(T).name();
-			return componentPools.find(typeName) != componentPools.end();
-		}
-
-		template<typename T>
-		T& AddComponent(EntityID entity) {
-			const char* typeName = typeid(T).name();
-			if (componentPools.find(typeName) == componentPools.end()) {
-				componentPools.insert({ typeName, CreateRef<ComponentPool<T>>() });
-				componentTypes.insert({ typeName, nextComponentType++ });
-			}
-			return GetComponentPool<T>()->CreateComponent(entity);
-		}
-
-		void EntityDestroyed(EntityID entity) {
-			for (auto const& pair : componentPools) {
-				auto const& component = pair.second;
-				component->EntityDestroyed(entity);
-			}
-		}
-
-		template<typename T>
-		void RemoveComponent(EntityID entity) {
-			GetComponentPool<T>()->RemoveEntityData(entity);
-		}
-
-		template<typename T>
-		T& GetComponent(EntityID entity) {
-			return GetComponentPool<T>()->GetComponent(entity);
-		}
-
-		template<typename T>
-		bool HasComponent(EntityID entity) {
-			const char* typeName = typeid(T).name();
-			if (componentPools.find(typeName) == componentPools.end()) return false;
-
-			return GetComponentPool<T>()->ContainsComponent(entity);
-		}
-
-		template<typename T>
-		std::vector<T>& GetComponentIterator() {
-			const char* typeName = typeid(T).name();
-			componentPools.insert({ typeName, CreateRef<ComponentPool<T>>() });
-			return GetComponentPool<T>()->GetComponents();
-		}
-
-		template<typename T>
-		ComponentType GetComponentType() {
-			const char* typeName = typeid(T).name();
-			return componentTypes.find(typeName)->second;
-		}
-
-	private:
-		std::unordered_map<const char*, Ref<IComponentPool>> componentPools{};
-		std::unordered_map<const char*, ComponentType> componentTypes{};
-		ComponentType nextComponentType{};
-
-
-		template<typename T>
-		Ref<ComponentPool<T>> GetComponentPool()
-		{
-			const char* typeName = typeid(T).name();
-
-			assert(componentPools.find(typeName) != componentPools.end());
-
-			return std::static_pointer_cast<ComponentPool<T>>(componentPools[typeName]);
-		}
-	};
-	
-
 	class ECS {
 	public:
 		EntityID CreateEntity() {
 			return entityManager.CreateEntity();
 		}
 
-		template<typename T>
-		Ref<T> RegisterSystem() {	
-			return systemManager.RegisterSystem<T>();
-		}
-
-		template<typename T>
-		void SetSystemSignature(Signature signature){
-			systemManager.SetSignature<T>(signature);
+		template<typename SystemType>
+		Ref<SystemType> RegisterSystem() {
+			Ref<SystemType> system = systemManager.RegisterSystem<SystemType>();
+			Ref<ISystem> baseSystem = static_cast<Ref<ISystem>>(system);
+			Signature signature = baseSystem->GetSignature(&componentManager);
+			systemManager.SetSignature<SystemType>(signature);
+			return system;
 		}
 
 		template<typename T>
 		ComponentType GetComponentType() {
-			if (!componentManager.IsComponentRegistered<T>())
-				componentManager.RegisterComponent<T>();
 			return componentManager.GetComponentType<T>();
 		}
 

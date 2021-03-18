@@ -1,8 +1,11 @@
 #pragma once
 #include "Entity.h"
+#include "Components.h"
 
 namespace Engine {
-	class BaseSystem : public System {
+	
+	template<typename... C>
+	class BaseSystem : public System<C...> {
 	public:
 		void SetContext(Scene* scene) {
 			this->scene = scene;
@@ -12,12 +15,12 @@ namespace Engine {
 	};
 
 
-	class RenderingSystem : public BaseSystem {
+	class RenderingSystem : public BaseSystem<TransformComponent, MeshComponent> {
 	public:
 		void Update(float ts);
 	};
 
-	class MainCameraSetupSystem : public BaseSystem {
+	class MainCameraSetupSystem : public BaseSystem<TransformComponent, CameraComponent> {
 	public:
 		void Update(float ts);
 	};
