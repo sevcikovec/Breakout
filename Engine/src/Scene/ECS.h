@@ -175,12 +175,13 @@ namespace Engine {
 		std::set<EntityID> entities{};
 
 		virtual Signature GetSignature(ComponentManager* componentSystem) = 0;
+		virtual void Update(float ts) = 0;
 	};
 
 	template<typename... C>
 	class System : public ISystem{
 	public:
-		virtual Signature GetSignature(ComponentManager* componentSystem) override {
+		Signature GetSignature(ComponentManager* componentSystem) override {
 			return GetSignature<C...>(componentSystem);
 		}
 		

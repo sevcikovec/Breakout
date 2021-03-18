@@ -9,6 +9,8 @@ namespace Engine {
 		Window(const std::string& name);
 
 		void OnUpdate();
+
+		GLFWwindow* GetGLFW();
 	private:
 		GLFWwindow* window;
 	};

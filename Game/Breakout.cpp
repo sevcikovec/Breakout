@@ -12,8 +12,4 @@ Breakout::Breakout() : Engine::Application("Breakout")
     std::cout << error << std::endl;
     */
 
-    //const char* vertexShader = "..\\..\\..\\..\\Engine\\resources\\shaders\\vert.glsl";
-    //const char* fragmentShader = "..\\..\\..\\..\\Engine\\resources\\shaders\\frag.glsl";
-    //Shader testShader(vertexShader, fragmentShader);
-
 }

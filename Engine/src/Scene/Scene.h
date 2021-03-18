@@ -19,8 +19,15 @@ namespace Engine {
 
 		virtual void OnUpdate(float deltaTime);
 
-	private:
+		template<typename T>
+		void RegisterSystem() {
+			auto system = ecs.RegisterSystem<T>();
+			system->SetContext(this);
+			systems.push_back(system);
+		}
+	protected:
 		std::string name;
+
 
 	private:
 		friend class Entity;
@@ -33,5 +40,7 @@ namespace Engine {
 		void InitRenderingSystems();
 		Ref<RenderingSystem> renderingSystem;
 		Ref<MainCameraSetupSystem> mainCameraSetupSystem;
+
+		std::vector<Ref<ISystem>> systems;
 	};
 }

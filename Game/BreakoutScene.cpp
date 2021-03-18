@@ -1,13 +1,13 @@
-#include <Scene\Entity.cpp>
 #include "BreakoutScene.h"
+#include <Scene\Entity.cpp>
 #include <cstdio>
 #include "Scripts/TestScript.cpp"
-#include <Scene\Components.h>
+#include "Systems/PlayerMovementSystem.h"
 
 BreakoutScene::BreakoutScene() : Engine::Scene("Main scene")
 {
 	// initialize scene
-	
+	RegisterSystem<PlayerMovementSystem>();
 	/*
 	std::string test = "test string";
 	for (int i = 0; i < 100; i++) {
@@ -107,9 +107,9 @@ BreakoutScene::BreakoutScene() : Engine::Scene("Main scene")
 	transform.position = { .2f,.2f,0.f };
 	transform.rotation= { 0.f,0.0f, 45.f};
 	auto& mesh = entity.AddComponent<Engine::MeshComponent>();
-
 	mesh.shader = shader;
 	mesh.vao = vao;
+	auto& player = entity.AddComponent<PlayerComponent>();
 }
 
 void BreakoutScene::OnUpdate(float frameTimeMS)

@@ -8,8 +8,6 @@ public:
 
 	void OnUpdate(float frameTimeMS);
 
-	void SwapVAs();
-
 private:
 
 };

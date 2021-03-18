@@ -62,14 +62,8 @@ namespace Engine {
 		entitiesToDestroy.clear();
 
 		
-
-		Ref<Camera> camera;
-		TransformComponent cameraTransform;
-		for (auto& cameraComponent : ecs.GetComponentIterator<CameraComponent>())
-		{
-			if (cameraComponent.primary) {
-				camera = cameraComponent.camera;
-			}
+		for (auto& system : systems) {
+			system->Update(ts);
 		}
 		
 		mainCameraSetupSystem->Update(ts);
@@ -79,20 +73,9 @@ namespace Engine {
 	void Scene::InitRenderingSystems()
 	{
 		renderingSystem = ecs.RegisterSystem<RenderingSystem>();
-		/*Signature rendererSignature;
-		rendererSignature.set(ecs.GetComponentType<TransformComponent>());
-		rendererSignature.set(ecs.GetComponentType<MeshComponent>());
-		ecs.SetSystemSignature<RenderingSystem>(rendererSignature);
-		*/
 		renderingSystem->SetContext(this);
-		mainCameraSetupSystem = ecs.RegisterSystem<MainCameraSetupSystem>();
-		/*
-		Signature cameraSignature;
-		cameraSignature.set(ecs.GetComponentType<TransformComponent>());
-		cameraSignature.set(ecs.GetComponentType<CameraComponent>());
-		ecs.SetSystemSignature<MainCameraSetupSystem>(cameraSignature);
-		*/
-		mainCameraSetupSystem->SetContext(this);
 
+		mainCameraSetupSystem = ecs.RegisterSystem<MainCameraSetupSystem>();
+		mainCameraSetupSystem->SetContext(this);
 	}
 }

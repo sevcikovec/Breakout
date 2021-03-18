@@ -13,6 +13,10 @@ namespace Engine {
 
 		void Application::AddScene(Scene* scene);
 
+		Window* GetWindow();
+
+		static Application* GetInstance();
+
 	private:
 		Window window;
 
@@ -23,5 +27,7 @@ namespace Engine {
 		bool isRunning;
 
 		bool initialized;
+
+		static Application* instance;
 	};
 }

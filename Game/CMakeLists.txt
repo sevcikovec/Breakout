@@ -7,6 +7,10 @@ add_executable(Game
 "Breakout.h" 
 "BreakoutScene.cpp"
 "BreakoutScene.h"
+
+"Components/PlayerComponent.h"
+"Systems/PlayerMovementSystem.h"
+
  "Scripts/TestScript.cpp")
 
 

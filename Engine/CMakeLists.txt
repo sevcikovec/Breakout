@@ -47,6 +47,8 @@ set (API
 
     "src/Core/Application.h"
     "src/Core/Window.h"
+    "src/Core/Input.h"
+    "src/Core/KeyCodes.h"
 
      "src/Scene/Scene.h"
      "src/Scene/Entity.h"

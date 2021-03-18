@@ -17,11 +17,11 @@ namespace Engine {
 
 	class RenderingSystem : public BaseSystem<TransformComponent, MeshComponent> {
 	public:
-		void Update(float ts);
+		void Update(float ts) override;
 	};
 
 	class MainCameraSetupSystem : public BaseSystem<TransformComponent, CameraComponent> {
 	public:
-		void Update(float ts);
+		void Update(float ts) override;
 	};
 }

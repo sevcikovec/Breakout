@@ -27,4 +27,8 @@ namespace Engine {
         glfwPollEvents();
         glfwSwapBuffers(window);
     }
+	GLFWwindow* Window::GetGLFW()
+	{
+		return window;
+	}
 }

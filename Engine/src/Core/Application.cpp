@@ -10,6 +10,8 @@
 using namespace std;
 
 namespace Engine {
+    Application* Application::instance = nullptr;
+
 
     Application::Application(const std::string& name) : window(name)
     {
@@ -20,6 +22,7 @@ namespace Engine {
         }
 
         Renderer::Init();
+        instance = this;
     }
 
     void Application::Run()
@@ -44,6 +47,13 @@ namespace Engine {
     void Application::AddScene(Scene* scene) {
         scenes.push_back(scene);
     }
+
+    Window* Application::GetWindow() {
+        return &window;
+    }
         
+    Application* Application::GetInstance() {
+        return instance;
+    }
    
 }

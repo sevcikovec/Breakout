@@ -37,10 +37,6 @@ namespace Engine {
 			auto& tag = e.GetComponent<TagComponent>();
 			auto& transform = e.GetComponent<TransformComponent>();
 			auto& mesh = e.GetComponent<MeshComponent>();
-
-			transform.rotation.y += ts * 20;
-			transform.rotation.x += ts * 20;
-						
 			
 			mesh.shader->Bind();
 			mesh.shader->SetUniformMat4("modelMat", transform.GetTransformMatrix());
