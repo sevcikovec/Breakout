@@ -16,8 +16,19 @@ Week 2:
 
     Updated project structure - engine as lib, added separate Game project.
 
-    Added simple renderer - now supporting VBO, IBO and array objects. Also supports shader data layout.
+    Added simple renderer - now supporting VBO, IBO and array objects. Also supports custom shader data layout.
 
     Added entity component system supporting basic components - tranform, name ...
 
     Added scriptable components - possible to add behaviour to entity as component.
+
+Week 3:
+    Added rendering system - automatically render all entities with mesh and shader components.
+
+    Added some math classes - quaternion, mat4, vec4.
+
+    Added camera.
+
+    Added uniform buffer support.
+
+    Added keyboard input support.
