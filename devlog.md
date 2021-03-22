@@ -23,6 +23,7 @@ Week 2:
     Added scriptable components - possible to add behaviour to entity as component.
 
 Week 3:
+
     Added rendering system - automatically render all entities with mesh and shader components.
 
     Added some math classes - quaternion, mat4, vec4.
@@ -34,4 +35,5 @@ Week 3:
     Added keyboard input support.
 
 Week 4:
+
     Added generation of ark mesh with parameters.
