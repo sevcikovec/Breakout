@@ -36,8 +36,8 @@ BreakoutScene::BreakoutScene() : Engine::Scene("Main scene")
 	
 
 	auto& cameraTransform = cameraEntity.AddComponent<Engine::TransformComponent>();
-	cameraTransform.position = { 0, 5,10.f };
-	cameraTransform.rotation = { -30, 0,0 };
+	cameraTransform.position = { 0, 10,7.f };
+	cameraTransform.rotation = { -60, 0,0 };
 
 	Engine::Ref<Engine::Camera> camera = Engine::CreateRef<Engine::Camera>();
 	camera->SetPerspective(0.785398f, 0.1f, 100.f);
