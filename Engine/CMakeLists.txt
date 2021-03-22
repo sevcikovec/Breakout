@@ -8,55 +8,14 @@ add_subdirectory ("Dependencies/glfw")
 
 
 # add sources
-set (SOURCES 
-    "src/Math/Mat3.cpp"
-    "src/Math/Vec3.cpp"
-    "src/Math/Mat4.cpp"
-    "src/Math/Vec4.cpp"
-
-    "src/Renderer/Shader.cpp"
-    "src/Renderer/Renderer.cpp"
-    "src/Renderer/Buffers.cpp"
-    "src/Renderer/UniformBuffer.cpp"
-    "src/Renderer/VertexArray.cpp"
-    "src/Renderer/Camera.cpp"
-
-    "src/Core/Application.cpp"
-    "src/Core/Window.cpp"
-
-     "src/Scene/Scene.cpp"
-     "src/Scene/Systems.cpp"
-     "src/Scene/Entity.cpp"
+file(GLOB_RECURSE SOURCES 
+    *.cpp
      )
 
-set (API 
-    "src/Utils.h"
-
-    "src/Math/Mat3.h"
-    "src/Math/Vec3.h"
-    "src/Math/Vec4.h"
-    "src/Math/Mat4.h"
-    "src/Math/Quaternion.h"
-
-    "src/Renderer/Shader.h"
-    "src/Renderer/Renderer.h"
-    "src/Renderer/Buffers.h"
-    "src/Renderer/UniformBuffer.h"
-    "src/Renderer/VertexArray.h"
-    "src/Renderer/Camera.h"
-
-    "src/Core/Application.h"
-    "src/Core/Window.h"
-    "src/Core/Input.h"
-    "src/Core/KeyCodes.h"
-
-     "src/Scene/Scene.h"
-     "src/Scene/Entity.h"
-     "src/Scene/Components.h"
-     "src/Scene/Systems.h"
-     "src/Scene/ECS.h"
-     "src/Scene/ScriptableEntity.h"
+file(GLOB_RECURSE API 
+    *.h
      )
+
 
 add_library(Engine STATIC ${SOURCES} ${API})
 

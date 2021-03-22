@@ -10,26 +10,28 @@ class PlayerMovementSystem : public Engine::BaseSystem<Engine::TransformComponen
 			auto& transform = e.GetComponent<Engine::TransformComponent>();
 			auto& player = e.GetComponent<PlayerComponent>();
 			
-			float moveDelta = player.moveSpeed * ts;
+			float moveDelta = player.moveSpeed * ts * 30;
+
 			Engine::Vec3 move{ 0 };
+			Engine::Vec3 rotation{ 0 };
 			if (Engine::Input::IsKeyDown(Engine::KeyCode::A)) {
-				move.x -= moveDelta;
+				rotation.y -= moveDelta;
 			}
 			if (Engine::Input::IsKeyDown(Engine::KeyCode::D)) {
-				move.x += moveDelta;
+				rotation.y += moveDelta;
 			}
 			if (Engine::Input::IsKeyDown(Engine::KeyCode::W)) {
-				move.y += moveDelta;
+				rotation.x += moveDelta;
 			}
 			if (Engine::Input::IsKeyDown(Engine::KeyCode::S)) {
-				move.y -= moveDelta;
+				rotation.x -= moveDelta;
 			}
 			 
 			//rotate for no reason
-			transform.rotation.y += ts * 20;
-			transform.rotation.x += ts * 20;
+			//transform.rotation.y += ts * 20;
+			//transform.rotation.x += ts * 20;
 
-			transform.position.Add(move);
+			transform.rotation.Add(rotation);
 		}
 	}
 };

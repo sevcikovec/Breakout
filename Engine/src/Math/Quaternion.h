@@ -2,7 +2,9 @@
 #include "Vec3.h"
 namespace Engine {
 # define PI           3.14159265358979323846f  /* pi */
-
+    static float ToRadians(float degrees) {
+        return degrees * PI / 180.f;
+    }
 	class Quaternion {
 	public:
 		Quaternion(float yaw, float pitch, float roll) {

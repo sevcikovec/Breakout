@@ -32,3 +32,6 @@ Week 3:
     Added uniform buffer support.
 
     Added keyboard input support.
+
+Week 4:
+    Added generation of ark mesh with parameters.

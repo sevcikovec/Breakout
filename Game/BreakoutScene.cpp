@@ -3,6 +3,7 @@
 #include <cstdio>
 #include "Scripts/TestScript.cpp"
 #include "Systems/PlayerMovementSystem.h"
+#include "Utils/MeshGenerator.h"
 
 BreakoutScene::BreakoutScene() : Engine::Scene("Main scene")
 {
@@ -34,7 +35,7 @@ BreakoutScene::BreakoutScene() : Engine::Scene("Main scene")
 	
 
 	auto& cameraTransform = cameraEntity.AddComponent<Engine::TransformComponent>();
-	cameraTransform.position = { 0, 0,5.f };
+	cameraTransform.position = { 0, 0,10.f };
 
 	Engine::Ref<Engine::Camera> camera = Engine::CreateRef<Engine::Camera>();
 	camera->SetPerspective(0.785398f, 0.1f, 100.f);
@@ -51,7 +52,7 @@ BreakoutScene::BreakoutScene() : Engine::Scene("Main scene")
 	
 	
 	
-
+	/*
 	float vertices[] = {
 
 		-0.5f,0.5f,-0.5f,   0.0f, 0.0f, 0.0f,//Point A 0
@@ -62,40 +63,47 @@ BreakoutScene::BreakoutScene() : Engine::Scene("Main scene")
 		-0.5f,-0.5f,-0.5f,  1.0f, 0.0f, 0.0f,//Point E 4
 		-0.5f,-0.5f,0.5f,   1.0f, 0.0f, 1.0f,//Point F 5
 		0.5f,-0.5f,-0.5f,   1.0f, 1.0f, 0.0f,//Point G 6
-		0.5f,-0.5f,0.5f,    1.0f, 1.0f, 1.0f//Point H 7
+		0.5f,-0.5f,0.5f,    1.0f, 1.0f, 1.0f //Point H 7
 
 	};
+	unsigned int indices[] = {
+		//Above ABC,BCD
+		0, 1, 2,
+		1, 2, 3,
 
-	auto vb1 = Engine::VertexBuffer::Create(vertices, 6 * 8);
+		//Following EFG,FGH
+		4, 5, 6,
+		5, 6, 7,
+		//Left ABF,AEF
+		0, 1, 5,
+		0, 4, 5,
+		//Right side CDH,CGH
+		2, 3, 7,
+		2, 6, 7,
+		//ACG,AEG
+		0, 2, 6,
+		0, 4, 6,
+		//Behind BFH,BDH
+		1, 5, 7,
+		1, 3, 7
+	};
+	*/
+
+	std::vector<float> arkVertices;
+	std::vector<uint32_t> arkIndices;
+	
+
+	Engine::MeshGenerator::GenerateArk(2.f, 2.5f, 90.f, 0.5f, 10, true, arkVertices, arkIndices);
+
+	auto vb1 = Engine::VertexBuffer::Create(arkVertices.data(), arkVertices.size());
 	vb1->SetLayout(
 		{
-			{ Engine::LayoutShaderType::Float3 },
 			{ Engine::LayoutShaderType::Float3 }
 		});
 
-	unsigned int indices[] = {
-		/*Above ABC,BCD*/
-		0,1,2,
-		1,2,3,
+	
 
-		/*Following EFG,FGH*/
-		4,5,6,
-		5,6,7,
-		/*Left ABF,AEF*/
-		0,1,5,
-		0,4,5,
-		/*Right side CDH,CGH*/
-		2,3,7,
-		2,6,7,
-		/*ACG,AEG*/
-		0,2,6,
-		0,4,6,
-		/*Behind BFH,BDH*/
-		1,5,7,
-		1,3,7
-	};
-
-	auto ib = Engine::IndexBuffer::Create(indices, 36);
+	auto ib = Engine::IndexBuffer::Create(arkIndices.data(), arkIndices.size());
 
 	auto vao = Engine::VertexArray::Create();
 	vao->SetIndexBuffer(ib);
@@ -103,9 +111,9 @@ BreakoutScene::BreakoutScene() : Engine::Scene("Main scene")
 
 	Engine::Entity entity = CreateEntity("Test entity");
 	auto& transform = entity.AddComponent<Engine::TransformComponent>();
-	transform.scale = { 0.5, .5f, 1 };
-	transform.position = { .2f,.2f,0.f };
-	transform.rotation= { 0.f,0.0f, 45.f};
+	transform.scale = { 1.f, 1.f, 1.f };
+	transform.position = { 0.f,.0f,0.f };
+	transform.rotation= { 0.f,0.0f, 0.f};
 	auto& mesh = entity.AddComponent<Engine::MeshComponent>();
 	mesh.shader = shader;
 	mesh.vao = vao;
