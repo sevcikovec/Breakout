@@ -4,6 +4,7 @@
 #include "Scripts/TestScript.cpp"
 #include "Systems/PlayerMovementSystem.h"
 #include "Utils/MeshGenerator.h"
+#include <Renderer\Material.h>
 
 BreakoutScene::BreakoutScene() : Engine::Scene("Main scene")
 {
@@ -35,7 +36,8 @@ BreakoutScene::BreakoutScene() : Engine::Scene("Main scene")
 	
 
 	auto& cameraTransform = cameraEntity.AddComponent<Engine::TransformComponent>();
-	cameraTransform.position = { 0, 0,10.f };
+	cameraTransform.position = { 0, 5,10.f };
+	cameraTransform.rotation = { -30, 0,0 };
 
 	Engine::Ref<Engine::Camera> camera = Engine::CreateRef<Engine::Camera>();
 	camera->SetPerspective(0.785398f, 0.1f, 100.f);
@@ -49,11 +51,17 @@ BreakoutScene::BreakoutScene() : Engine::Scene("Main scene")
 	const char* vertexShader = "..\\..\\..\\..\\Engine\\resources\\shaders\\vert.glsl";
 	const char* fragmentShader = "..\\..\\..\\..\\Engine\\resources\\shaders\\frag.glsl";
 	auto shader = Engine::CreateRef<Engine::Shader>(vertexShader, fragmentShader);
-	
+	auto platformMaterial = Engine::CreateRef<Engine::Material>();
+	platformMaterial->SetShader(shader);
+	platformMaterial->SetProperty("color", Engine::Vec3{ .7f, .5f, 0 });
+
+	auto playerArchMaterial = Engine::CreateRef<Engine::Material>();
+	playerArchMaterial->SetShader(shader);
+	playerArchMaterial->SetProperty("color", Engine::Vec3{ .0f, .0f, .7f });
 	
 	
 	/*
-	float vertices[] = {
+	std::vector<float> vertices{
 
 		-0.5f,0.5f,-0.5f,   0.0f, 0.0f, 0.0f,//Point A 0
 		-0.5f,0.5f,0.5f,    0.0f, 0.0f, 1.0f,//Point B 1
@@ -66,7 +74,7 @@ BreakoutScene::BreakoutScene() : Engine::Scene("Main scene")
 		0.5f,-0.5f,0.5f,    1.0f, 1.0f, 1.0f //Point H 7
 
 	};
-	unsigned int indices[] = {
+	std::vector<uint32_t> indices {
 		//Above ABC,BCD
 		0, 1, 2,
 		1, 2, 3,
@@ -89,39 +97,54 @@ BreakoutScene::BreakoutScene() : Engine::Scene("Main scene")
 	};
 	*/
 
-	std::vector<float> arkVertices;
-	std::vector<uint32_t> arkIndices;
+	std::vector<float> vertices;
+	std::vector<uint32_t> indices;	
+
+
+	Engine::MeshGenerator::GenerateCircle(5, 50, vertices, indices);
+	auto platformVAO = GetVertexArray(vertices, indices);
 	
+	Engine::MeshGenerator::GenerateArk(4.f, 4.5f, 45.f, 0.5f, 10, true, vertices, indices);
+	auto playerMeshVAO = GetVertexArray(vertices, indices);
 
-	Engine::MeshGenerator::GenerateArk(2.f, 2.5f, 90.f, 0.5f, 10, true, arkVertices, arkIndices);
-
-	auto vb1 = Engine::VertexBuffer::Create(arkVertices.data(), arkVertices.size());
-	vb1->SetLayout(
-		{
-			{ Engine::LayoutShaderType::Float3 }
-		});
-
-	
-
-	auto ib = Engine::IndexBuffer::Create(arkIndices.data(), arkIndices.size());
-
-	auto vao = Engine::VertexArray::Create();
-	vao->SetIndexBuffer(ib);
-	vao->SetVertexBuffer(vb1);
-
-	Engine::Entity entity = CreateEntity("Test entity");
-	auto& transform = entity.AddComponent<Engine::TransformComponent>();
+	Engine::Entity platformEntity = CreateEntity("Platform entity");
+	auto& transform = platformEntity.AddComponent<Engine::TransformComponent>();
 	transform.scale = { 1.f, 1.f, 1.f };
 	transform.position = { 0.f,.0f,0.f };
 	transform.rotation= { 0.f,0.0f, 0.f};
-	auto& mesh = entity.AddComponent<Engine::MeshComponent>();
-	mesh.shader = shader;
-	mesh.vao = vao;
-	auto& player = entity.AddComponent<PlayerComponent>();
+	auto& mesh = platformEntity.AddComponent<Engine::MeshComponent>();
+	mesh.material = platformMaterial;
+	mesh.vao = platformVAO;
+	
+	Engine::Entity playerArchEntity = CreateEntity("Player entity");
+	auto& playerTransform = playerArchEntity.AddComponent<Engine::TransformComponent>();
+	playerTransform.scale = { 1.f, 1.f, 1.f };
+	playerTransform.position = { 0.f,.0f,0.f };
+	playerTransform.rotation = { 0.f,0.0f, 0.f };
+	auto& playerMesh = playerArchEntity.AddComponent<Engine::MeshComponent>();
+	playerMesh.material = playerArchMaterial;
+	playerMesh.vao = playerMeshVAO;
+	auto& player = playerArchEntity.AddComponent<PlayerComponent>();
 }
 
 void BreakoutScene::OnUpdate(float frameTimeMS)
 {
 	Engine::Scene::OnUpdate(frameTimeMS);
+}
+
+Engine::Ref<Engine::VertexArray> BreakoutScene::GetVertexArray(std::vector<float>& vertices, std::vector<uint32_t>& indices)
+{
+	auto vb1 = Engine::VertexBuffer::Create(vertices.data(), vertices.size());
+	vb1->SetLayout(
+		{
+			{ Engine::LayoutShaderType::Float3 }
+		});
+
+	auto ib = Engine::IndexBuffer::Create(indices.data(), indices.size());
+
+	auto vao = Engine::VertexArray::Create();
+	vao->SetIndexBuffer(ib);
+	vao->SetVertexBuffer(vb1);
+	return vao;
 }
 

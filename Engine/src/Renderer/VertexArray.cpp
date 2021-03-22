@@ -16,6 +16,8 @@ namespace Engine {
 	void VertexArray::Bind() const
 	{
 		glBindVertexArray(rendererID);
+		if (vertexBuffer) vertexBuffer->Bind();
+		if (indexBuffer) indexBuffer->Bind();
 	}
 
 	void VertexArray::SetVertexBuffer(const Ref<VertexBuffer>& vb)

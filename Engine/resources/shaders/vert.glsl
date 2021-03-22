@@ -1,7 +1,7 @@
 #version 430 core
 
 layout (location = 0) in vec3 pos;
-layout (location = 1) in vec3 color; 
+//layout (location = 1) in vec3 color; 
 
 uniform mat4 modelMat;
 
@@ -13,11 +13,11 @@ layout (std140, binding = 0) uniform CameraData
 
 };
 
-out vec3 vertexColor; 
+//out vec3 vertexColor; 
   
 void main()
 {
-    vertexColor = color;
+    //vertexColor = color;
     gl_Position =  viewProjection * modelMat * vec4(pos, 1.0); 
 }
 

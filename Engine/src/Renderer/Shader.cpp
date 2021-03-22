@@ -29,6 +29,12 @@ namespace Engine {
 		glUniform4f(location, x, y, z, w);
 	}
 
+	void Shader::SetUniformFloat3(const std::string& name, Vec3& value)
+	{
+		GLint location = glGetUniformLocation(programID, name.c_str());
+		glUniform3f(location, value.x, value.y, value.z);
+	}
+
 	void Shader::SetUniformMat4(const std::string& name, Mat4& value)
 	{
 		GLint location = glGetUniformLocation(programID, name.c_str());

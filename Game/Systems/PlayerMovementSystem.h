@@ -21,17 +21,25 @@ class PlayerMovementSystem : public Engine::BaseSystem<Engine::TransformComponen
 				rotation.y += moveDelta;
 			}
 			if (Engine::Input::IsKeyDown(Engine::KeyCode::W)) {
-				rotation.x += moveDelta;
+				//rotation.x += moveDelta;
 			}
 			if (Engine::Input::IsKeyDown(Engine::KeyCode::S)) {
-				rotation.x -= moveDelta;
+				//rotation.x -= moveDelta;
 			}
-			 
+			
+			transform.rotation.Add(rotation);
+
+			auto angle = transform.rotation.y;
+			auto newPositionCircleX = player.radius * cos(Engine::ToRadians(angle));
+			auto newPositionCircleY = player.radius * sin(Engine::ToRadians(angle));
+
+			transform.position.x = newPositionCircleX;
+			transform.position.z = -newPositionCircleY;
+
 			//rotate for no reason
 			//transform.rotation.y += ts * 20;
 			//transform.rotation.x += ts * 20;
 
-			transform.rotation.Add(rotation);
 		}
 	}
 };

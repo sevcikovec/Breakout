@@ -29,7 +29,7 @@ namespace Engine {
 		Renderer::Clear();
 		glEnable(GL_DEPTH_TEST);
 		glEnable(GL_CULL_FACE);
-		glCullFace(GL_FRONT);
+		glCullFace(GL_BACK);
 		GLenum err;
 
 
@@ -40,14 +40,15 @@ namespace Engine {
 			auto& transform = e.GetComponent<TransformComponent>();
 			auto& mesh = e.GetComponent<MeshComponent>();
 			
-			mesh.shader->Bind();
-			mesh.shader->SetUniformMat4("modelMat", transform.GetTransformMatrix());
+			mesh.material->GetShader()->Bind();
+			mesh.material->GetShader()->SetUniformMat4("modelMat", transform.GetTransformMatrix());
+			mesh.vao->Bind();
 			while ((err = glGetError()) != GL_NO_ERROR)
 			{
 				std::cout << err << std::endl;
 			}
 
-			Renderer::Submit(mesh.shader, mesh.vao);
+			Renderer::Submit(mesh.material, mesh.vao);
 		}
 	}
 }

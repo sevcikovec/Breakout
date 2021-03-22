@@ -8,9 +8,10 @@ namespace Engine {
 		cameraUBO = CreateUnique<UniformBuffer<CameraUBOData>>();
 	}
 
-	void Renderer::Submit(const Ref<Shader> shader, const Ref<VertexArray> va)
+	void Renderer::Submit(const Ref<Material> material, const Ref<VertexArray> va)
 	{
-		shader->Bind();
+		material->GetShader()->Bind();
+		material->BindProperties();
 		va->Bind();
 
 		uint32_t count = va->GetIndexBuffer()->GetCount();

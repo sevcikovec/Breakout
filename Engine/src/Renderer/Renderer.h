@@ -3,6 +3,7 @@
 #include "Buffers.h"
 #include "VertexArray.h"
 #include "UniformBuffer.h"
+#include "Material.h"
 
 
 namespace Engine {
@@ -10,7 +11,7 @@ namespace Engine {
 	public:
 		static void Init();
 
-		static void Submit(const Ref<Shader> shader, const Ref<VertexArray> va);
+		static void Submit(const Ref<Material> material, const Ref<VertexArray> va);
 
 		static void Clear();
 

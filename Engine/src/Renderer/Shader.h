@@ -11,9 +11,23 @@ namespace Engine {
 
 		void Bind() const;
 
+		template<typename T>
+		void SetUniform(const std::string& name, T&);
+
 		void SetUniformFloat4(const std::string& name, const float& x, const float& y, const float& z, const float& w);
 
+		void SetUniformFloat3(const std::string& name, Vec3& value);
+
 		void SetUniformMat4(const std::string& name, Mat4& value);
+
+		template<>
+		void SetUniform<Vec3>(const std::string& name, Vec3& value) {
+			SetUniformFloat3(name, value);
+		}
+		template<>
+		void SetUniform<Mat4>(const std::string& name, Mat4& value) {
+			SetUniformMat4(name, value);
+		}
 
 
 	private:
