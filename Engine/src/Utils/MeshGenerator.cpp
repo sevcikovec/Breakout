@@ -1,6 +1,8 @@
 #include "MeshGenerator.h"
 #include <cassert>
 #include "../Math/Quaternion.h"
+#include "../Math/Vec2.h"
+#include "../Math/Coordinates.h"
 
 namespace Engine {
 	void MeshGenerator::GenerateArk(float innerRadius, float outerRadius, float sectorAngleSize, float height, uint32_t resolution, bool center, std::vector<float>& vertices, std::vector<uint32_t>& indices)
@@ -25,17 +27,17 @@ namespace Engine {
 			float currentRadius = side == 0 ? innerRadius : outerRadius;
 			for (int i = 0; i < resolution + 1; i++) {
 				float currentAngle = angleOffset * i;
-				float xCircle = currentRadius * cos(ToRadians(startAngle + currentAngle));
-				float yCircle = currentRadius * sin(ToRadians(startAngle + currentAngle));
+
+				Vec2 cartesianCoors = PolarToCartesian({ currentRadius, startAngle + currentAngle});
 
 				// add lower part
-				vertices.push_back(xCircle - centerXOffset); // x coord
+				vertices.push_back(cartesianCoors.x - centerXOffset); // x coord
 				vertices.push_back(0); // y coord
-				vertices.push_back(yCircle); // z coord
+				vertices.push_back(cartesianCoors.y); // z coord
 				// add upper part
-				vertices.push_back(xCircle - centerXOffset); // x coord
+				vertices.push_back(cartesianCoors.x - centerXOffset); // x coord
 				vertices.push_back(height); // y coord
-				vertices.push_back(yCircle); // z coord
+				vertices.push_back(cartesianCoors.y); // z coord
 				
 				// add indices for inner and outer sides
 				if (i > 0) { 
@@ -103,7 +105,6 @@ namespace Engine {
 			indices.push_back(i * 2 + 1);
 			indices.push_back(i * 2 + backVerticesOffset + 1);
 		}
-		
 	}
 
 	void MeshGenerator::GenerateCircle(float radius, uint32_t resolution, std::vector<float>& vertices, std::vector<uint32_t>& indices) {
@@ -115,16 +116,16 @@ namespace Engine {
 		vertices.push_back(0);
 		vertices.push_back(0);
 		float currentAngle = 0;
-		float angleStep = 360 / resolution;
+		float angleStep = 360.f / resolution;
 		for (size_t i = 0; i < resolution + 1U; i++)
 		{
 			currentAngle = i * angleStep;
-			float xCircle = radius * cos(ToRadians(currentAngle));
-			float yCircle = radius * sin(ToRadians(currentAngle));
+
+			Vec2 cartesianCoors = PolarToCartesian({radius, currentAngle});
 			
-			vertices.push_back(xCircle);
+			vertices.push_back(cartesianCoors.x);
 			vertices.push_back(0);
-			vertices.push_back(yCircle);
+			vertices.push_back(cartesianCoors.y);
 
 			// add indices
 			if (i > 1) {
