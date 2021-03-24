@@ -38,4 +38,14 @@ Week 4:
 
     Added generation of ark and circle mesh with parameters.
 
-    Added behaviour of player arch (moving around the platform).
+    Added behaviour of player arch (moving around the platform)
+
+    Added conversions between cartesian and polar/cylindrical coords.
+
+    Added bounding box component and its visualization (so far only manual setting)
+    
+    ![week4_gif](Images/Week4_all.gif)
+
+    
+    ![week4_wireframe](Images/Week4_wireframe.png)
+
