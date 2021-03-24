@@ -1,17 +1,10 @@
 ﻿project(Game)
 
+file(GLOB_RECURSE SOURCES 
+    *.h *.cpp
+     )
 
-add_executable(Game 
-"Main.cpp" 
-"Breakout.cpp"
-"Breakout.h" 
-"BreakoutScene.cpp"
-"BreakoutScene.h"
-
-"Components/PlayerComponent.h"
-"Systems/PlayerMovementSystem.h"
-
- "Scripts/TestScript.cpp")
+add_executable(Game ${SOURCES})
 
 
 # link libraries

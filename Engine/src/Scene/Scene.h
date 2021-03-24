@@ -40,6 +40,7 @@ namespace Engine {
 		void InitRenderingSystems();
 		Ref<RenderingSystem> renderingSystem;
 		Ref<MainCameraSetupSystem> mainCameraSetupSystem;
+		Ref<AABBVisualizationSystem> aabbVisSystem;
 
 		std::vector<Ref<ISystem>> systems;
 	};

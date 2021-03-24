@@ -1,6 +1,8 @@
 #pragma once
 #include "Entity.h"
 #include "Components.h"
+#include "../Physics/PhysicsComponents.h"
+
 
 namespace Engine {
 	
@@ -23,5 +25,14 @@ namespace Engine {
 	class MainCameraSetupSystem : public BaseSystem<TransformComponent, CameraComponent> {
 	public:
 		void Update(float ts) override;
+	};
+
+	class AABBVisualizationSystem : public BaseSystem<TransformComponent, AABB> {
+	public:
+		void Update(float ts) override;
+		void SetMaterial(Ref<Material> material);
+
+	private:
+		Ref<Material> material;
 	};
 }

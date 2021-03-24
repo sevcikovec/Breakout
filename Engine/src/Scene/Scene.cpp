@@ -34,7 +34,7 @@ namespace Engine {
 	void Scene::OnUpdate(float ts)
 	{
 
-		//std::cout << deltaTime << std::endl;
+		//std::cout << ts << std::endl;
 		for (auto& scriptComponent : ecs.GetComponentIterator<ScriptComponent>()) {
 			if (!scriptComponent.Instance) {
 				scriptComponent.InstantiateScript(&scriptComponent);
@@ -68,6 +68,7 @@ namespace Engine {
 		
 		mainCameraSetupSystem->Update(ts);
 		renderingSystem->Update(ts);
+		aabbVisSystem->Update(ts);
 
 	}
 	void Scene::InitRenderingSystems()
@@ -77,5 +78,18 @@ namespace Engine {
 
 		mainCameraSetupSystem = ecs.RegisterSystem<MainCameraSetupSystem>();
 		mainCameraSetupSystem->SetContext(this);
+
+		aabbVisSystem = ecs.RegisterSystem<AABBVisualizationSystem>();
+		aabbVisSystem->SetContext(this);
+
+		const char* vertexShader = "..\\..\\..\\..\\Engine\\resources\\shaders\\vert.glsl";
+		const char* fragmentShader = "..\\..\\..\\..\\Engine\\resources\\shaders\\frag.glsl";
+		auto shader = CreateRef<Shader>(vertexShader, fragmentShader);
+
+		auto aabbMat = CreateRef<Material>();
+		aabbMat->SetShader(shader);
+		aabbMat->SetProperty("color", Vec3{ .0f, 1.f, 0 });
+		aabbVisSystem->SetMaterial(aabbMat);
+
 	}
 }
