@@ -36,6 +36,8 @@ Week 3:
 
 Week 4:
 
+    Added material class - storing shader and uniform variables.
+
     Added generation of ark and circle mesh with parameters.
 
     Added behaviour of player arch (moving around the platform)
