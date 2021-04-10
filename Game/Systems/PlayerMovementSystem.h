@@ -2,13 +2,13 @@
 #include "../Components/PlayerComponent.h"
 #include <Scene/Systems.h>
 #include <Core/Input.h>
-class PlayerMovementSystem : public Engine::BaseSystem<Engine::TransformComponent, PlayerComponent> {
+class PlayerMovementSystem : public Engine::OnUpdateSystem {
 	void Update(float ts) override {
-		for (auto& entity : entities)
+		auto view = ecs->GetView<PlayerComponent, Engine::TransformComponent>();
+		while (view.MoveNext())
 		{
-			auto e = scene->GetEntity(entity);
-			auto& transform = e.GetComponent<Engine::TransformComponent>();
-			auto& player = e.GetComponent<PlayerComponent>();
+			auto& transform = view.GetComponent<Engine::TransformComponent>();
+			auto& player = view.GetComponent<PlayerComponent>();
 			
 			float moveDelta = player.moveSpeed * ts * 30;
 

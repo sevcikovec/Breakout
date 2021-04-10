@@ -2,7 +2,7 @@
 
 namespace Engine {
 	// extracted from "glfw3.h
-	enum KeyCode {
+	enum class KeyCode {
 		/* The unknown key */
 	UNKNOWN            = -1,
 

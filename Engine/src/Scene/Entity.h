@@ -1,7 +1,7 @@
 #pragma once
 #include <map>
 #include <string>
-#include "ECS.h"
+#include "../ECS/ECS.h"
 
 namespace Engine {
 	class Entity {

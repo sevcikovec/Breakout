@@ -1,7 +1,7 @@
 #pragma once
 #include "GLFW/glfw3.h"
 #include "KeyCodes.h"
-#include <Core/Application.h>
+#include "Application.h"
 namespace Engine {
 	class Input {
 	public:

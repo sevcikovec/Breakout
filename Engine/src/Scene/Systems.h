@@ -6,28 +6,22 @@
 
 namespace Engine {
 	
-	template<typename... C>
-	class BaseSystem : public System<C...> {
+	class OnUpdateSystem : public ISystem {
 	public:
-		void SetContext(Scene* scene) {
-			this->scene = scene;
-		}
-	protected:
-		Scene* scene = nullptr;
+		virtual void Update(float ts) = 0;
 	};
 
-
-	class RenderingSystem : public BaseSystem<TransformComponent, MeshComponent> {
+	class RenderingSystem : public OnUpdateSystem {
 	public:
 		void Update(float ts) override;
 	};
 
-	class MainCameraSetupSystem : public BaseSystem<TransformComponent, CameraComponent> {
+	class MainCameraSetupSystem : public OnUpdateSystem {
 	public:
 		void Update(float ts) override;
 	};
 
-	class AABBVisualizationSystem : public BaseSystem<TransformComponent, AABB> {
+	class AABBVisualizationSystem : public OnUpdateSystem {
 	public:
 		void Update(float ts) override;
 		void SetMaterial(Ref<Material> material);

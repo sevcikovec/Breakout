@@ -1,7 +1,7 @@
 #pragma once
 #include <string>
 #include <unordered_set>
-#include "ECS.h"
+#include "../ECS.h"
 #include "Systems.h"
 #include "../Renderer/Renderer.h"
 #include "../Renderer/UniformBuffer.h"
@@ -17,14 +17,21 @@ namespace Engine {
 
 		Entity GetEntity(EntityID entityID);
 
+		template<typename... T>
+		View<T...> GetView() {
+			return ecs.GetView<T...>();
+		}
+
 		virtual void OnUpdate(float deltaTime);
 
 		template<typename T>
-		void RegisterSystem() {
-			auto system = ecs.RegisterSystem<T>();
-			system->SetContext(this);
+		Ref<T> RegisterSystem() {
+			auto system = CreateRef<T>();
+			system->Init(&ecs);
 			systems.push_back(system);
+			return system;
 		}
+
 	protected:
 		std::string name;
 
@@ -35,13 +42,12 @@ namespace Engine {
 		ECS ecs{};
 
 		std::unordered_set<Entity> entitiesToDestroy;
-		
 
 		void InitRenderingSystems();
 		Ref<RenderingSystem> renderingSystem;
 		Ref<MainCameraSetupSystem> mainCameraSetupSystem;
 		Ref<AABBVisualizationSystem> aabbVisSystem;
 
-		std::vector<Ref<ISystem>> systems;
+		std::vector<Ref<OnUpdateSystem>> systems;
 	};
 }

@@ -14,7 +14,7 @@ namespace Engine {
 		virtual void OnDestroy() {}
 		virtual void OnUpdate(float deltaTime) {}
 	private:
-		//Entity entity;
+		Entity entity;
 		friend class Scene;
 	};
 }

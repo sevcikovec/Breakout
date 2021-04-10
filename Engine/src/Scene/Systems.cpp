@@ -1,20 +1,21 @@
 #include "Systems.h"
-#include "ECS.h"
+#include "../ECS/ECS.h"
 #include "Scene.h"
 #include <iostream>
 #include "../Mat4.h"
 #include "../Renderer/Camera.h"
 #include "../Renderer/UniformBuffer.h"
+#include "../Core/Input.h"
 
 namespace Engine {
 
 	void MainCameraSetupSystem::Update(float ts) {
 
-		for (auto& entity : entities)
+		auto view = ecs->GetView<CameraComponent, TransformComponent>();
+		while (view.MoveNext())
 		{
-			auto e = scene->GetEntity(entity);
-			auto& cameraComponent = e.GetComponent<CameraComponent>();
-			auto& cameraTransform = e.GetComponent<TransformComponent>();
+			auto& cameraComponent = view.GetComponent<CameraComponent>();
+			auto& cameraTransform = view.GetComponent<TransformComponent>();
 
 
 			if (cameraComponent.primary) {
@@ -30,15 +31,15 @@ namespace Engine {
 		glEnable(GL_DEPTH_TEST);
 		glEnable(GL_CULL_FACE);
 		glCullFace(GL_BACK);
+
 		GLenum err;
 
-
-		for (auto& entity : entities)
+		auto view = ecs->GetView<MeshComponent, TransformComponent, TagComponent>();
+		while (view.MoveNext())
 		{
-			auto e = scene->GetEntity(entity);
-			auto& tag = e.GetComponent<TagComponent>();
-			auto& transform = e.GetComponent<TransformComponent>();
-			auto& mesh = e.GetComponent<MeshComponent>();
+			auto& tag = view.GetComponent<TagComponent>();
+			auto& transform = view.GetComponent<TransformComponent>();
+			auto& mesh = view.GetComponent<MeshComponent>();
 			
 			mesh.material->GetShader()->Bind();
 			mesh.material->GetShader()->SetUniformMat4("modelMat", transform.GetTransformMatrix());
@@ -53,17 +54,22 @@ namespace Engine {
 	}
 
 	void AABBVisualizationSystem::Update(float ts) {
+
+		if (!Input::IsKeyDown(KeyCode::B)) {
+			return;
+		}
+
+
 		// TODO refactor 
 		glDisable (GL_DEPTH_TEST);
 		GLenum err;
 
-
-		for (auto& entity : entities)
+		auto view = ecs->GetView<AABB, TransformComponent, TagComponent>();
+		while (view.MoveNext())
 		{
-			auto e = scene->GetEntity(entity);
-			auto& tag = e.GetComponent<TagComponent>();
-			auto& transform = e.GetComponent<TransformComponent>();
-			auto& aabb = e.GetComponent<AABB>();
+			auto& tag = view.GetComponent<TagComponent>();
+			auto& transform = view.GetComponent<TransformComponent>();
+			auto& aabb = view.GetComponent<AABB>();
 
 			this->material->GetShader()->Bind();
 			this->material->GetShader()->SetUniformMat4("modelMat", transform.GetTransformMatrix());

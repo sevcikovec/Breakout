@@ -35,17 +35,19 @@ namespace Engine {
 	{
 
 		//std::cout << ts << std::endl;
-		for (auto& scriptComponent : ecs.GetComponentIterator<ScriptComponent>()) {
+
+		auto view = ecs.GetView<ScriptComponent>();
+		while (view.MoveNext()){
+			auto& scriptComponent = view.GetComponent<ScriptComponent>();
 			if (!scriptComponent.Instance) {
 				scriptComponent.InstantiateScript(&scriptComponent);
-				// TODO set entity of the component
-				//scriptComponent.Instance->entity = Entity{ entity, this };
+
+				scriptComponent.Instance->entity = Entity{ view.GetEntity(), this };
 				scriptComponent.Instance->OnCreate();
 			}
 			scriptComponent.Instance->OnUpdate(ts);
 		}
 
-		
 
 		// destroy entities
 		for (auto& entity : entitiesToDestroy){
@@ -73,14 +75,12 @@ namespace Engine {
 	}
 	void Scene::InitRenderingSystems()
 	{
-		renderingSystem = ecs.RegisterSystem<RenderingSystem>();
-		renderingSystem->SetContext(this);
-
-		mainCameraSetupSystem = ecs.RegisterSystem<MainCameraSetupSystem>();
-		mainCameraSetupSystem->SetContext(this);
-
-		aabbVisSystem = ecs.RegisterSystem<AABBVisualizationSystem>();
-		aabbVisSystem->SetContext(this);
+		renderingSystem = CreateRef<RenderingSystem>();
+		renderingSystem->Init(&ecs);
+		mainCameraSetupSystem = CreateRef<MainCameraSetupSystem>();
+		mainCameraSetupSystem->Init(&ecs);
+		aabbVisSystem = CreateRef<AABBVisualizationSystem>();
+		aabbVisSystem->Init(&ecs);
 
 		const char* vertexShader = "..\\..\\..\\..\\Engine\\resources\\shaders\\vert.glsl";
 		const char* fragmentShader = "..\\..\\..\\..\\Engine\\resources\\shaders\\frag.glsl";
