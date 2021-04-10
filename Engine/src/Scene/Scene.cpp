@@ -9,6 +9,7 @@ namespace Engine {
 	Scene::Scene(const std::string& name) : name(name)
 	{
 		InitRenderingSystems();
+		InitPhysicsSystems();
 	}
 
 	Entity Scene::CreateEntity(const std::string& name)
@@ -35,6 +36,8 @@ namespace Engine {
 	{
 
 		//std::cout << ts << std::endl;
+		physicsSystem->Update(ts);
+
 
 		auto view = ecs.GetView<ScriptComponent>();
 		while (view.MoveNext()){
@@ -91,5 +94,10 @@ namespace Engine {
 		aabbMat->SetProperty("color", Vec3{ .0f, 1.f, 0 });
 		aabbVisSystem->SetMaterial(aabbMat);
 
+	}
+	void Scene::InitPhysicsSystems()
+	{
+		physicsSystem = CreateRef<PhysicsSystem>();
+		physicsSystem->Init(&ecs);
 	}
 }

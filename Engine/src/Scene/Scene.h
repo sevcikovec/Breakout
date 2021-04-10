@@ -5,6 +5,7 @@
 #include "Systems.h"
 #include "../Renderer/Renderer.h"
 #include "../Renderer/UniformBuffer.h"
+#include "../Physics/PhysicsSystem.h"
 
 namespace Engine {
 	class Scene {
@@ -47,6 +48,9 @@ namespace Engine {
 		Ref<RenderingSystem> renderingSystem;
 		Ref<MainCameraSetupSystem> mainCameraSetupSystem;
 		Ref<AABBVisualizationSystem> aabbVisSystem;
+
+		void InitPhysicsSystems();
+		Ref<PhysicsSystem> physicsSystem;
 
 		std::vector<Ref<OnUpdateSystem>> systems;
 	};
