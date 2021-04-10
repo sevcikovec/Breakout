@@ -82,7 +82,8 @@ namespace Engine {
 	void Vec3::Normalize()
 	{
 		float mag = Mag();
-		Div(mag);
+		if (mag != 0) 
+			Div(mag);
 	}
 
 	Vec3 Vec3::operator+(const Vec3& other)

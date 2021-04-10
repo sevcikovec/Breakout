@@ -45,24 +45,28 @@ BreakoutScene::BreakoutScene() : Scene("Main scene")
 	auto playerArchMaterial = CreateRef<Material>();
 	playerArchMaterial->SetShader(shader);
 	playerArchMaterial->SetProperty("color", Vec3{ .0f, .0f, .7f });
-	
-	
 
 	std::vector<float> vertices;
 	std::vector<uint32_t> indices;	
+	
+	float innerRadius = 4.f;
+	float outerRadius = 4.5f;
+	float playerRadius = (innerRadius + outerRadius) / 2;
+	MeshGenerator::GenerateArk(innerRadius, outerRadius, 45.f, 0.5f, 50, true, vertices, indices);
+	auto playerMeshVAO = GetVertexArray(vertices, indices);
+	CreatePlayerArch(playerArchMaterial, playerMeshVAO, 0, playerRadius);
+	CreatePlayerArch(playerArchMaterial, playerMeshVAO, 120, playerRadius);
+	CreatePlayerArch(playerArchMaterial, playerMeshVAO, 240, playerRadius);
+
 
 
 	MeshGenerator::GenerateCircle(5, 50, vertices, indices);
 	auto platformVAO = GetVertexArray(vertices, indices);
-	
-	MeshGenerator::GenerateArk(4.f, 4.5f, 45.f, 0.5f, 10, true, vertices, indices);
-	auto playerMeshVAO = GetVertexArray(vertices, indices);
-
 	Entity platformEntity = CreateEntity("Platform entity");
 	auto& transform = platformEntity.AddComponent<TransformComponent>();
 	transform.scale = { 1.f, 1.f, 1.f };
 	transform.position = { 0.f,.0f,0.f };
-	transform.rotation= { 0.f,0.0f, 0.f};
+	transform.rotation = { 0.f,0.0f, 0.f };
 	auto& mesh = platformEntity.AddComponent<MeshComponent>();
 	mesh.material = platformMaterial;
 	mesh.vao = platformVAO;
@@ -73,28 +77,6 @@ BreakoutScene::BreakoutScene() : Scene("Main scene")
 	platformAABB.yMax = 0.f;
 	platformAABB.zMin = -5.f;
 	platformAABB.zMax = 5.f;
-
-
-	Entity playerArchEntity = CreateEntity("Player entity");
-	auto& playerTransform = playerArchEntity.AddComponent<TransformComponent>();
-	playerTransform.scale = { 1.f, 1.f, 1.f };
-	playerTransform.position = { 0.f,.0f,0.f };
-	playerTransform.rotation = { 0.f,0.0f, 0.f };
-	auto& playerMesh = playerArchEntity.AddComponent<MeshComponent>();
-	playerMesh.material = playerArchMaterial;
-	playerMesh.vao = playerMeshVAO;
-
-	// todo calculate automatically AABB
-	auto& playerAABB = playerArchEntity.AddComponent<AABB>();
-	playerAABB.xMin = -0.6f;
-	playerAABB.xMax = 0.25f;
-	playerAABB.yMin = -0.f;
-	playerAABB.yMax = .5f;
-	playerAABB.zMin = -1.8f;
-	playerAABB.zMax = 1.8f;
-
-
-	auto& player = playerArchEntity.AddComponent<PlayerComponent>();
 }
 
 void BreakoutScene::OnUpdate(float frameTimeMS)
@@ -116,5 +98,30 @@ Ref<VertexArray> BreakoutScene::GetVertexArray(std::vector<float>& vertices, std
 	vao->SetIndexBuffer(ib);
 	vao->SetVertexBuffer(vb1);
 	return vao;
+}
+
+void BreakoutScene::CreatePlayerArch(Engine::Ref<Engine::Material> playerArchMaterial, Engine::Ref<Engine::VertexArray> playerMeshVAO, float startingAngle, float radius)
+{
+	Entity playerArchEntity = CreateEntity("Player entity");
+	auto& playerTransform = playerArchEntity.AddComponent<TransformComponent>();
+	playerTransform.scale = { 1.f, 1.f, 1.f };
+	playerTransform.position = { 0.f,.0f,0.f };
+	playerTransform.rotation = { 0.f, startingAngle, 0.f };
+	auto& playerMesh = playerArchEntity.AddComponent<MeshComponent>();
+	playerMesh.material = playerArchMaterial;
+	playerMesh.vao = playerMeshVAO;
+
+	// todo calculate automatically AABB
+	auto& playerAABB = playerArchEntity.AddComponent<AABB>();
+	playerAABB.xMin = -0.6f;
+	playerAABB.xMax = 0.25f;
+	playerAABB.yMin = -0.f;
+	playerAABB.yMax = .5f;
+	playerAABB.zMin = -1.8f;
+	playerAABB.zMax = 1.8f;
+
+
+	auto& player = playerArchEntity.AddComponent<PlayerComponent>();
+	player.radius = radius;
 }
 

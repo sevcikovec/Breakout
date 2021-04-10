@@ -2,6 +2,7 @@
 #include "../Components/PlayerComponent.h"
 #include <Scene/Systems.h>
 #include <Core/Input.h>
+#include "Math/Coordinates.h"
 class PlayerMovementSystem : public Engine::OnUpdateSystem {
 	void Update(float ts) override {
 		auto view = ecs->GetView<PlayerComponent, Engine::TransformComponent>();
@@ -29,17 +30,7 @@ class PlayerMovementSystem : public Engine::OnUpdateSystem {
 			
 			transform.rotation.Add(rotation);
 
-			auto angle = transform.rotation.y;
-			auto newPositionCircleX = player.radius * cos(Engine::ToRadians(angle));
-			auto newPositionCircleY = player.radius * sin(Engine::ToRadians(angle));
-
-			transform.position.x = newPositionCircleX;
-			transform.position.z = -newPositionCircleY;
-
-			//rotate for no reason
-			//transform.rotation.y += ts * 20;
-			//transform.rotation.x += ts * 20;
-
+			transform.position = Engine::CylindricalToCartesian({ player.radius, transform.position.y, -transform.rotation.y });
 		}
 	}
 };
