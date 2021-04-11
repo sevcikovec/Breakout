@@ -10,7 +10,13 @@ namespace Engine {
 
 		void AddColliderObject(ColliderObject object);
 	private:
+		friend class BroadphaseSystem;
+		friend class NarrowphaseSystem;
+		friend class CollisionEventsSystem;
+
 		std::vector<ColliderObject> collisionObjects;
+
+		std::vector<PossibleCollisionPair> possibleCollisions;
 
 		std::vector<CollisionPair> collisionPairs;
 	};

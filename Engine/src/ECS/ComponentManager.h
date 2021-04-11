@@ -42,6 +42,14 @@ namespace Engine {
 			size_t index = entityToIndexMap[entityID];
 			size_t lastIndex = componentVector.size() - 1;
 
+			if (index == lastIndex) {
+				indexToEntityMap.clear();
+				componentVector.clear();
+				entityToIndexMap.clear();
+				return;
+			}
+
+			// move components so the pool remain dense
 			componentVector[index] = componentVector[lastIndex];
 			componentVector.pop_back();
 

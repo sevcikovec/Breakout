@@ -5,6 +5,12 @@
 #include "PhysicsComponents.h"
 #include <limits> 
 namespace Engine {
+	enum ColliderType {
+		sphere,
+		box,
+		arch
+	};
+
 	struct AABB {
 		AABB(AABB_local localAABB, Mat4 transform) {
 			std::vector<Vec4> points(8);
@@ -41,12 +47,25 @@ namespace Engine {
 		float xMin, yMin, zMin;
 		float xMax, yMax, zMax;
 
+		static bool IsOverlapping(const AABB& a, const AABB& b) {
+			return (a.xMin <= b.xMax && a.xMax >= b.xMin) &&
+				(a.yMin <= b.yMax && a.yMax >= b.yMin) &&
+				(a.zMin <= b.zMax && a.zMax >= b.zMin);
+		}
+
 	};
 
 	struct CollisionPair {
-		EntityID collidingA;
-		EntityID collidingB;
+		size_t ColliderObjectAIndex;
+		size_t ColliderObjectBIndex;
 		Vec3 collisionPoint;
+		Vec3 collisionNormal;
+	};
+
+	struct PossibleCollisionPair
+	{
+		size_t ColliderObjectAIndex;
+		size_t ColliderObjectBIndex;
 	};
 
 	struct ColliderObject
@@ -54,11 +73,6 @@ namespace Engine {
 		EntityID entity;
 		AABB aabb;
 		TransformComponent transform;
-	};
-
-	enum ColliderType {
-		sphere,
-		box,
-		arch
+		ColliderType colliderType;
 	};
 }

@@ -30,11 +30,11 @@ namespace Engine {
 
 		void Normalize();
 
-		Vec3 operator+(const Vec3& other);
+		Vec3 operator+(const Vec3& other) const;
 
-		Vec3 operator-(const Vec3& other);
+		Vec3 operator-(const Vec3& other) const;
 
-		Vec3 operator*(const float& other);
+		Vec3 operator*(const float& other) const;
 
 		float operator[](int) const;
 
@@ -43,6 +43,8 @@ namespace Engine {
 		static float Dot(const Vec3& a, const Vec3& b);
 
 		static Vec3 Cross(const Vec3& a, const Vec3& b);
+
+		static Vec3 Reflect(const Vec3& a, const Vec3& aroundNormal);
 
 		friend std::ostream& operator<<(std::ostream& os, Vec3 const& v) {
 			return os << "(" << v.x << ", " << v.y << ", " << v.z << ")" << std::endl;

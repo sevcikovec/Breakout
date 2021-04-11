@@ -54,3 +54,18 @@ Week 4:
 Week 5:
 
     Nothing commited - Easter holiday.
+
+Week 6:
+
+    Added generation of sphere mesh.
+
+    Slightly reworked systems and component gathering - now using templated view to iterate over entities with selected components.
+    
+    Physics WIP 
+    - added colliders (sphere, box and arc)
+    - naive broad phase checking all entities with collider
+    - narrow phase: resolving basic colision between sphere and arc
+    - implemented propagating collision information to the entity (possible to react to collision- e.g. bounce, destroying brick etc.)
+     
+    
+![week6](/Images/Week6.gif)

@@ -86,21 +86,21 @@ namespace Engine {
 			Div(mag);
 	}
 
-	Vec3 Vec3::operator+(const Vec3& other)
+	Vec3 Vec3::operator+(const Vec3& other) const
 	{
 		Vec3 res(*this);
 		res.Add(other);
 		return res;
 	}
 
-	Vec3 Vec3::operator-(const Vec3& other)
+	Vec3 Vec3::operator-(const Vec3& other) const
 	{
 		Vec3 res(*this);
 		res.Sub(other);
 		return res;
 	}
 
-	Vec3 Vec3::operator*(const float& other)
+	Vec3 Vec3::operator*(const float& other) const
 	{
 		Vec3 res(*this);
 		res.Mul(other);
@@ -151,5 +151,11 @@ namespace Engine {
 		cross.y = a.z * b.x - a.x * b.z;
 		cross.z = a.x * b.y - a.y * b.x;
 		return cross;
+	}
+	Vec3 Vec3::Reflect(const Vec3& a, const Vec3& aroundNormal)
+	{
+		float dot = Vec3::Dot(a, aroundNormal);
+
+		return a - aroundNormal * (2 * dot);
 	}
 }

@@ -1,26 +1,30 @@
 #pragma once
-#include "../Scene/Systems.h"
-#include "PhysicsWorld.h"
+#include "APhysicsSystem.h"
 
 namespace Engine {
-	class CollectObjectsSystem : public OnUpdateSystem {
+	class CollectObjectsSystem : public APhysicsSystem {
 	public:
-		void SetPhysicsWorld(PhysicsWorld* pWorld) {
-			this->pWorld = pWorld;
-		}
-
-		void Update(float ts) override {
-			auto view = ecs->GetView<AABB_local, TransformComponent>();
-			while (view.MoveNext())
+		void Update(float ts) {
+			auto viewSphere = ecs->GetView<SphereCollider, AABB_local, TransformComponent>();
+			while (viewSphere.MoveNext())
 			{
-				auto& transform = view.GetComponent<TransformComponent>();
-				auto& localAABB = view.GetComponent<AABB_local>();
-				auto entity = view.GetEntity();
+				auto& transform = viewSphere.GetComponent<TransformComponent>();
+				auto& localAABB = viewSphere.GetComponent<AABB_local>();
+				auto entity = viewSphere.GetEntity();
 
-				pWorld->AddColliderObject(ColliderObject{entity, AABB(localAABB, transform.GetTransformMatrix()), transform});
+				pWorld->AddColliderObject(ColliderObject{entity, AABB(localAABB, transform.GetTransformMatrix()), transform, ColliderType::sphere});
+			}
+			
+			auto viewArch = ecs->GetView<ArchCollider, AABB_local, TransformComponent>();
+			while (viewArch.MoveNext())
+			{
+				auto& transform = viewArch.GetComponent<TransformComponent>();
+				auto& localAABB = viewArch.GetComponent<AABB_local>();
+				auto entity = viewArch.GetEntity();
+
+				pWorld->AddColliderObject(ColliderObject{ entity, AABB(localAABB, transform.GetTransformMatrix()), transform , ColliderType::arch});
 			}
 		}
-	private:
-		PhysicsWorld* pWorld;
+
 	};
 }

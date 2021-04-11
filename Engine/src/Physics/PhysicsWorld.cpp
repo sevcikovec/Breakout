@@ -5,6 +5,7 @@ namespace Engine {
 	{
 		collisionObjects.clear();
 		collisionPairs.clear();
+		possibleCollisions.clear();
 	}
 
 	void PhysicsWorld::AddColliderObject(ColliderObject object)

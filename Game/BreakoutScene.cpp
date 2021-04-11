@@ -13,7 +13,6 @@ using namespace Engine;
 BreakoutScene::BreakoutScene() : Scene("Main scene")
 {
 	// initialize scene
-
 	// register systems
 	RegisterSystem<PlayerMovementSystem>();
 	RegisterSystem<BallSystem>();
@@ -60,7 +59,7 @@ BreakoutScene::BreakoutScene() : Scene("Main scene")
 		ballEntity.AddComponent<BallComponent>();
 		auto& transform = ballEntity.AddComponent<TransformComponent>();
 		transform.scale = { 1.f, 1.f, 1.f };
-		transform.position = { 0.f,0.25f,0.f };
+		transform.position = { 0.f,0.25f,1.f };
 		transform.rotation = { 0.f,0.0f, 0.f };
 		auto& mesh = ballEntity.AddComponent<MeshComponent>();
 		mesh.material = ballMaterial;
@@ -74,7 +73,11 @@ BreakoutScene::BreakoutScene() : Scene("Main scene")
 		platformAABB.zMax =  radius;
 
 		auto& velocity = ballEntity.AddComponent<VelocityComponent>();
-		velocity.velocity.z = 1;
+		velocity.velocity.z = 1.2;
+		velocity.velocity.x = 2;
+
+		auto& sphereCollider = ballEntity.AddComponent<SphereCollider>();
+		sphereCollider.radius = radius;
 	}
 
 	// generate player
@@ -88,9 +91,9 @@ BreakoutScene::BreakoutScene() : Scene("Main scene")
 		float playerRadius = (innerRadius + outerRadius) / 2;
 		MeshGenerator::GenerateArk(innerRadius, outerRadius, 45.f, 0.5f, 50, true, vertices, indices);
 		auto playerMeshVAO = GetVertexArray(vertices, indices);
-		CreatePlayerArch(playerArchMaterial, playerMeshVAO, 0, playerRadius);
-		CreatePlayerArch(playerArchMaterial, playerMeshVAO, 120, playerRadius);
-		CreatePlayerArch(playerArchMaterial, playerMeshVAO, 240, playerRadius);
+		CreatePlayerArch(playerArchMaterial, playerMeshVAO, 0, playerRadius, innerRadius, outerRadius);
+		CreatePlayerArch(playerArchMaterial, playerMeshVAO, 120, playerRadius, innerRadius, outerRadius);
+		CreatePlayerArch(playerArchMaterial, playerMeshVAO, 240, playerRadius, innerRadius, outerRadius);
 	}
 	
 	// generate floor
@@ -141,7 +144,7 @@ Ref<VertexArray> BreakoutScene::GetVertexArray(std::vector<float>& vertices, std
 	return vao;
 }
 
-void BreakoutScene::CreatePlayerArch(Engine::Ref<Engine::Material> playerArchMaterial, Engine::Ref<Engine::VertexArray> playerMeshVAO, float startingAngle, float radius)
+void BreakoutScene::CreatePlayerArch(Engine::Ref<Engine::Material> playerArchMaterial, Engine::Ref<Engine::VertexArray> playerMeshVAO, float startingAngle, float radius, float innerRadius, float outerRadius)
 {
 	Entity playerArchEntity = CreateEntity("Player entity");
 	auto& playerTransform = playerArchEntity.AddComponent<TransformComponent>();
@@ -164,5 +167,9 @@ void BreakoutScene::CreatePlayerArch(Engine::Ref<Engine::Material> playerArchMat
 
 	auto& player = playerArchEntity.AddComponent<PlayerComponent>();
 	player.radius = radius;
+
+	auto& archCollider = playerArchEntity.AddComponent<ArchCollider>();
+	archCollider.innerRadius = innerRadius;
+	archCollider.outerRadius = outerRadius;
 }
 

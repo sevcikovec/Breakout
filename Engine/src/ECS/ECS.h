@@ -37,7 +37,7 @@ namespace Engine {
 
 		template<typename T>
 		void RemoveComponent(EntityID entity) {
-			T& newComponent = componentManager.AddComponent<T>(entity);
+			componentManager.RemoveComponent<T>(entity);
 
 			Signature signature = entityManager.GetEntitySignature(entity);
 			signature.set(componentManager.GetComponentType<T>(), false);

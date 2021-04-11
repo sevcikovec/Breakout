@@ -2,6 +2,9 @@
 #include "../ECS/ECS.h"
 #include "DynamicsSystem.h"
 #include "CollectObjectsSystem.h"
+#include "BroadphaseSystem.h"
+#include "NarrowphaseSystem.h"
+#include "CollisionEventsSystem.h"
 
 namespace Engine {
 	class PhysicsSystem : public OnUpdateSystem {
@@ -16,5 +19,8 @@ namespace Engine {
 
 		Ref<DynamicsSystem> dynamicsSystem;
 		Ref<CollectObjectsSystem> collectionSystem;
+		Ref<BroadphaseSystem> broadphaseSystem;
+		Ref<NarrowphaseSystem> narrowphaseSystem;
+		Ref<CollisionEventsSystem> eventsSystem;
 	};
 }
