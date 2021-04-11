@@ -85,6 +85,7 @@
     - naive broad phase checking all entities with collider for AABB overlap
     - narrow phase: resolving basic colision between sphere and arc
     - implemented propagating collision information to the entity (possible to react to collision- e.g. bounce, destroying brick etc.)
+    - added velocity component and its simulation
   
 ![week6](/Images/Week6.gif)
 
