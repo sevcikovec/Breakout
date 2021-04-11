@@ -37,4 +37,12 @@ namespace Engine {
 			atan2(z, x)
 		};
 	}
+	Vec3 SphericalToCartesian(float radius, float inclination, float azimuth)
+	{
+		return {
+			radius * sin(ToRadians(inclination)) * cos(ToRadians(azimuth)),
+			radius * cos(ToRadians(inclination)),
+			radius * sin(ToRadians(inclination))* sin(ToRadians(azimuth))
+		};
+	}
 }

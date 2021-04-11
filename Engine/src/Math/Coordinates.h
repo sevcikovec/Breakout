@@ -7,4 +7,6 @@ namespace Engine {
 
 	Vec3 CylindricalToCartesian(Vec3 cylindrical);
 	Vec3 CartesianToCylindrical(Vec3 cartesian);
+
+	Vec3 SphericalToCartesian(float radius, float inclination, float azimuth);
 }

@@ -142,17 +142,89 @@ namespace Engine {
 	}
 
 
-	void MeshGenerator::GenerateSphere(float radius, uint32_t resolution, std::vector<float>& vertices, std::vector<uint32_t>& indices)
+	void MeshGenerator::GenerateSphere(float radius, uint32_t resolutionHorizontal, uint32_t resolutionVertical, std::vector<float>& vertices, std::vector<uint32_t>& indices)
 	{
-		// TODO generation of sphere
-		for (size_t j = 0; j < resolution; j++) {
-			for (size_t i = 0; i < resolution; i++)
-			{
-				
+		
+		vertices.clear();
+		indices.clear();
+
+		float azimuthStep = 360.f / resolutionHorizontal;
+		float inclinationStep = 180.f / (resolutionVertical-1);
+
+
+		
+		// add top vertex
+		vertices.push_back(0);
+		vertices.push_back(radius);
+		vertices.push_back(0);
+		// add bottom vertex
+		vertices.push_back(0);
+		vertices.push_back(-radius);
+		vertices.push_back(0);
+		
+
+		for (size_t x = 0; x < resolutionHorizontal; x++)
+		{
+			float currentAzimuth = x * azimuthStep;
+			for (size_t y = 1; y < resolutionVertical-1; y++) {
+				float currentInclination = y * inclinationStep;
+				Vec3 coords = SphericalToCartesian(radius, currentInclination, currentAzimuth);
+
+				vertices.push_back(coords.x);
+				vertices.push_back(coords.y);
+				vertices.push_back(coords.z);
+
+				// add indices
+				if (x > 0) {
+					if (y == 1) {
+					// add top triangle
+					indices.push_back(0);
+					indices.push_back(2 + (resolutionVertical - 2) * x);
+					indices.push_back(2 + (resolutionVertical - 2) * (x - 1));
+					}
+					else {
+						indices.push_back(2 + (resolutionVertical - 2) * (x - 1) + (y-1) - 1);
+						indices.push_back(2 + (resolutionVertical - 2) * x + (y - 1) - 1);
+						indices.push_back(2 + (resolutionVertical - 2) * (x - 1) + (y) - 1);
+						
+						indices.push_back(2 + (resolutionVertical - 2) * x + (y - 1) - 1);
+						indices.push_back(2 + (resolutionVertical - 2) * x + (y) - 1);
+						indices.push_back(2 + (resolutionVertical - 2) * (x - 1) + (y)-1);
+					}
+				}
+				else {
+					if (y == 1) {
+						indices.push_back(0);
+						indices.push_back(2);
+						indices.push_back(2 + (resolutionVertical - 2) * (resolutionHorizontal-1));
+					}
+					else {
+						indices.push_back(2 + (resolutionVertical - 2) * (resolutionHorizontal - 1) + (y - 1) - 1);
+						indices.push_back(2 + (resolutionVertical - 2) * x + (y - 1) - 1);
+						indices.push_back(2 + (resolutionVertical - 2) * (resolutionHorizontal - 1) + (y)-1);
+
+						indices.push_back(2 + (resolutionVertical - 2) * x + (y - 1) - 1);
+						indices.push_back(2 + (resolutionVertical - 2) * x + (y)-1);
+						indices.push_back(2 + (resolutionVertical - 2) * (resolutionHorizontal - 1) + (y)-1);
+					}
+				}
 			}
+
+			// add indices
+			if (x > 0) {
+				
+				// add bottom triangle
+				indices.push_back(1);
+				indices.push_back(2 + (resolutionVertical - 2) * (x) - 1);
+				indices.push_back(2 + (resolutionVertical - 2) * (x+1) -1 );
+			}
+			else {
+				indices.push_back(1);
+				indices.push_back(2 + (resolutionVertical - 2) * (resolutionHorizontal) - 1);
+				indices.push_back(2 + (resolutionVertical - 2) * (x + 1) - 1);
+			}
+			
 		}
-
-
 	}
 
 }

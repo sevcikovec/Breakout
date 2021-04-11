@@ -6,6 +6,7 @@
 #include "../Renderer/Camera.h"
 #include "../Renderer/UniformBuffer.h"
 #include "../Core/Input.h"
+#include "../Physics/CollisionStructs.h"
 
 namespace Engine {
 
@@ -31,7 +32,7 @@ namespace Engine {
 		glEnable(GL_DEPTH_TEST);
 		glEnable(GL_CULL_FACE);
 		glCullFace(GL_BACK);
-
+		//glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 		GLenum err;
 
 		auto view = ecs->GetView<MeshComponent, TransformComponent, TagComponent>();
@@ -64,15 +65,19 @@ namespace Engine {
 		glDisable (GL_DEPTH_TEST);
 		GLenum err;
 
-		auto view = ecs->GetView<AABB, TransformComponent, TagComponent>();
+		auto view = ecs->GetView<AABB_local, TransformComponent, TagComponent>();
 		while (view.MoveNext())
 		{
 			auto& tag = view.GetComponent<TagComponent>();
 			auto& transform = view.GetComponent<TransformComponent>();
-			auto& aabb = view.GetComponent<AABB>();
+			auto& aabb_local = view.GetComponent<AABB_local>();
 
+			auto aabb = AABB(aabb_local, transform.GetTransformMatrix());
+
+			//this->material->SetProperty("color", aabb.color);
 			this->material->GetShader()->Bind();
-			this->material->GetShader()->SetUniformMat4("modelMat", transform.GetTransformMatrix());
+			//this->material->GetShader()->SetUniformMat4("modelMat", transform.GetTransformMatrix());
+			this->material->GetShader()->SetUniformMat4("modelMat", Mat4(1));
 
 			this->material->BindProperties();
 			glLineWidth(1); 
@@ -84,7 +89,7 @@ namespace Engine {
 			glVertex3f(aabb.xMax, aabb.yMax, aabb.zMin);
 			glVertex3f(aabb.xMin, aabb.yMax, aabb.zMin);
 			glEnd();
-
+			
 			// back side
 			glBegin(GL_LINE_LOOP);
 			glVertex3f(aabb.xMin, aabb.yMin, aabb.zMax);
@@ -92,6 +97,7 @@ namespace Engine {
 			glVertex3f(aabb.xMax, aabb.yMax, aabb.zMax);
 			glVertex3f(aabb.xMin, aabb.yMax, aabb.zMax);
 			glEnd();
+			
 			
 			// sides
 			glBegin(GL_LINES);
@@ -107,7 +113,7 @@ namespace Engine {
 			glVertex3f(aabb.xMax, aabb.yMax, aabb.zMin);
 			glVertex3f(aabb.xMax, aabb.yMax, aabb.zMax);
 			glEnd();
-
+			
 			while ((err = glGetError()) != GL_NO_ERROR)
 			{
 				std::cout << err << std::endl;

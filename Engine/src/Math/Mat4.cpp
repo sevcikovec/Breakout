@@ -177,7 +177,7 @@ namespace Engine {
 		return res;
 	}
 
-		Mat4 Engine::Mat4::operator*(const Mat4& other)
+	Mat4 Engine::Mat4::operator*(const Mat4& other)
 	{
 		Mat4 res(0);
 		int i, j, k;
@@ -221,5 +221,16 @@ namespace Engine {
         int row = index % 4;
 
         return collumns[col][row];
+    }
+
+    Vec4 Multiply(Mat4 mat, Vec4 vec) {
+        Vec4 res;
+        int i, j, k;
+        for (i = 0; i < 4; i++) {
+            res[i] = 0;
+            for (k = 0; k < 4; k++)
+                res[i] += mat(i, k) * vec[k];
+        }
+        return res;
     }
 }

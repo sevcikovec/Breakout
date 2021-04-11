@@ -9,8 +9,10 @@ namespace Engine {
 	///
 	/// AABB in model space
 	///
-	struct AABB {
+	struct AABB_local {
 		float xMin, yMin, zMin;
 		float xMax, yMax, zMax;
+
+		Vec3 color{ 0,1,0 };
 	};
 }

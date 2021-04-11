@@ -65,4 +65,6 @@ namespace Engine {
 	private:
 		Vec4 collumns[4];
 	};
+
+	Vec4 Multiply(Mat4 mat, Vec4 vec);
 }
