@@ -18,6 +18,7 @@
 <details>
 
 <summary>Week 2</summary>
+
     Updated project structure - engine as lib, added separate Game project.
 
     Added simple renderer - now supporting VBO, IBO and array objects. Also supports custom shader data layout.
