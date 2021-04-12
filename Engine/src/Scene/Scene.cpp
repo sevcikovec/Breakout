@@ -45,8 +45,11 @@ namespace Engine {
 			}
 			scriptComponent.Instance->OnUpdate(ts);
 		}
-
-
+		
+		for (auto& system : systems) {
+			system->Update(ts);
+		}
+		
 		// destroy entities
 		{
 			auto destroyView = ecs.GetView<DestroyTag>();
@@ -54,9 +57,9 @@ namespace Engine {
 				entitiesToDestroy.push_back(destroyView.GetEntity());
 			}
 
-			for (auto& entity : entitiesToDestroy){
-		
-				if (ecs.HasComponent<ScriptComponent>(entity)) 
+			for (auto& entity : entitiesToDestroy) {
+
+				if (ecs.HasComponent<ScriptComponent>(entity))
 				{
 					auto& script = ecs.GetComponent<ScriptComponent>(entity);
 					script.Instance->OnDestroy();
@@ -67,11 +70,7 @@ namespace Engine {
 			}
 			entitiesToDestroy.clear();
 		}
-		
-		for (auto& system : systems) {
-			system->Update(ts);
-		}
-		
+
 		mainCameraSetupSystem->Update(ts);
 		renderingSystem->Update(ts);
 		aabbVisSystem->Update(ts);

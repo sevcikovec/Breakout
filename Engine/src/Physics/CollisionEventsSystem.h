@@ -27,15 +27,17 @@ namespace Engine {
 				auto& first = objects[collisionPairs[i].ColliderObjectAIndex];
 				auto& second = objects[collisionPairs[i].ColliderObjectBIndex];
 
-				/*
-				auto& firstCollisionEvent = ecs->AddComponent<CollisionEvent>(first.entity);
-				firstCollisionEvent.collisionNormal = collisionPairs[i].collisionNormal;
-				firstCollisionEvent.otherEntity = second.entity;
+				if (!ecs->HasComponent<CollisionEvent>(first.entity)) {
+					auto& firstCollisionEvent = ecs->AddComponent<CollisionEvent>(first.entity);
+					firstCollisionEvent.collisionNormal = collisionPairs[i].collisionNormal;
+					firstCollisionEvent.otherEntity = second.entity;
+				}
 
-				auto& secondCollisionEvent = ecs->AddComponent<CollisionEvent>(second.entity);
-				secondCollisionEvent.collisionNormal = collisionPairs[i].collisionNormal * -1;
-				secondCollisionEvent.otherEntity = first.entity;
-				*/
+				if (!ecs->HasComponent<CollisionEvent>(second.entity)) {
+					auto& secondCollisionEvent = ecs->AddComponent<CollisionEvent>(second.entity);
+					secondCollisionEvent.collisionNormal = collisionPairs[i].collisionNormal * -1;
+					secondCollisionEvent.otherEntity = first.entity;
+				}
 			}
 
 

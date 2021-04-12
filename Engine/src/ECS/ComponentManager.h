@@ -25,9 +25,6 @@ namespace Engine {
 	class ComponentPool : public IComponentPool {
 	public:
 		T& CreateComponent(EntityID entityID) {
-			if (entityToIndexMap.find(entityID) != entityToIndexMap.end()) {
-				int x = 1;
-			}
 			assert(entityToIndexMap.find(entityID) == entityToIndexMap.end());
 
 			componentVector.emplace_back();
@@ -46,9 +43,10 @@ namespace Engine {
 			size_t lastIndex = componentVector.size() - 1;
 
 			if (index == lastIndex) {
-				indexToEntityMap.clear();
-				componentVector.clear();
-				entityToIndexMap.clear();
+				componentVector.pop_back();
+				indexToEntityMap.erase(lastIndex);
+				entityToIndexMap.erase(entityID);
+
 				return;
 			}
 
@@ -58,7 +56,7 @@ namespace Engine {
 
 			EntityID movedEntity = indexToEntityMap[lastIndex];
 			indexToEntityMap.erase(lastIndex);
-			indexToEntityMap[index] = entityID;
+			indexToEntityMap[index] = movedEntity;
 
 			entityToIndexMap.erase(entityID);
 			entityToIndexMap[movedEntity] = index;

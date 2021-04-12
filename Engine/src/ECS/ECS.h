@@ -63,7 +63,13 @@ namespace Engine {
 		View<T...> GetView() {
 			return View<T...>{ &componentManager, &entityManager };
 		}
-	
+
+		template<typename... T>
+		bool HasComponents(EntityID entity) {
+			auto targetSignature = componentManager.GetSignature<T...>();
+			auto entitySignature = entityManager.GetEntitySignature(entity);
+			return (targetSignature & entitySignature) == targetSignature;
+		}
 
 	private:
 		EntityManager entityManager;

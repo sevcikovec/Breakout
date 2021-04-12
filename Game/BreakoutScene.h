@@ -16,8 +16,8 @@ private:
 
 	Engine::Entity CreatePlayerArch(Engine::Ref<Engine::Material> material, Engine::Ref<Engine::VertexArray> vertexArray, float startingAngle, float radius, float innerRadius, float outerRadius, Engine::AABB_local aabb);
 	
-	Engine::Entity CreateArch(Engine::Ref<Engine::Material> material, Engine::Ref<Engine::VertexArray> vertexArray, float startingAngle, float radius, float innerRadius, float outerRadius, Engine::AABB_local aabb);
+	Engine::Entity CreateArch(Engine::Ref<Engine::Material> material, Engine::Ref<Engine::VertexArray> vertexArray, float startingAngle, float radius, float innerRadius, float outerRadius, float yPos, Engine::AABB_local aabb);
 
-	Engine::Entity CreateBlockArch(Engine::Ref<Engine::Material> material, Engine::Ref<Engine::VertexArray> vertexArray, float startingAngle, float radius, float innerRadius, float outerRadius, Engine::AABB_local aabb);
+	Engine::Entity CreateBlockArch(Engine::Ref<Engine::Material> material, Engine::Ref<Engine::VertexArray> vertexArray, float startingAngle, float radius, float innerRadius, float outerRadius, float yPos, Engine::AABB_local aabb);
 
 };

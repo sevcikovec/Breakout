@@ -1,59 +1,50 @@
 #include "Systems.h"
-#include "../Components/PlayerComponent.h"
-#include "../Components/BallComponent.h"
+#include "../Components/BreakoutComponents.h"
 #include <Core/Input.h>
 #include "Math/Coordinates.h"
 
+using namespace Engine;
+
 void PlayerMovementSystem::Update(float ts) {
-	auto view = ecs->GetView<PlayerComponent, Engine::TransformComponent>();
+	auto view = ecs->GetView<PlayerComponent, TransformComponent>();
 	while (view.MoveNext())
 	{
-		auto& transform = view.GetComponent<Engine::TransformComponent>();
+		auto& transform = view.GetComponent<TransformComponent>();
 		auto& player = view.GetComponent<PlayerComponent>();
 
 		float moveDelta = player.moveSpeed * ts * 30;
 
-		Engine::Vec3 move{ 0 };
+		Vec3 move{ 0 };
 		float rotation = transform.rotation.y;
-		if (Engine::Input::IsKeyDown(Engine::KeyCode::A)) {
+		if (Input::IsKeyDown(KeyCode::A)) {
 			rotation -= moveDelta;
 		}
-		if (Engine::Input::IsKeyDown(Engine::KeyCode::D)) {
+		if (Input::IsKeyDown(KeyCode::D)) {
 			rotation += moveDelta;
 		}
-		if (Engine::Input::IsKeyDown(Engine::KeyCode::W)) {
+		if (Input::IsKeyDown(KeyCode::W)) {
 			//rotation.x += moveDelta;
 		}
-		if (Engine::Input::IsKeyDown(Engine::KeyCode::S)) {
+		if (Input::IsKeyDown(KeyCode::S)) {
 			//rotation.x -= moveDelta;
 		}
 
-		transform = Engine::TransformComponent::GetArchTransform(rotation, player.radius, transform.position.y);
+		transform = TransformComponent::GetArchTransform(rotation, player.radius, transform.position.y);
 	}
 }
 
 void BallSystem::Update(float ts) {
-	auto view = ecs->GetView<BallComponent, Engine::TransformComponent>();
+		
+}
+
+void BlockSystem::Update(float ts)
+{
+	auto view = ecs->GetView<BlockComponent, CollisionEvent>();
 	while (view.MoveNext()) {
-		auto& transform = view.GetComponent<Engine::TransformComponent>();
-		auto& ball = view.GetComponent<BallComponent>();
+		auto& collisionEvent = view.GetComponent<CollisionEvent>();
 
-		float rotDelta = ts * 30;
-
-		Engine::Vec3 rotation{ 0 };
-		if (Engine::Input::IsKeyDown(Engine::KeyCode::LEFT)) {
-			rotation.y -= rotDelta;
+		if (ecs->HasComponents<BallComponent>(collisionEvent.otherEntity)) {
+			ecs->AddComponent<DestroyTag>(view.GetEntity());
 		}
-		if (Engine::Input::IsKeyDown(Engine::KeyCode::RIGHT)) {
-			rotation.y += rotDelta;
-		}
-		if (Engine::Input::IsKeyDown(Engine::KeyCode::UP)) {
-			rotation.x += rotDelta;
-		}
-		if (Engine::Input::IsKeyDown(Engine::KeyCode::DOWN)) {
-			rotation.x -= rotDelta;
-		}
-
-		transform.rotation.Add(rotation);
 	}
 }
