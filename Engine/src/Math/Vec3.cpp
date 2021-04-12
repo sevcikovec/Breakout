@@ -158,4 +158,8 @@ namespace Engine {
 
 		return a - aroundNormal * (2 * dot);
 	}
+	Vec3 Vec3::Right(const Vec3& forward, const Vec3& up)
+	{
+		return Vec3::Cross(forward, up);
+	}
 }

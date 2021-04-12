@@ -46,6 +46,8 @@ namespace Engine {
 
 		static Vec3 Reflect(const Vec3& a, const Vec3& aroundNormal);
 
+		static Vec3 Right(const Vec3& forward, const Vec3& up);
+
 		friend std::ostream& operator<<(std::ostream& os, Vec3 const& v) {
 			return os << "(" << v.x << ", " << v.y << ", " << v.z << ")" << std::endl;
 		}

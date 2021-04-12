@@ -13,8 +13,6 @@ namespace Engine {
 	struct AABB_local {
 		float xMin, yMin, zMin;
 		float xMax, yMax, zMax;
-
-		Vec3 color{ 0,1,0 };
 	};
 
 	struct SphereCollider {
@@ -25,6 +23,7 @@ namespace Engine {
 		Vec3 center{0};
 		float innerRadius;
 		float outerRadius;
+		float angleWidth;
 	};
 
 	struct CollisionEvent {

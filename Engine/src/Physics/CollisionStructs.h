@@ -60,6 +60,7 @@ namespace Engine {
 		size_t ColliderObjectBIndex;
 		Vec3 collisionPoint;
 		Vec3 collisionNormal;
+		Vec3 firstObjectDisplacement;
 	};
 
 	struct PossibleCollisionPair

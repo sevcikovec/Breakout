@@ -39,21 +39,6 @@ namespace Engine {
 					secondCollisionEvent.otherEntity = first.entity;
 				}
 			}
-
-
-			// update entities with velocity
-			auto viewVelocity = ecs->GetView<CollisionEvent, VelocityComponent>();
-			while (viewVelocity.MoveNext()) {
-				auto& velocity = viewVelocity.GetComponent<VelocityComponent>();
-				auto& collision = viewVelocity.GetComponent<CollisionEvent>();
-
-				float currentSpeed = velocity.velocity.Mag();
-
-				Vec3 newVelocity = Vec3::Reflect(velocity.velocity, collision.collisionNormal);
-				newVelocity.Normalize();
-				newVelocity.Mul(currentSpeed);
-				velocity.velocity = newVelocity;
-			}
 		}
 	};
 }

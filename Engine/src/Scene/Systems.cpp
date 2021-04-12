@@ -74,7 +74,6 @@ namespace Engine {
 
 			auto aabb = AABB(aabb_local, transform.GetTransformMatrix());
 
-			//this->material->SetProperty("color", aabb.color);
 			this->material->GetShader()->Bind();
 			//this->material->GetShader()->SetUniformMat4("modelMat", transform.GetTransformMatrix());
 			this->material->GetShader()->SetUniformMat4("modelMat", Mat4(1));

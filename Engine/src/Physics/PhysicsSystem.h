@@ -5,6 +5,7 @@
 #include "BroadphaseSystem.h"
 #include "NarrowphaseSystem.h"
 #include "CollisionEventsSystem.h"
+#include "CollisionReactionResolveSystem.h"
 
 namespace Engine {
 	class PhysicsSystem : public OnUpdateSystem {
@@ -22,5 +23,6 @@ namespace Engine {
 		Ref<BroadphaseSystem> broadphaseSystem;
 		Ref<NarrowphaseSystem> narrowphaseSystem;
 		Ref<CollisionEventsSystem> eventsSystem;
+		Ref<CollisionReactionResolveSystem> reactionResolveSystem;;
 	};
 }

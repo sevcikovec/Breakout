@@ -5,6 +5,11 @@ namespace Engine {
     static float ToRadians(float degrees) {
         return degrees * PI / 180.f;
     }
+
+    static float ToDegrees(float radians) {
+        return radians * 180.f / PI;
+    }
+
 	class Quaternion {
 	public:
 		Quaternion(float yaw, float pitch, float roll) {

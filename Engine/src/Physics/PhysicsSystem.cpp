@@ -24,6 +24,10 @@ namespace Engine {
 		this->eventsSystem = CreateRef<CollisionEventsSystem>();
 		this->eventsSystem->Init(ecs);
 		this->eventsSystem->SetPhysicsWorld(&physicsWorld);
+		
+		this->reactionResolveSystem = CreateRef<CollisionReactionResolveSystem>();
+		this->reactionResolveSystem->Init(ecs);
+		this->reactionResolveSystem->SetPhysicsWorld(&physicsWorld);
 	}
 
 	void PhysicsSystem::Update(float ts)
@@ -38,5 +42,7 @@ namespace Engine {
 		this->narrowphaseSystem->Update(ts);
 		
 		this->eventsSystem->Update(ts);
+
+		this->reactionResolveSystem->Update(ts);
 	}
 }

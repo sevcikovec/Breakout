@@ -8,7 +8,7 @@ namespace Engine {
 		float y = cartesian.y;
 		return {
 			sqrt(x * x + y * y),
-			atan2(y, x)
+			ToDegrees(atan2(y, x))
 		};
 	}
 	Vec2 PolarToCartesian(Vec2 polar)
@@ -32,9 +32,9 @@ namespace Engine {
 		float y = cartesian.y;
 		float z = cartesian.z;
 		return {
-			sqrt(x * x + z * z),
+			ToDegrees(sqrt(x * x + z * z)),
 			y,
-			atan2(z, x)
+			ToDegrees(atan2(z, x))
 		};
 	}
 	Vec3 SphericalToCartesian(float radius, float inclination, float azimuth)
