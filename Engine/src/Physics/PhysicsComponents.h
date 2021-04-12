@@ -1,5 +1,6 @@
 #pragma once
 #include "../Math/Vec3.h"
+#include "../ECS/ComponentManager.h"
 
 namespace Engine {
 	struct VelocityComponent {

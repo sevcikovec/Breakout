@@ -8,3 +8,7 @@ class PlayerMovementSystem : public Engine::OnUpdateSystem {
 class BallSystem : public Engine::OnUpdateSystem {
 	void Update(float ts) override;
 };
+
+class BlockSystem : public Engine::OnUpdateSystem {
+	void Update(float ts) override;
+};

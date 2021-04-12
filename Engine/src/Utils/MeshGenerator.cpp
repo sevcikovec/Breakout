@@ -3,6 +3,7 @@
 #include "../Math/Quaternion.h"
 #include "../Math/Vec2.h"
 #include "../Math/Coordinates.h"
+#include <algorithm>
 
 namespace Engine {
 	void MeshGenerator::GenerateArk(float innerRadius, float outerRadius, float sectorAngleSize, float height, uint32_t resolution, bool center, std::vector<float>& vertices, std::vector<uint32_t>& indices)
@@ -141,7 +142,6 @@ namespace Engine {
 		indices.push_back(resolution);
 	}
 
-
 	void MeshGenerator::GenerateSphere(float radius, uint32_t resolutionHorizontal, uint32_t resolutionVertical, std::vector<float>& vertices, std::vector<uint32_t>& indices)
 	{
 		
@@ -227,4 +227,24 @@ namespace Engine {
 		}
 	}
 
+	AABB_local MeshGenerator::GetAABB(std::vector<float>& vertices) {
+		AABB_local aabb;
+		aabb.xMax = -FLT_MAX;
+		aabb.yMax = -FLT_MAX;
+		aabb.yMax = -FLT_MAX;
+		aabb.yMin =  FLT_MAX;
+		aabb.zMin =  FLT_MAX;
+		aabb.xMin =  FLT_MAX;
+		for (size_t i = 0; i < vertices.size(); i += 3)
+		{
+			aabb.xMin = std::min(aabb.xMin, vertices[i]);
+			aabb.yMin = std::min(aabb.yMin, vertices[i+1]);
+			aabb.zMin = std::min(aabb.zMin, vertices[i+2]);
+			aabb.xMax = std::max(aabb.xMax, vertices[i]);
+			aabb.yMax = std::max(aabb.yMax, vertices[i+1]);
+			aabb.zMax = std::max(aabb.zMax, vertices[i+2]);
+		}
+
+		return aabb;
+	}
 }

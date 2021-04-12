@@ -14,12 +14,12 @@ void PlayerMovementSystem::Update(float ts) {
 		float moveDelta = player.moveSpeed * ts * 30;
 
 		Engine::Vec3 move{ 0 };
-		Engine::Vec3 rotation{ 0 };
+		float rotation = transform.rotation.y;
 		if (Engine::Input::IsKeyDown(Engine::KeyCode::A)) {
-			rotation.y -= moveDelta;
+			rotation -= moveDelta;
 		}
 		if (Engine::Input::IsKeyDown(Engine::KeyCode::D)) {
-			rotation.y += moveDelta;
+			rotation += moveDelta;
 		}
 		if (Engine::Input::IsKeyDown(Engine::KeyCode::W)) {
 			//rotation.x += moveDelta;
@@ -28,9 +28,7 @@ void PlayerMovementSystem::Update(float ts) {
 			//rotation.x -= moveDelta;
 		}
 
-		transform.rotation.Add(rotation);
-
-		transform.position = Engine::CylindricalToCartesian({ player.radius, transform.position.y, -transform.rotation.y });
+		transform = Engine::TransformComponent::GetArchTransform(rotation, player.radius, transform.position.y);
 	}
 }
 

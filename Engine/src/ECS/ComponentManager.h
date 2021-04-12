@@ -25,6 +25,9 @@ namespace Engine {
 	class ComponentPool : public IComponentPool {
 	public:
 		T& CreateComponent(EntityID entityID) {
+			if (entityToIndexMap.find(entityID) != entityToIndexMap.end()) {
+				int x = 1;
+			}
 			assert(entityToIndexMap.find(entityID) == entityToIndexMap.end());
 
 			componentVector.emplace_back();

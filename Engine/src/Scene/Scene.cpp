@@ -21,11 +21,6 @@ namespace Engine {
 		return entity;
 	}
 
-	void Scene::DestroyEntity(Entity entity)
-	{
-		entitiesToDestroy.insert(entity);
-	}
-
 	Entity Scene::GetEntity(EntityID entityID)
 	{
 		return { entityID, this };
@@ -53,19 +48,25 @@ namespace Engine {
 
 
 		// destroy entities
-		for (auto& entity : entitiesToDestroy){
-		
-			if (ecs.HasComponent<ScriptComponent>(entity.id)) 
-			{
-				auto& script = ecs.GetComponent<ScriptComponent>(entity.id);
-				script.Instance->OnDestroy();
-				script.DestroyScript(&script);
+		{
+			auto destroyView = ecs.GetView<DestroyTag>();
+			while (destroyView.MoveNext()) {
+				entitiesToDestroy.push_back(destroyView.GetEntity());
 			}
 
-			ecs.EntityDestroyed(entity.id);
-		}
-		entitiesToDestroy.clear();
+			for (auto& entity : entitiesToDestroy){
+		
+				if (ecs.HasComponent<ScriptComponent>(entity)) 
+				{
+					auto& script = ecs.GetComponent<ScriptComponent>(entity);
+					script.Instance->OnDestroy();
+					script.DestroyScript(&script);
+				}
 
+				ecs.EntityDestroyed(entity);
+			}
+			entitiesToDestroy.clear();
+		}
 		
 		for (auto& system : systems) {
 			system->Update(ts);

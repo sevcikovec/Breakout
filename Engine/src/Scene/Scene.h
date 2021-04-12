@@ -14,8 +14,6 @@ namespace Engine {
 
 		Entity CreateEntity(const std::string& name);
 
-		void DestroyEntity(Entity entity);
-
 		Entity GetEntity(EntityID entityID);
 
 		template<typename... T>
@@ -42,7 +40,7 @@ namespace Engine {
 		
 		ECS ecs{};
 
-		std::unordered_set<Entity> entitiesToDestroy;
+		std::vector<EntityID> entitiesToDestroy;
 
 		void InitRenderingSystems();
 		Ref<RenderingSystem> renderingSystem;

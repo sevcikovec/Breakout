@@ -5,8 +5,11 @@
 #include <../Renderer/Camera.h>
 #include <../Renderer/Material.h>
 #include <../Renderer/VertexArray.h>
+#include "../Math/Coordinates.h"
 
 namespace Engine {
+
+	struct DestroyTag{};
 
 	struct TagComponent {
 		std::string name;
@@ -23,6 +26,15 @@ namespace Engine {
 			Mat4 modelMat = Mat4::GetTranslationMatrix(position) * Mat4(Mat3::RotationMatrix(rot)) * Mat4::GetScaleMatrix(scale);
 			
 			return modelMat;
+		}
+
+		static TransformComponent GetArchTransform(float angle, float radius, float y) {
+			TransformComponent transform;
+			transform.position.y = y;
+			transform.rotation.y = angle;
+
+			transform.position = CylindricalToCartesian({ radius, transform.position.y, -transform.rotation.y });
+			return transform;
 		}
 	};
 
