@@ -16,8 +16,20 @@ namespace Engine {
 				auto& first = objects[collisionPairs[i].ColliderObjectAIndex];
 				auto& second = objects[collisionPairs[i].ColliderObjectBIndex];
 
-				auto& firstDisplacement = collisionPairs[i].firstObjectDisplacement;
-				first.transform.position = first.transform.position + firstDisplacement;
+				if (first.colliderType == ColliderType::sphere && second.colliderType == ColliderType::sphere) {
+					auto& firstDisplacement = collisionPairs[i].firstObjectDisplacement;
+					firstDisplacement.Mul(0.5f);
+					first.transform.position = first.transform.position + firstDisplacement;
+
+					auto& secondDisplacement = firstDisplacement;
+					secondDisplacement.Mul(-1);
+					second.transform.position = second.transform.position + secondDisplacement;
+				}
+				else {
+					auto& firstDisplacement = collisionPairs[i].firstObjectDisplacement;
+					first.transform.position = first.transform.position + firstDisplacement;
+				}
+
 			}
 
 			// update transforms

@@ -27,6 +27,9 @@ namespace Engine {
 				else if (objects[bIndex].colliderType == ColliderType::sphere && objects[aIndex].colliderType == ColliderType::arch) {
 					isColliding = ResolveSphereArchCollisions(bIndex, aIndex, collisionPair);
 				}
+				else if (objects[aIndex].colliderType == ColliderType::sphere && objects[bIndex].colliderType == ColliderType::sphere) {
+					isColliding = ResolveSphereSphereCollisions(aIndex, bIndex, collisionPair);
+				}
 
 				if (isColliding) {
 					collisionPairs.push_back(collisionPair);
@@ -151,5 +154,30 @@ namespace Engine {
 
 			return false;
 		}
+		
+		bool ResolveSphereSphereCollisions(const size_t& sphereAIndex, const size_t& sphereBIndex, CollisionPair& collisionPair) {
+			auto & objects = pWorld->collisionObjects;
+
+			auto& sphereAObject = objects[sphereAIndex];
+			auto& sphereBObject = objects[sphereBIndex];
+
+			auto& colliderA = ecs->GetComponent<SphereCollider>(sphereAObject.entity);
+			auto& colliderB = ecs->GetComponent<SphereCollider>(sphereBObject.entity);
+			
+			float minkowskiSphereARadius = colliderA.radius + colliderB.radius;
+
+			float distance = (sphereBObject.transform.position - sphereAObject.transform.position).Mag();
+			if (distance < minkowskiSphereARadius) {
+				collisionPair.ColliderObjectAIndex = sphereAIndex;
+				collisionPair.ColliderObjectBIndex = sphereBIndex;
+				float e = 0.00000001f; // added epsilon if spheres on the same position
+				collisionPair.collisionNormal = ((sphereAObject.transform.position + e) - sphereBObject.transform.position).Normalized();
+				collisionPair.firstObjectDisplacement = collisionPair.collisionNormal * (minkowskiSphereARadius - distance);
+				return true;
+			}
+
+			return false;
+		}
+
 	};
 }

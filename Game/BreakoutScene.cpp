@@ -47,7 +47,7 @@ BreakoutScene::BreakoutScene() : Scene("Main scene")
 	// generate ball
 	{
 
-		float radius = 0.15;
+		float radius = 0.2;
 		MeshGenerator::GenerateSphere(radius, 20, 20, vertices, indices);
 		auto ballMeshVAO = GetVertexArray(vertices, indices);
 
@@ -55,29 +55,14 @@ BreakoutScene::BreakoutScene() : Scene("Main scene")
 		ballMaterial->SetShader(shader);
 		ballMaterial->SetProperty("color", Vec3{ .7f, .0f, 0 });
 
-		Entity ballEntity = CreateEntity("Ball");
-		ballEntity.AddComponent<BallComponent>();
-		auto& transform = ballEntity.AddComponent<TransformComponent>();
-		transform.scale = { 1.f, 1.f, 1.f };
-		transform.position = { 0.f,0.25f,-5.f };
-		transform.rotation = { 0.f,0.0f, 0.f };
-		auto& mesh = ballEntity.AddComponent<MeshComponent>();
-		mesh.material = ballMaterial;
-		mesh.vao = ballMeshVAO;
-		auto& platformAABB = ballEntity.AddComponent<AABB_local>();
-		platformAABB.xMin = -radius;
-		platformAABB.yMin = -radius;
-		platformAABB.zMin = -radius;
-		platformAABB.xMax =  radius;
-		platformAABB.yMax =  radius;
-		platformAABB.zMax =  radius;
-
-		auto& velocity = ballEntity.AddComponent<VelocityComponent>();
-		velocity.velocity.z = 6;
-		velocity.velocity.x = 0.5f;
-
-		auto& sphereCollider = ballEntity.AddComponent<SphereCollider>();
-		sphereCollider.radius = radius;
+		auto ball1 = CreateBall(ballMaterial, ballMeshVAO, radius, { -4.f, 0.1f, 0 }, { 2, 0, 1 });
+		auto ball2 = CreateBall(ballMaterial, ballMeshVAO, radius, { 0.f, 0.1f, 4.1f }, { 1, 0, 2 });
+		CreateBall(ballMaterial, ballMeshVAO, radius, { 0.f, 0.1f, 3.4f }, { 6, 0, 2 });
+		CreateBall(ballMaterial, ballMeshVAO, radius, { 0.f, 0.1f, -3.4f }, { 6, 0, 2 });
+		CreateBall(ballMaterial, ballMeshVAO, radius, { 0.f, 0.1f, 0.4f }, { 6, 0, 2 });
+		CreateBall(ballMaterial, ballMeshVAO, radius, { 0.f, 0.1f, 1.4f }, { 6, 0, 2 });
+		for (int i =0; i<1; i++)
+			CreateBall(ballMaterial, ballMeshVAO, radius, { ((rand() % 70) - 35) / 10.f, 0.1f, ((rand() % 70) - 35) / 10.f }, { 6, 0, 2 });
 	}
 
 	// generate wall
@@ -232,5 +217,33 @@ Engine::Entity BreakoutScene::CreateBlockArch(Engine::Ref<Engine::Material> play
 	auto& block = entity.AddComponent<BlockComponent>();
 
 	return entity;
+}
+
+Engine::Entity BreakoutScene::CreateBall(Engine::Ref<Engine::Material> material, Engine::Ref<Engine::VertexArray> vertexArray, float radius, Engine::Vec3 position, Engine::Vec3 velocity)
+{
+	Entity ballEntity = CreateEntity("Ball");
+	ballEntity.AddComponent<BallComponent>();
+	auto& transform = ballEntity.AddComponent<TransformComponent>();
+	transform.position = position;
+	
+	auto& mesh = ballEntity.AddComponent<MeshComponent>();
+	mesh.material = material;
+	mesh.vao = vertexArray;
+	auto& platformAABB = ballEntity.AddComponent<AABB_local>();
+	platformAABB.xMin = -radius;
+	platformAABB.yMin = -radius;
+	platformAABB.zMin = -radius;
+	platformAABB.xMax = radius;
+	platformAABB.yMax = radius;
+	platformAABB.zMax = radius;
+
+	auto& velocityComponent = ballEntity.AddComponent<VelocityComponent>();
+	velocityComponent.velocity = velocity;
+	velocityComponent.constraintMoveY = true;
+
+	auto& sphereCollider = ballEntity.AddComponent<SphereCollider>();
+	sphereCollider.radius = radius;
+
+	return ballEntity;
 }
 

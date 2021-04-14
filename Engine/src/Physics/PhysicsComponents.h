@@ -5,7 +5,12 @@
 namespace Engine {
 	struct VelocityComponent {
 		Vec3 velocity;
+	
+		bool constraintMoveX = false;
+		bool constraintMoveY = false;
+		bool constraintMoveZ = false;
 	};
+
 
 	///
 	/// AABB in model space

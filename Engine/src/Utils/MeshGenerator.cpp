@@ -231,10 +231,10 @@ namespace Engine {
 		AABB_local aabb;
 		aabb.xMax = -FLT_MAX;
 		aabb.yMax = -FLT_MAX;
-		aabb.yMax = -FLT_MAX;
+		aabb.zMax = -FLT_MAX;
+		aabb.xMin =  FLT_MAX;
 		aabb.yMin =  FLT_MAX;
 		aabb.zMin =  FLT_MAX;
-		aabb.xMin =  FLT_MAX;
 		for (size_t i = 0; i < vertices.size(); i += 3)
 		{
 			aabb.xMin = std::min(aabb.xMin, vertices[i]);
