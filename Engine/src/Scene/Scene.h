@@ -31,6 +31,14 @@ namespace Engine {
 			return system;
 		}
 
+		template<typename T>
+		Ref<T> RegisterOnCollisionSystem() {
+			auto onCollisionSystem = CreateRef<T>();
+			onCollisionSystem->Init(&ecs);
+			physicsSystem->RegisterOnCollisionListenerSystem(onCollisionSystem);
+			return onCollisionSystem;
+		}
+
 	protected:
 		std::string name;
 

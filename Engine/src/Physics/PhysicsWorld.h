@@ -12,7 +12,7 @@ namespace Engine {
 	private:
 		friend class BroadphaseSystem;
 		friend class NarrowphaseSystem;
-		friend class CollisionEventsSystem;
+		friend class CollisionEventDispatcherSystem;
 		friend class CollisionReactionResolveSystem;;
 
 		std::vector<ColliderObject> collisionObjects;

@@ -15,7 +15,9 @@ BreakoutScene::BreakoutScene() : Scene("Main scene")
 	// register systems
 	auto playerSystem = RegisterSystem<PlayerMovementSystem>();
 	auto ballSystem = RegisterSystem<BallSystem>();
-	auto blockSystem = RegisterSystem<BlockSystem>();
+
+	auto blockSystem = RegisterOnCollisionSystem<BlockSystem>();
+	auto ballBounceSystem = RegisterOnCollisionSystem<BounceSystem>();
 
 	// add camera
 	{

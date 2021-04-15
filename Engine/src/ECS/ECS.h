@@ -19,6 +19,15 @@ namespace Engine {
 			return componentManager.GetComponentType<T>();
 		}
 
+		template<typename... C>
+		Signature GetSignature() {
+			return componentManager.GetSignature<C...>();
+		}
+
+		Signature GetEntitySignature(EntityID entity) {
+			return entityManager.GetEntitySignature(entity);
+		}
+
 		template<typename T>
 		T& AddComponent(EntityID entity) {
 			T& newComponent = componentManager.AddComponent<T>(entity);

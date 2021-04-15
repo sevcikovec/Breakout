@@ -6,28 +6,28 @@ namespace Engine {
 		OnUpdateSystem::Init(ecs);
 
 
-		this->dynamicsSystem = CreateRef<DynamicsSystem>();
-		this->dynamicsSystem->Init(ecs);
+		dynamicsSystem = CreateRef<DynamicsSystem>();
+		dynamicsSystem->Init(ecs);
 		
-		this->collectionSystem = CreateRef<CollectObjectsSystem>();
-		this->collectionSystem->Init(ecs);
-		this->collectionSystem->SetPhysicsWorld(&physicsWorld);
+		collectionSystem = CreateRef<CollectObjectsSystem>();
+		collectionSystem->Init(ecs);
+		collectionSystem->SetPhysicsWorld(&physicsWorld);
 		
-		this->broadphaseSystem = CreateRef<BroadphaseSystem>();
-		this->broadphaseSystem->Init(ecs);
-		this->broadphaseSystem->SetPhysicsWorld(&physicsWorld);
+		broadphaseSystem = CreateRef<BroadphaseSystem>();
+		broadphaseSystem->Init(ecs);
+		broadphaseSystem->SetPhysicsWorld(&physicsWorld);
 
-		this->narrowphaseSystem = CreateRef<NarrowphaseSystem>();
-		this->narrowphaseSystem->Init(ecs);
-		this->narrowphaseSystem->SetPhysicsWorld(&physicsWorld);
-
-		this->eventsSystem = CreateRef<CollisionEventsSystem>();
-		this->eventsSystem->Init(ecs);
-		this->eventsSystem->SetPhysicsWorld(&physicsWorld);
+		narrowphaseSystem = CreateRef<NarrowphaseSystem>();
+		narrowphaseSystem->Init(ecs);
+		narrowphaseSystem->SetPhysicsWorld(&physicsWorld);
 		
-		this->reactionResolveSystem = CreateRef<CollisionReactionResolveSystem>();
-		this->reactionResolveSystem->Init(ecs);
-		this->reactionResolveSystem->SetPhysicsWorld(&physicsWorld);
+		reactionResolveSystem = CreateRef<CollisionReactionResolveSystem>();
+		reactionResolveSystem->Init(ecs);
+		reactionResolveSystem->SetPhysicsWorld(&physicsWorld);
+
+		eventsSystem = CreateRef<CollisionEventDispatcherSystem>();
+		eventsSystem->Init(ecs);
+		eventsSystem->SetPhysicsWorld(&physicsWorld);
 	}
 
 	void PhysicsSystem::Update(float ts)
@@ -41,8 +41,12 @@ namespace Engine {
 
 		this->narrowphaseSystem->Update(ts);
 		
-		this->eventsSystem->Update(ts);
-
 		this->reactionResolveSystem->Update(ts);
+
+		this->eventsSystem->Update(ts);
+	}
+	void PhysicsSystem::RegisterOnCollisionListenerSystem(Ref<ACollisionListenerSystem> onCollisionSystem)
+	{
+		eventsSystem->AddListener(onCollisionSystem);
 	}
 }

@@ -72,8 +72,16 @@ namespace Engine {
 	struct ColliderObject
 	{
 		EntityID entity;
+		Signature entitySignature;
 		AABB aabb;
 		TransformComponent transform;
 		ColliderType colliderType;
+	};
+
+
+	struct CollisionEvent {
+		EntityID collidingEntity;
+		EntityID otherEntity;
+		Vec3 collisionNormal;
 	};
 }

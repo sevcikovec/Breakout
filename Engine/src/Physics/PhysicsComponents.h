@@ -30,9 +30,4 @@ namespace Engine {
 		float outerRadius;
 		float angleWidth;
 	};
-
-	struct CollisionEvent {
-		EntityID otherEntity;
-		Vec3 collisionNormal;
-	};
 }

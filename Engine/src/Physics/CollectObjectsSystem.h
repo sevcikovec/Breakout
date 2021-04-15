@@ -12,7 +12,7 @@ namespace Engine {
 				auto& localAABB = viewSphere.GetComponent<AABB_local>();
 				auto entity = viewSphere.GetEntity();
 
-				pWorld->AddColliderObject(ColliderObject{entity, AABB(localAABB, transform.GetTransformMatrix()), transform, ColliderType::sphere});
+				pWorld->AddColliderObject(ColliderObject{entity, ecs->GetEntitySignature(entity), AABB(localAABB, transform.GetTransformMatrix()), transform, ColliderType::sphere});
 			}
 			
 			auto viewArch = ecs->GetView<ArchCollider, AABB_local, TransformComponent>();
@@ -22,7 +22,7 @@ namespace Engine {
 				auto& localAABB = viewArch.GetComponent<AABB_local>();
 				auto entity = viewArch.GetEntity();
 
-				pWorld->AddColliderObject(ColliderObject{ entity, AABB(localAABB, transform.GetTransformMatrix()), transform , ColliderType::arch});
+				pWorld->AddColliderObject(ColliderObject{ entity, ecs->GetEntitySignature(entity), AABB(localAABB, transform.GetTransformMatrix()), transform , ColliderType::arch});
 			}
 		}
 

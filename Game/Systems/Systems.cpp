@@ -37,14 +37,40 @@ void BallSystem::Update(float ts) {
 		
 }
 
+void BlockSystem::SetEntities()
+{
+	SetCollisionEntityColliding<BlockComponent>();
+	SetCollisionEntityOther<BallComponent>();	
+}
+
 void BlockSystem::Update(float ts)
 {
-	auto view = ecs->GetView<BlockComponent, CollisionEvent>();
-	while (view.MoveNext()) {
-		auto& collisionEvent = view.GetComponent<CollisionEvent>();
+	for (const auto& collisionEvent : collisionEvents) {		
+		ecs->AddComponent<DestroyTag>(collisionEvent.collidingEntity);
+	}
+}
 
-		if (ecs->HasComponents<BallComponent>(collisionEvent.otherEntity)) {
-			ecs->AddComponent<DestroyTag>(view.GetEntity());
-		}
+void BounceSystem::SetEntities()
+{
+	SetCollisionEntityColliding<BallComponent, VelocityComponent>();
+	//SetCollisionEntityOther<>();	
+}
+
+void BounceSystem::Update(float ts)
+{
+	// collision reaction with bounce
+	for (const auto& collisionEvent : collisionEvents) {
+		auto& velocity = ecs->GetComponent<VelocityComponent>(collisionEvent.collidingEntity);
+
+		float currentSpeed = velocity.velocity.Mag();
+		Vec3 newVelocity;
+		// if there is at most 90 deg angle between velocity and collision normal, don't reflect but add force in direction of collision normal
+		if (Vec3::Dot(velocity.velocity, collisionEvent.collisionNormal) > 0)
+			newVelocity = (velocity.velocity.Normalized() + collisionEvent.collisionNormal);
+		else
+			newVelocity = Vec3::Reflect(velocity.velocity, collisionEvent.collisionNormal);
+		newVelocity.Normalize();
+		newVelocity.Mul(currentSpeed);
+		velocity.velocity = newVelocity;
 	}
 }
