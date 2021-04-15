@@ -22,13 +22,13 @@ namespace Engine {
 		template<typename T>
 		bool HasComponent()
 		{
-			return scene->ecs.HasComponent<T>(entity);
+			return scene->ecs.HasComponent<T>(id);
 		}
 
 		template<typename T>
 		void RemoveComponent()
 		{
-			scene->ecs.RemoveComponent<T>(entity);
+			scene->ecs.RemoveComponent<T>(id);
 		}
 
 		size_t operator==(const Entity& other) const {

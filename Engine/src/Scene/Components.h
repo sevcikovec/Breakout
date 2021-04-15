@@ -33,7 +33,7 @@ namespace Engine {
 			transform.position.y = y;
 			transform.rotation.y = angle;
 
-			transform.position = CylindricalToCartesian({ radius, transform.position.y, -transform.rotation.y });
+			transform.position = CylindricalToCartesian({ radius, transform.position.y, transform.rotation.y });
 			return transform;
 		}
 	};

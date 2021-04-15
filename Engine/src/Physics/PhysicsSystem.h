@@ -23,6 +23,6 @@ namespace Engine {
 		Ref<BroadphaseSystem> broadphaseSystem;
 		Ref<NarrowphaseSystem> narrowphaseSystem;
 		Ref<CollisionEventsSystem> eventsSystem;
-		Ref<CollisionReactionResolveSystem> reactionResolveSystem;;
+		Ref<CollisionReactionResolveSystem> reactionResolveSystem;
 	};
 }

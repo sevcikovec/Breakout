@@ -21,11 +21,12 @@ BreakoutScene::BreakoutScene() : Scene("Main scene")
 	{
 		Entity cameraEntity = CreateEntity("Main camera");
 		auto& cameraTransform = cameraEntity.AddComponent<TransformComponent>();
-		cameraTransform.position = { 0, 10,7.f };
-		cameraTransform.rotation = { -60, 0,0 };
-		
+		cameraTransform.position = { 0, 30,0.f };
+		cameraTransform.rotation = { -90.f, 0,0 };
+		//cameraTransform.position = { 0, 0,20.f };
+		//cameraTransform.rotation = { 0.f, 0,0 };
 		Ref<Camera> camera = CreateRef<Camera>();
-		camera->SetPerspective(0.785398f, 0.1f, 100.f);
+		camera->SetPerspective(.6f, 0.1f, 100.f);
 		camera->SetViewport(640, 480);
 
 		auto& cameraComponent = cameraEntity.AddComponent<CameraComponent>();
@@ -55,14 +56,16 @@ BreakoutScene::BreakoutScene() : Scene("Main scene")
 		ballMaterial->SetShader(shader);
 		ballMaterial->SetProperty("color", Vec3{ .7f, .0f, 0 });
 
-		auto ball1 = CreateBall(ballMaterial, ballMeshVAO, radius, { -4.f, 0.1f, 0 }, { 2, 0, 1 });
-		auto ball2 = CreateBall(ballMaterial, ballMeshVAO, radius, { 0.f, 0.1f, 4.1f }, { 1, 0, 2 });
-		CreateBall(ballMaterial, ballMeshVAO, radius, { 0.f, 0.1f, 3.4f }, { 6, 0, 2 });
-		CreateBall(ballMaterial, ballMeshVAO, radius, { 0.f, 0.1f, -3.4f }, { 6, 0, 2 });
-		CreateBall(ballMaterial, ballMeshVAO, radius, { 0.f, 0.1f, 0.4f }, { 6, 0, 2 });
-		CreateBall(ballMaterial, ballMeshVAO, radius, { 0.f, 0.1f, 1.4f }, { 6, 0, 2 });
-		for (int i =0; i<1; i++)
-			CreateBall(ballMaterial, ballMeshVAO, radius, { ((rand() % 70) - 35) / 10.f, 0.1f, ((rand() % 70) - 35) / 10.f }, { 6, 0, 2 });
+		auto ball1 = CreateBall(ballMaterial, ballMeshVAO, radius, { 3.f, 0.1f, 3.5f }, { 3, 0, 2 });
+		//auto ball2 = CreateBall(ballMaterial, ballMeshVAO, radius, { 1.f, 0.1f, 5.f }, { 0, 0, 6 });
+		
+		//CreateBall(ballMaterial, ballMeshVAO, radius, { 0.f, 0.1f, 3.4f }, { 6, 0, 2 });
+		//CreateBall(ballMaterial, ballMeshVAO, radius, { 0.f, 0.1f, -3.4f }, { 6, 0, 2 });
+		//CreateBall(ballMaterial, ballMeshVAO, radius, { 0.f, 0.1f, 0.4f }, { 6, 0, 2 });
+		//CreateBall(ballMaterial, ballMeshVAO, radius, { 0.f, 0.1f, 1.4f }, { 6, 0, 2 });
+		/*for (int i = 0; i < 45; i++) {
+			CreateBall(ballMaterial, ballMeshVAO, radius, { ((rand() % 70) - 35) / 10.f, 0.1f, ((rand() % 70) - 35) / 10.f }, { 0, 0, 40 });
+		}*/
 	}
 
 	// generate wall
@@ -104,11 +107,11 @@ BreakoutScene::BreakoutScene() : Scene("Main scene")
 		float outerRadius = 6.f;
 		float playerRadius = (innerRadius + outerRadius) / 2;
 		float angleWidth = 360.f;
-		MeshGenerator::GenerateArk(innerRadius, outerRadius, angleWidth, 0.3f, 50, true, vertices, indices);
+		MeshGenerator::GenerateArk(innerRadius, outerRadius, angleWidth, 1.f, 50, true, vertices, indices);
 		auto aabb = MeshGenerator::GetAABB(vertices);
 		auto playerMeshVAO = GetVertexArray(vertices, indices);
-		auto& wall = CreateArch(outerWallMaterial, playerMeshVAO, angleWidth, 0, playerRadius, innerRadius, outerRadius, 0.3f, aabb);
-
+		auto& wall = CreateArch(outerWallMaterial, playerMeshVAO, angleWidth, 0, playerRadius, innerRadius, outerRadius, 0.0f, aabb);
+		//wall.RemoveComponent<MeshComponent>();
 	}
 
 	// generate player

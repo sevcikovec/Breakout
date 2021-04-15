@@ -6,6 +6,7 @@ namespace Engine {
 	{
 		float x = cartesian.x;
 		float y = cartesian.y;
+		float s = atan2(y, x);
 		return {
 			sqrt(x * x + y * y),
 			ToDegrees(atan2(y, x))
@@ -23,7 +24,7 @@ namespace Engine {
 		return {
 			cylindrical.x * cos(ToRadians(cylindrical.z)),
 			cylindrical.y,
-			cylindrical.x * sin(ToRadians(cylindrical.z))
+			-cylindrical.x * sin(ToRadians(cylindrical.z))
 		};
 	}
 	Vec3 CartesianToCylindrical(Vec3 cartesian)

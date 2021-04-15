@@ -30,7 +30,7 @@ namespace Engine {
 	void Scene::OnUpdate(float ts)
 	{
 
-		std::cout << 1/ts << std::endl;
+		//std::cout << 1/ts << std::endl;
 		physicsSystem->Update(ts);
 
 

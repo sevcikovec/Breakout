@@ -86,8 +86,8 @@ namespace Engine {
 			// if not overlapping with front/back size, there cannot be a colision
 			if (!collidingFrontBack) return false;
 
-			Vec2 spherePolar = CartesianToPolar({ sphereObject.transform.position.x, sphereObject.transform.position.z });
-			Vec2 centerArchPolar = CartesianToPolar({ archObject.transform.position.x, archObject.transform.position.z });
+			Vec2 spherePolar = CartesianToPolar({ sphereObject.transform.position.x, -sphereObject.transform.position.z });
+			Vec2 centerArchPolar = CartesianToPolar({ archObject.transform.position.x, -archObject.transform.position.z });
 
 			float currentSpherePosCircumference = 2 * PI * sphereDistFromCenter;
 			float angleChangeForSphereRadius = (sphereRadius / currentSpherePosCircumference) * 360.f;
@@ -145,7 +145,7 @@ namespace Engine {
 				// side collision
 				else {
 					collisionPair.collisionNormal = sidesNormal;
-					collisionPair.firstObjectDisplacement = sidesNormal * -overlappingDistanceSides;
+					collisionPair.firstObjectDisplacement = sidesNormal * overlappingDistanceSides;
 				}
 
 				return true;

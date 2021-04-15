@@ -47,8 +47,12 @@ namespace Engine {
 				auto& collision = viewVelocity.GetComponent<CollisionEvent>();
 
 				float currentSpeed = velocity.velocity.Mag();
-
-				Vec3 newVelocity = Vec3::Reflect(velocity.velocity, collision.collisionNormal);
+				Vec3 newVelocity;
+				// if there is at most 90 deg angle between velocity and collision normal, don't reflect but add force in direction of collision normal
+				if (Vec3::Dot(velocity.velocity, collision.collisionNormal) > 0) 
+					newVelocity = (velocity.velocity.Normalized() + collision.collisionNormal);
+				else
+					newVelocity = Vec3::Reflect(velocity.velocity, collision.collisionNormal);
 				newVelocity.Normalize();
 				newVelocity.Mul(currentSpeed);
 				velocity.velocity = newVelocity;
