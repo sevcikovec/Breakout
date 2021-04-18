@@ -89,22 +89,53 @@ namespace Engine {
 	Vec3 Vec3::operator+(const Vec3& other) const
 	{
 		Vec3 res(*this);
-		res.Add(other);
+		res += other;
 		return res;
+	}
+
+	Vec3& Vec3::operator+=(const Vec3& other)
+	{
+		this->Add(other);
+		return *this;
 	}
 
 	Vec3 Vec3::operator-(const Vec3& other) const
 	{
 		Vec3 res(*this);
-		res.Sub(other);
+		res -= other;
 		return res;
+	}
+
+	Vec3& Vec3::operator-=(const Vec3& other)
+	{
+		this->Sub(other);
+		return *this;
 	}
 
 	Vec3 Vec3::operator*(const float& other) const
 	{
 		Vec3 res(*this);
-		res.Mul(other);
+		res *= other;
 		return res;
+	}
+
+	Vec3& Vec3::operator*=(const float& other)
+	{
+		this->Mul(other);
+		return *this;
+	}
+
+	Vec3 Vec3::operator/(const float& other) const
+	{
+		Vec3 res(*this);
+		res /= other;
+		return res;
+	}
+
+	Vec3& Vec3::operator/=(const float& other)
+	{
+		this->Div(other);
+		return *this;
 	}
 
 	float Vec3::operator[](int index) const

@@ -90,3 +90,17 @@
 ![week6](/Images/Week6.gif)
 
 </details>
+
+<details>
+
+<summary>Week 7</summary>
+
+    Added center bricks - working destroying by ball with gravity and stacking.
+
+    Paddle movement included in calculation of ball bounce.
+
+    Added sphere-sphere collision.
+  
+![week6](/Images/Week7.gif)
+
+</details>

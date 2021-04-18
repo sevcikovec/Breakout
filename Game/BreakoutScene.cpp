@@ -23,8 +23,10 @@ BreakoutScene::BreakoutScene() : Scene("Main scene")
 	{
 		Entity cameraEntity = CreateEntity("Main camera");
 		auto& cameraTransform = cameraEntity.AddComponent<TransformComponent>();
-		cameraTransform.position = { 0, 30,0.f };
-		cameraTransform.rotation = { -90.f, 0,0 };
+		cameraTransform.position = { 0, 20,13.f };
+		cameraTransform.rotation = { -60.f, 0,0 };
+		//cameraTransform.position = { 0, 30,0.f };
+		//cameraTransform.rotation = { -90.f, 0,0 };
 		//cameraTransform.position = { 0, 0,20.f };
 		//cameraTransform.rotation = { 0.f, 0,0 };
 		Ref<Camera> camera = CreateRef<Camera>();
@@ -58,8 +60,8 @@ BreakoutScene::BreakoutScene() : Scene("Main scene")
 		ballMaterial->SetShader(shader);
 		ballMaterial->SetProperty("color", Vec3{ .7f, .0f, 0 });
 
-		auto ball1 = CreateBall(ballMaterial, ballMeshVAO, radius, { 3.f, 0.1f, 3.5f }, { 3, 0, 2 });
-		//auto ball2 = CreateBall(ballMaterial, ballMeshVAO, radius, { 1.f, 0.1f, 5.f }, { 0, 0, 6 });
+		auto ball1 = CreateBall(ballMaterial, ballMeshVAO, radius, { 0.f, radius, 3.0f }, { 0, 0, -2});
+		//auto ball2 = CreateBall(ballMaterial, ballMeshVAO, radius, { -3.f, 0.1f, 0.3f }, { 2, 0, 0 });
 		
 		//CreateBall(ballMaterial, ballMeshVAO, radius, { 0.f, 0.1f, 3.4f }, { 6, 0, 2 });
 		//CreateBall(ballMaterial, ballMeshVAO, radius, { 0.f, 0.1f, -3.4f }, { 6, 0, 2 });
@@ -69,7 +71,7 @@ BreakoutScene::BreakoutScene() : Scene("Main scene")
 			CreateBall(ballMaterial, ballMeshVAO, radius, { ((rand() % 70) - 35) / 10.f, 0.1f, ((rand() % 70) - 35) / 10.f }, { 0, 0, 40 });
 		}*/
 	}
-
+	
 	// generate wall
 	{
 		auto material1 = CreateRef<Material>();
@@ -79,8 +81,8 @@ BreakoutScene::BreakoutScene() : Scene("Main scene")
 		material2->SetShader(shader);
 		material2->SetProperty("color", Vec3{ .0f, .7f, .7f });
 
-		float numberInRow = 10;
-		int rows = 1;
+		float numberInRow = 12;
+		int rows = 3;
 
 		float innerRadius = 1.f;
 		float outerRadius = 1.5f;
@@ -91,14 +93,19 @@ BreakoutScene::BreakoutScene() : Scene("Main scene")
 		auto aabb = MeshGenerator::GetAABB(vertices);
 		auto vertexArray = GetVertexArray(vertices, indices);
 
-		for (size_t i = 0; i < rows; i++) {
+		//for (int i = rows-1; i >= 0; i--) {
+		for (int i = 0; i < rows; i++) {
 			for (size_t j = 0; j < numberInRow; j++)
 			{
-				auto& block = CreateBlockArch((j + i) % 2 ? material1 : material2, vertexArray, widthAngle, widthAngle * j, radius, innerRadius, outerRadius, height * i, aabb);
+				auto& block = CreateBlockArch((j + i) % 2 ? material1 : material2, vertexArray, widthAngle, widthAngle * j, radius, innerRadius, outerRadius, height, height * i + i * 0.f -0.f, aabb);
+				//if (i != 0)
+				auto& rb = block.AddComponent<Rigidbody>();
+				rb.restitution = .1f;
+				rb.mass = 1.f;
 			}
 		}
 	}
-
+	/*
 	// generate outer wall
 	{
 		auto outerWallMaterial = CreateRef<Material>();
@@ -109,34 +116,38 @@ BreakoutScene::BreakoutScene() : Scene("Main scene")
 		float outerRadius = 6.f;
 		float playerRadius = (innerRadius + outerRadius) / 2;
 		float angleWidth = 360.f;
-		MeshGenerator::GenerateArk(innerRadius, outerRadius, angleWidth, 1.f, 50, true, vertices, indices);
+		float height = 1.f;
+		MeshGenerator::GenerateArk(innerRadius, outerRadius, angleWidth, height, 50, true, vertices, indices);
 		auto aabb = MeshGenerator::GetAABB(vertices);
 		auto playerMeshVAO = GetVertexArray(vertices, indices);
-		auto& wall = CreateArch(outerWallMaterial, playerMeshVAO, angleWidth, 0, playerRadius, innerRadius, outerRadius, 0.0f, aabb);
+		auto& wall = CreateArch(outerWallMaterial, playerMeshVAO, angleWidth, 0, playerRadius, innerRadius, outerRadius, height, 0.0f, aabb);
 		//wall.RemoveComponent<MeshComponent>();
 	}
+	*/
 
+	
 	// generate player
 	{
 		auto playerArchMaterial = CreateRef<Material>();
 		playerArchMaterial->SetShader(shader);
 		playerArchMaterial->SetProperty("color", Vec3{ .0f, .0f, .7f });
 
-		float innerRadius = 4.f;
-		float outerRadius = 5.f;
+		float innerRadius = 6.f;
+		float outerRadius = 6.5f;
 		float playerRadius = (innerRadius + outerRadius) / 2;
 		float angleWidth = 45.f;
-		MeshGenerator::GenerateArk(innerRadius, outerRadius, angleWidth, 0.5f, 50, true, vertices, indices);
+		float height = 0.5f;
+		MeshGenerator::GenerateArk(innerRadius, outerRadius, angleWidth, height, 50, true, vertices, indices);
 		auto aabb = MeshGenerator::GetAABB(vertices);
 		auto playerMeshVAO = GetVertexArray(vertices, indices);
-		auto& player1 = CreatePlayerArch(playerArchMaterial, playerMeshVAO, angleWidth, 0, playerRadius, innerRadius, outerRadius, aabb);
-		auto& player2 = CreatePlayerArch(playerArchMaterial, playerMeshVAO, angleWidth, 120, playerRadius, innerRadius, outerRadius, aabb);
-		auto& player3 = CreatePlayerArch(playerArchMaterial, playerMeshVAO, angleWidth, 240, playerRadius, innerRadius, outerRadius, aabb);
+		auto& player1 = CreatePlayerArch(playerArchMaterial, playerMeshVAO, angleWidth, 0, playerRadius, innerRadius, outerRadius, height, aabb);
+		auto& player2 = CreatePlayerArch(playerArchMaterial, playerMeshVAO, angleWidth, 120, playerRadius, innerRadius, outerRadius, height, aabb);
+		auto& player3 = CreatePlayerArch(playerArchMaterial, playerMeshVAO, angleWidth, 240, playerRadius, innerRadius, outerRadius, height, aabb);
 	}
 	
 	// generate floor
 	{
-		float radius = 6;
+		float radius = 7;
 		auto platformMaterial = CreateRef<Material>();
 		platformMaterial->SetShader(shader);
 		platformMaterial->SetProperty("color", Vec3{ .7f, .5f, 0 });
@@ -146,7 +157,7 @@ BreakoutScene::BreakoutScene() : Scene("Main scene")
 		Entity platformEntity = CreateEntity("Platform entity");
 		auto& transform = platformEntity.AddComponent<TransformComponent>();
 		transform.scale = { 1.f, 1.f, 1.f };
-		transform.position = { 0.f,.0f,0.f };
+		transform.position = { 0.f,0.-0.2f,0.f };
 		transform.rotation = { 0.f,0.0f, 0.f };
 		auto& mesh = platformEntity.AddComponent<MeshComponent>();
 		mesh.material = platformMaterial;
@@ -155,9 +166,12 @@ BreakoutScene::BreakoutScene() : Scene("Main scene")
 		platformAABB.xMin = -radius;
 		platformAABB.xMax = radius;
 		platformAABB.yMin = -0.2f;
-		platformAABB.yMax = 0.f;
+		platformAABB.yMax = 0.2f;
 		platformAABB.zMin = -radius;
 		platformAABB.zMax = radius;
+
+		auto& boxCollider = platformEntity.AddComponent<BoxCollider>();
+		boxCollider.size = { radius*2, 0.4f, radius*2 };
 	}
 	
 }
@@ -184,9 +198,9 @@ Ref<VertexArray> BreakoutScene::GetVertexArray(std::vector<float>& vertices, std
 }
 
 
-Entity BreakoutScene::CreatePlayerArch(Engine::Ref<Engine::Material> playerArchMaterial, Engine::Ref<Engine::VertexArray> playerMeshVAO, float angleWidth, float startingAngle, float radius, float innerRadius, float outerRadius, AABB_local aabb)
+Entity BreakoutScene::CreatePlayerArch(Engine::Ref<Engine::Material> playerArchMaterial, Engine::Ref<Engine::VertexArray> playerMeshVAO, float angleWidth, float startingAngle, float radius, float innerRadius, float outerRadius, float height, AABB_local aabb)
 {
-	Entity entity = CreateArch(playerArchMaterial, playerMeshVAO, angleWidth, startingAngle, radius, innerRadius, outerRadius, 0, aabb);
+	Entity entity = CreateArch(playerArchMaterial, playerMeshVAO, angleWidth, startingAngle, radius, innerRadius, outerRadius, height, 0, aabb);
 
 	auto& playerEntity = entity.AddComponent<PlayerComponent>();
 	playerEntity.radius = radius;
@@ -194,7 +208,7 @@ Entity BreakoutScene::CreatePlayerArch(Engine::Ref<Engine::Material> playerArchM
 	return entity;
 }
 
-Engine::Entity BreakoutScene::CreateArch(Engine::Ref<Engine::Material> material, Engine::Ref<Engine::VertexArray> vertexArray, float angleWidth, float startingAngle, float radius, float innerRadius, float outerRadius, float yPos, Engine::AABB_local aabb)
+Engine::Entity BreakoutScene::CreateArch(Engine::Ref<Engine::Material> material, Engine::Ref<Engine::VertexArray> vertexArray, float angleWidth, float startingAngle, float radius, float innerRadius, float outerRadius, float height, float yPos, Engine::AABB_local aabb)
 {
 	Entity entity = CreateEntity("Arch entity");
 	auto& playerTransform = entity.AddComponent<TransformComponent>();
@@ -211,13 +225,14 @@ Engine::Entity BreakoutScene::CreateArch(Engine::Ref<Engine::Material> material,
 	archCollider.innerRadius = innerRadius;
 	archCollider.outerRadius = outerRadius;
 	archCollider.angleWidth = angleWidth;
+	archCollider.height = height;
 
 	return entity;
 }
 
-Engine::Entity BreakoutScene::CreateBlockArch(Engine::Ref<Engine::Material> playerArchMaterial, Engine::Ref<Engine::VertexArray> playerMeshVAO, float angleWidth, float startingAngle, float radius, float innerRadius, float outerRadius, float yPos, Engine::AABB_local aabb)
+Engine::Entity BreakoutScene::CreateBlockArch(Engine::Ref<Engine::Material> playerArchMaterial, Engine::Ref<Engine::VertexArray> playerMeshVAO, float angleWidth, float startingAngle, float radius, float innerRadius, float outerRadius, float height, float yPos, Engine::AABB_local aabb)
 {
-	Entity entity = CreateArch(playerArchMaterial, playerMeshVAO, angleWidth, startingAngle, radius, innerRadius, outerRadius, yPos, aabb);
+	Entity entity = CreateArch(playerArchMaterial, playerMeshVAO, angleWidth, startingAngle, radius, innerRadius, outerRadius, height, yPos, aabb);
 
 	auto& block = entity.AddComponent<BlockComponent>();
 
@@ -242,9 +257,12 @@ Engine::Entity BreakoutScene::CreateBall(Engine::Ref<Engine::Material> material,
 	platformAABB.yMax = radius;
 	platformAABB.zMax = radius;
 
-	auto& velocityComponent = ballEntity.AddComponent<VelocityComponent>();
-	velocityComponent.velocity = velocity;
-	velocityComponent.constraintMoveY = true;
+	auto& rbComponent = ballEntity.AddComponent<Rigidbody>();
+	rbComponent.velocity = velocity;
+	rbComponent.constraintMoveY = true;
+	rbComponent.useGravity = false;
+	rbComponent.restitution = 1.f;
+	rbComponent.mass = 0.2f;
 
 	auto& sphereCollider = ballEntity.AddComponent<SphereCollider>();
 	sphereCollider.radius = radius;

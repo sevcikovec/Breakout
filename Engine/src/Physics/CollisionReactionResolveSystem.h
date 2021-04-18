@@ -1,5 +1,6 @@
 #pragma once
 #include "APhysicsSystem.h"
+#include <iostream>
 
 namespace Engine {
 	class CollisionReactionResolveSystem : public APhysicsSystem {
@@ -10,52 +11,77 @@ namespace Engine {
 			auto& collisionPairs = pWorld->collisionPairs;
 			auto& objects = pWorld->collisionObjects;
 
-			// update entities that has been displaced
+			size_t it = 3;
+			for (size_t k = 0; k < it; k++)
 			for (size_t i = 0; i < collisionPairs.size(); i++)
 			{
 				auto& first = objects[collisionPairs[i].ColliderObjectAIndex];
 				auto& second = objects[collisionPairs[i].ColliderObjectBIndex];
 
-				if (first.colliderType == ColliderType::sphere && second.colliderType == ColliderType::sphere) {
-					auto& firstDisplacement = collisionPairs[i].firstObjectDisplacement;
-					firstDisplacement.Mul(0.5f);
-					first.transform.position = first.transform.position + firstDisplacement;
 
-					auto& secondDisplacement = firstDisplacement;
-					secondDisplacement.Mul(-1);
-					second.transform.position = second.transform.position + secondDisplacement;
+				float penetrationDepth = collisionPairs[i].penetrationDepth;
+
+				Vec3 collisionNormal = collisionPairs[i].collisionNormal;
+
+				Vec3 relativeVelocity(0);
+
+				float e = 1;
+				float mass1 = 0;
+				float mass2 = 0;
+				if (first.hasRigidbody && second.hasRigidbody) {
+					relativeVelocity = first.rigidbody.velocity - second.rigidbody.velocity;
+					e = fmax(first.rigidbody.restitution, second.rigidbody.restitution);
+					mass1 = first.rigidbody.mass;
+					mass2 = second.rigidbody.mass;
 				}
-				else {
-					auto& firstDisplacement = collisionPairs[i].firstObjectDisplacement;
-					first.transform.position = first.transform.position + firstDisplacement;
+				else if (first.hasRigidbody && !second.hasRigidbody){
+					relativeVelocity = first.rigidbody.velocity;
+					e = first.rigidbody.restitution;
+					mass1 = first.rigidbody.mass;
 				}
+				else if (!first.hasRigidbody && second.hasRigidbody) {
+					relativeVelocity = second.rigidbody.velocity * -1;
+					e = second.rigidbody.restitution;
+					mass2 = second.rigidbody.mass;
+				}
+
+				float normalVelocity = Vec3::Dot(relativeVelocity, collisionNormal);
+
+				float j = 0;
+				if (normalVelocity > 0) continue;
+
+				float invMass1 = mass1 == 0 ? 0 : 1 / mass1;
+				float invMass2 = mass2 == 0 ? 0 : 1 / mass2;
+
+				float b = 5.f;
+				float slop = 0.005f;
+				
+				{
+					j = -(1 + e) * normalVelocity;
+					j /= invMass1 + invMass2;
+				}
+
+				j += fmax(penetrationDepth - slop, 0) * b;
+
+				if (first.hasRigidbody)
+					first.rigidbody.velocity += collisionNormal * j * invMass1;
+				if (second.hasRigidbody)
+					second.rigidbody.velocity -= collisionNormal * j * invMass2;
 
 			}
+	
 
-			// update transforms
-			for (size_t i = 0; i < objects.size(); i++)
+			// update transforms and velocities
+			for (auto& object : objects)
 			{
-				auto& transform = ecs->GetComponent<TransformComponent>(objects[i].entity);
-				transform = objects[i].transform;
-			}
+				auto& transform = ecs->GetComponent<TransformComponent>(object.entity);
+				transform = object.transform;
 
-
-			// collision reaction with bounce
-			auto viewVelocity = ecs->GetView<CollisionEvent, VelocityComponent>();
-			while (viewVelocity.MoveNext()) {
-				auto& velocity = viewVelocity.GetComponent<VelocityComponent>();
-				auto& collision = viewVelocity.GetComponent<CollisionEvent>();
-
-				float currentSpeed = velocity.velocity.Mag();
-				Vec3 newVelocity;
-				// if there is at most 90 deg angle between velocity and collision normal, don't reflect but add force in direction of collision normal
-				if (Vec3::Dot(velocity.velocity, collision.collisionNormal) > 0) 
-					newVelocity = (velocity.velocity.Normalized() + collision.collisionNormal);
-				else
-					newVelocity = Vec3::Reflect(velocity.velocity, collision.collisionNormal);
-				newVelocity.Normalize();
-				newVelocity.Mul(currentSpeed);
-				velocity.velocity = newVelocity;
+				if (object.hasRigidbody) {
+					auto& rb = ecs->GetComponent<Rigidbody>(object.entity);
+					rb = object.rigidbody;
+					transform.position += rb.velocity * ts;
+				}
 			}
 		}
 	};

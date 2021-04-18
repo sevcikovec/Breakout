@@ -5,7 +5,7 @@
 #include "PhysicsComponents.h"
 #include <limits> 
 namespace Engine {
-	enum ColliderType {
+	enum class ColliderType {
 		sphere,
 		box,
 		arch
@@ -60,7 +60,7 @@ namespace Engine {
 		size_t ColliderObjectBIndex;
 		Vec3 collisionPoint;
 		Vec3 collisionNormal;
-		Vec3 firstObjectDisplacement;
+		float penetrationDepth;
 	};
 
 	struct PossibleCollisionPair
@@ -76,6 +76,8 @@ namespace Engine {
 		AABB aabb;
 		TransformComponent transform;
 		ColliderType colliderType;
+		bool hasRigidbody;
+		Rigidbody rigidbody;
 	};
 
 

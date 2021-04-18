@@ -2,6 +2,7 @@
 #include "../Components/BreakoutComponents.h"
 #include <Core/Input.h>
 #include "Math/Coordinates.h"
+#include <iostream>
 
 using namespace Engine;
 
@@ -29,12 +30,23 @@ void PlayerMovementSystem::Update(float ts) {
 			//rotation.x -= moveDelta;
 		}
 
+		Vec3 prevPos = transform.position;
+
 		transform = TransformComponent::GetArchTransform(rotation, player.radius, transform.position.y);
+
+		player.movementDelta = transform.position - prevPos;
 	}
 }
 
 void BallSystem::Update(float ts) {
-		
+	auto view = ecs->GetView<BallComponent, TransformComponent, Rigidbody>();
+	while (view.MoveNext()) {
+		auto& transform = view.GetComponent<TransformComponent>();
+		auto& rb = view.GetComponent<Rigidbody>();
+		rb.velocity.Normalize();
+		rb.velocity.Mul(5);
+		std::cout << rb.velocity << std::endl;
+	}
 }
 
 void BlockSystem::SetEntities()
@@ -53,16 +65,22 @@ void BlockSystem::Update(float ts)
 
 void BounceSystem::SetEntities()
 {
-	SetCollisionEntityColliding<BallComponent, VelocityComponent>();
-	//SetCollisionEntityOther<>();	
+	SetCollisionEntityColliding<BallComponent, Rigidbody>();
+	SetCollisionEntityOther<PlayerComponent>();	
 }
 
 void BounceSystem::Update(float ts)
 {
 	// collision reaction with bounce
 	for (const auto& collisionEvent : collisionEvents) {
-		auto& velocity = ecs->GetComponent<VelocityComponent>(collisionEvent.collidingEntity);
+		
+		auto& rb = ecs->GetComponent<Rigidbody>(collisionEvent.collidingEntity);
+		auto& transform = ecs->GetComponent<TransformComponent>(collisionEvent.collidingEntity);
 
+		auto& playerComponent = ecs->GetComponent<PlayerComponent>(collisionEvent.otherEntity);
+		
+		rb.velocity += playerComponent.movementDelta.Normalized() * 2;
+		/*
 		float currentSpeed = velocity.velocity.Mag();
 		Vec3 newVelocity;
 		// if there is at most 90 deg angle between velocity and collision normal, don't reflect but add force in direction of collision normal
@@ -72,6 +90,6 @@ void BounceSystem::Update(float ts)
 			newVelocity = Vec3::Reflect(velocity.velocity, collisionEvent.collisionNormal);
 		newVelocity.Normalize();
 		newVelocity.Mul(currentSpeed);
-		velocity.velocity = newVelocity;
+		velocity.velocity = newVelocity;*/
 	}
 }

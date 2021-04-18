@@ -2,6 +2,7 @@
 #include "Ray.h"
 #include "CollisionStructs.h"
 #include <vector>
+
 namespace Engine {
 	class PhysicsWorld {
 	public:
@@ -13,7 +14,8 @@ namespace Engine {
 		friend class BroadphaseSystem;
 		friend class NarrowphaseSystem;
 		friend class CollisionEventDispatcherSystem;
-		friend class CollisionReactionResolveSystem;;
+		friend class CollisionReactionResolveSystem;
+		friend class DynamicsSystem;
 
 		std::vector<ColliderObject> collisionObjects;
 

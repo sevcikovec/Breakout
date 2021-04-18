@@ -12,7 +12,17 @@ namespace Engine {
 				auto& localAABB = viewSphere.GetComponent<AABB_local>();
 				auto entity = viewSphere.GetEntity();
 
-				pWorld->AddColliderObject(ColliderObject{entity, ecs->GetEntitySignature(entity), AABB(localAABB, transform.GetTransformMatrix()), transform, ColliderType::sphere});
+				bool hasRigidbody = ecs->HasComponent<Rigidbody>(entity);
+
+				pWorld->AddColliderObject(ColliderObject{
+					entity,
+					ecs->GetEntitySignature(entity),
+					AABB(localAABB, transform.GetTransformMatrix()),
+					transform,
+					ColliderType::sphere,
+					hasRigidbody,
+					hasRigidbody ? viewSphere.GetComponent<Rigidbody>() : Rigidbody()
+					});
 			}
 			
 			auto viewArch = ecs->GetView<ArchCollider, AABB_local, TransformComponent>();
@@ -22,7 +32,37 @@ namespace Engine {
 				auto& localAABB = viewArch.GetComponent<AABB_local>();
 				auto entity = viewArch.GetEntity();
 
-				pWorld->AddColliderObject(ColliderObject{ entity, ecs->GetEntitySignature(entity), AABB(localAABB, transform.GetTransformMatrix()), transform , ColliderType::arch});
+				bool hasRigidbody = ecs->HasComponent<Rigidbody>(entity);
+
+				pWorld->AddColliderObject(ColliderObject{
+					entity,
+					ecs->GetEntitySignature(entity),
+					AABB(localAABB, transform.GetTransformMatrix()),
+					transform,
+					ColliderType::arch,
+					hasRigidbody,
+					hasRigidbody ? viewArch.GetComponent<Rigidbody>() : Rigidbody()
+					});
+			}
+
+			auto viewBox = ecs->GetView<BoxCollider, AABB_local, TransformComponent>();
+			while (viewBox.MoveNext())
+			{
+				auto& transform = viewBox.GetComponent<TransformComponent>();
+				auto& localAABB = viewBox.GetComponent<AABB_local>();
+				auto entity = viewBox.GetEntity();
+
+				bool hasRigidbody = ecs->HasComponent<Rigidbody>(entity);
+
+				pWorld->AddColliderObject(ColliderObject{
+					entity,
+					ecs->GetEntitySignature(entity),
+					AABB(localAABB, transform.GetTransformMatrix()),
+					transform,
+					ColliderType::box,
+					hasRigidbody,
+					hasRigidbody ? viewBox.GetComponent<Rigidbody>() : Rigidbody()
+					});
 			}
 		}
 

@@ -30,6 +30,15 @@ namespace Engine {
 				else if (objects[aIndex].colliderType == ColliderType::sphere && objects[bIndex].colliderType == ColliderType::sphere) {
 					isColliding = ResolveSphereSphereCollisions(aIndex, bIndex, collisionPair);
 				}
+				else if (objects[aIndex].colliderType == ColliderType::arch && objects[bIndex].colliderType == ColliderType::arch) {
+					isColliding = ResolveArchArchCollisions(aIndex, bIndex, collisionPair);
+				}
+				else if (objects[aIndex].colliderType == ColliderType::arch && objects[bIndex].colliderType == ColliderType::box) {
+					isColliding = ResolveArchBoxCollisions(aIndex, bIndex, collisionPair);
+				}
+				else if (objects[aIndex].colliderType == ColliderType::box && objects[bIndex].colliderType == ColliderType::arch) {
+					isColliding = ResolveArchBoxCollisions(bIndex, aIndex, collisionPair);
+				}
 
 				if (isColliding) {
 					collisionPairs.push_back(collisionPair);
@@ -47,9 +56,6 @@ namespace Engine {
 
 			auto& sphereCollider = ecs->GetComponent<SphereCollider>(sphereObject.entity);
 			auto& archCollider = ecs->GetComponent<ArchCollider>(archObject.entity);
-
-			collisionPair.ColliderObjectAIndex = sphereIndex;
-			collisionPair.ColliderObjectBIndex = archIndex;
 
 			float sphereDistFromCenter = sphereObject.transform.position.Mag();
 			
@@ -140,13 +146,17 @@ namespace Engine {
 				// front/back collision
 				if (overlappingDistanceFrontBack < overlappingDistanceSides) {
 					collisionPair.collisionNormal = frontBackNormal;
-					collisionPair.firstObjectDisplacement = frontBackNormal * overlappingDistanceFrontBack;
+					collisionPair.penetrationDepth = overlappingDistanceFrontBack;
 				}
 				// side collision
 				else {
 					collisionPair.collisionNormal = sidesNormal;
-					collisionPair.firstObjectDisplacement = sidesNormal * overlappingDistanceSides;
+					collisionPair.penetrationDepth = overlappingDistanceSides;
 				}
+
+
+				collisionPair.ColliderObjectAIndex = sphereIndex;
+				collisionPair.ColliderObjectBIndex = archIndex;
 
 				return true;
 			}
@@ -170,9 +180,109 @@ namespace Engine {
 			if (distance < minkowskiSphereARadius) {
 				collisionPair.ColliderObjectAIndex = sphereAIndex;
 				collisionPair.ColliderObjectBIndex = sphereBIndex;
-				float e = 0.00000001f; // added epsilon if spheres on the same position
+				float e = 0.f;// 0.00000001f; // added epsilon if spheres on the same position
 				collisionPair.collisionNormal = ((sphereAObject.transform.position + e) - sphereBObject.transform.position).Normalized();
-				collisionPair.firstObjectDisplacement = collisionPair.collisionNormal * (minkowskiSphereARadius - distance);
+				collisionPair.penetrationDepth = minkowskiSphereARadius - distance;
+				return true;
+			}
+
+			return false;
+		}
+
+		bool ResolveArchArchCollisions(const size_t& archIndex1, const size_t& archIndex2, CollisionPair& collisionPair) {
+			auto& objects = pWorld->collisionObjects;
+
+			auto& archObject1 = objects[archIndex1];
+			auto& archObject2 = objects[archIndex2];
+
+			auto& archCollider1 = ecs->GetComponent<ArchCollider>(archObject1.entity);
+			auto& archCollider2 = ecs->GetComponent<ArchCollider>(archObject2.entity);
+			
+			// arches aren't intersecting
+			if (archCollider1.outerRadius < archCollider2.innerRadius || archCollider2.outerRadius < archCollider1.innerRadius) return false;
+
+			// testing side overlap
+			float halfWidthMinkowski = (archCollider1.angleWidth / 2) + (archCollider2.angleWidth / 2);
+
+			Vec2 centerArch1Polar = CartesianToPolar({ archObject1.transform.position.x, -archObject1.transform.position.z });
+			Vec2 centerArch2Polar = CartesianToPolar({ archObject2.transform.position.x, -archObject2.transform.position.z });
+			
+			float centerArch1Angle = fmod(centerArch1Polar.y, 360) + 360;
+			float centerArch2Angle = fmod(centerArch2Polar.y, 360) + 360;
+
+			float angleSideDifference = abs(centerArch1Angle - centerArch2Angle);
+			float sideOverlap = halfWidthMinkowski - angleSideDifference;
+			bool sideColliding = false;
+			
+			if (sideOverlap > 0.001f) {
+				sideColliding = true;
+			}
+			if (!sideColliding) return false;
+
+
+
+			// testing Y overlap
+			float minkowskyY = archCollider1.height / 2.f + archCollider2.height / 2.f;
+			
+			float arch1Ycenter = archObject1.transform.position.y + archCollider1.height / 2.f;
+			float arch2Ycenter = archObject2.transform.position.y + archCollider2.height / 2.f;
+
+
+			float arch1TopBottomOverlap = minkowskyY - abs(arch1Ycenter - arch2Ycenter);
+			bool isCollisingTopBottom = false;
+			Vec3 topBottomNormal(0,1,0);
+			if (arch1TopBottomOverlap > 0) {
+				isCollisingTopBottom = true;
+				if (archObject1.transform.position.y < archObject2.transform.position.y)
+					topBottomNormal = topBottomNormal * -1;
+			}
+
+			if (isCollisingTopBottom) {
+				
+				collisionPair.collisionNormal = topBottomNormal;
+				collisionPair.penetrationDepth = arch1TopBottomOverlap;
+				
+				collisionPair.ColliderObjectAIndex = archIndex1;
+				collisionPair.ColliderObjectBIndex = archIndex2;
+				return true;
+			}
+			
+			return false;
+		}
+
+		bool ResolveArchBoxCollisions(const size_t& archIndex, const size_t& boxIndex, CollisionPair& collisionPair) {
+			auto& objects = pWorld->collisionObjects;
+
+			auto& archObject = objects[archIndex];
+			auto& boxObject = objects[boxIndex];
+
+			auto& archCollider = ecs->GetComponent<ArchCollider>(archObject.entity);
+			auto& boxCollider = ecs->GetComponent<BoxCollider>(boxObject.entity);
+
+			bool isCollidingTopBottom = false;
+			Vec3 topBottomNormal(0, 1, 0);
+
+			float minkowskyY = archCollider.height / 2.f + boxCollider.size.y / 2.f;
+			float archYCenter = archObject.transform.position.y + archCollider.height / 2.f;
+			float boxYCenter = boxObject.transform.position.y;
+
+			float boxOverlap = minkowskyY - abs(archYCenter - boxYCenter);
+
+			if (boxOverlap > 0.001) {
+				if (archYCenter < boxYCenter) {
+					topBottomNormal *= -1;
+				}
+				isCollidingTopBottom = true;
+			}
+
+
+			if (isCollidingTopBottom) {
+
+				collisionPair.collisionNormal = topBottomNormal;
+				collisionPair.penetrationDepth = boxOverlap;
+
+				collisionPair.ColliderObjectAIndex = archIndex;
+				collisionPair.ColliderObjectBIndex = boxIndex;
 				return true;
 			}
 

@@ -4,14 +4,14 @@ namespace Engine {
 	void PhysicsSystem::Init(ECS* ecs)
 	{
 		OnUpdateSystem::Init(ecs);
-
-
-		dynamicsSystem = CreateRef<DynamicsSystem>();
-		dynamicsSystem->Init(ecs);
 		
 		collectionSystem = CreateRef<CollectObjectsSystem>();
 		collectionSystem->Init(ecs);
 		collectionSystem->SetPhysicsWorld(&physicsWorld);
+
+		dynamicsSystem = CreateRef<DynamicsSystem>();
+		dynamicsSystem->Init(ecs);
+		dynamicsSystem->SetPhysicsWorld(&physicsWorld);
 		
 		broadphaseSystem = CreateRef<BroadphaseSystem>();
 		broadphaseSystem->Init(ecs);
@@ -32,18 +32,23 @@ namespace Engine {
 
 	void PhysicsSystem::Update(float ts)
 	{
-		physicsWorld.Reset();
-		this->dynamicsSystem->Update(ts);
+		currentTime += ts;
+		float step = 0.02f;
+		if (currentTime >= step) {
+			physicsWorld.Reset();
+			this->collectionSystem->Update(step);
 
-		this->collectionSystem->Update(ts);
+			this->dynamicsSystem->Update(step);
 
-		this->broadphaseSystem->Update(ts);
+			this->broadphaseSystem->Update(step);
 
-		this->narrowphaseSystem->Update(ts);
+			this->narrowphaseSystem->Update(step);
 		
-		this->reactionResolveSystem->Update(ts);
+			this->reactionResolveSystem->Update(step);
 
-		this->eventsSystem->Update(ts);
+			this->eventsSystem->Update(step);
+			currentTime = 0;
+		}
 	}
 	void PhysicsSystem::RegisterOnCollisionListenerSystem(Ref<ACollisionListenerSystem> onCollisionSystem)
 	{

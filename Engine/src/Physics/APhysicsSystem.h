@@ -9,6 +9,6 @@ namespace Engine {
 			this->pWorld = pWorld;
 		}
 	protected:
-		PhysicsWorld* pWorld;
+		PhysicsWorld* pWorld = nullptr;
 	};
 }

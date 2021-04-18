@@ -1,27 +1,37 @@
 #pragma once
-#include "../Scene/Systems.h"
+#include "APhysicsSystem.h"
 #include "../Scene/Components.h"
 #include "PhysicsComponents.h"
 
 namespace Engine {
-	class DynamicsSystem : public OnUpdateSystem {
+	class DynamicsSystem : public APhysicsSystem {
 	public:
 		void Update(float ts) override {
-			auto view = ecs->GetView<VelocityComponent, TransformComponent>();
-			while (view.MoveNext())
+
+			auto& objects = pWorld->collisionObjects;
+			Vec3 gravity(0, -9.87f, 0);
+			for (auto& object : objects)
 			{
-				auto& transform = view.GetComponent<TransformComponent>();
-				auto& velocity = view.GetComponent<VelocityComponent>();
+				if (!object.hasRigidbody) continue;
 
-				float speed = velocity.velocity.Mag();
-				if (velocity.constraintMoveX) velocity.velocity.x = 0;
-				if (velocity.constraintMoveY) velocity.velocity.y = 0;
-				if (velocity.constraintMoveZ) velocity.velocity.z = 0;
 
-				velocity.velocity.Normalize();
-				velocity.velocity.Mul(speed);
+				Vec3 force(0);
+				if (object.rigidbody.useGravity)
+					force += gravity * object.rigidbody.mass;
 
-				transform.position = transform.position + velocity.velocity * ts;
+				object.rigidbody.velocity += force / object.rigidbody.mass * ts;
+
+				//float speed = velocity.velocity.Mag();
+
+				//if (velocity.constraintMoveX) velocity.velocity.x = 0;
+				//if (velocity.constraintMoveY) velocity.velocity.y = 0;
+				//if (velocity.constraintMoveZ) velocity.velocity.z = 0;
+
+				//velocity.velocity.Normalize();
+				//velocity.velocity.Mul(speed);
+
+				//object.transform.position += object.velocity.velocity * ts;
+				
 			}
 		}
 	};

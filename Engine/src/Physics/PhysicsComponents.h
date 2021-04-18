@@ -3,12 +3,21 @@
 #include "../ECS/ComponentManager.h"
 
 namespace Engine {
-	struct VelocityComponent {
+	struct Rigidbody {
 		Vec3 velocity;
 	
 		bool constraintMoveX = false;
 		bool constraintMoveY = false;
 		bool constraintMoveZ = false;
+
+		bool useGravity = true;
+		
+		float mass = 1;
+
+		float restitution = .3f;
+
+		float isKinematic = false;
+
 	};
 
 
@@ -29,5 +38,10 @@ namespace Engine {
 		float innerRadius;
 		float outerRadius;
 		float angleWidth;
+		float height;
+	};
+
+	struct BoxCollider {
+		Vec3 size;
 	};
 }

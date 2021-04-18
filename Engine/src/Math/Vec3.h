@@ -31,10 +31,16 @@ namespace Engine {
 		void Normalize();
 
 		Vec3 operator+(const Vec3& other) const;
+		Vec3& operator+=(const Vec3& other);
 
 		Vec3 operator-(const Vec3& other) const;
+		Vec3& operator-=(const Vec3& other);
 
 		Vec3 operator*(const float& other) const;
+		Vec3& operator*=(const float& other);
+
+		Vec3 operator/(const float& other) const;
+		Vec3& operator/=(const float& other);
 
 		float operator[](int) const;
 

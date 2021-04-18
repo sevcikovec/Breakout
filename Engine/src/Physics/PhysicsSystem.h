@@ -16,6 +16,7 @@ namespace Engine {
 		void RegisterOnCollisionListenerSystem(Ref<ACollisionListenerSystem> onCollisionSystem);
 
 	private:
+		float currentTime = 0.f;
 		ECS* ecs;
 
 		PhysicsWorld physicsWorld;

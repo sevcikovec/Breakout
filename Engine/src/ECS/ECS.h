@@ -92,6 +92,6 @@ namespace Engine {
 		}
 
 	protected:
-		ECS* ecs;
+		ECS* ecs = nullptr;
 	};
 }
