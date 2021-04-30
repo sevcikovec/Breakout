@@ -72,6 +72,7 @@ namespace Engine {
 		}
 
 		mainCameraSetupSystem->Update(ts);
+		lightsSystem->Update(ts);
 		renderingSystem->Update(ts);
 		aabbVisSystem->Update(ts);
 
@@ -82,6 +83,8 @@ namespace Engine {
 		renderingSystem->Init(&ecs);
 		mainCameraSetupSystem = CreateRef<MainCameraSetupSystem>();
 		mainCameraSetupSystem->Init(&ecs);
+		lightsSystem = CreateRef<LightsSystem>();
+		lightsSystem->Init(&ecs);
 		aabbVisSystem = CreateRef<AABBVisualizationSystem>();
 		aabbVisSystem->Init(&ecs);
 

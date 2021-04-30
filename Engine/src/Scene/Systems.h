@@ -2,6 +2,7 @@
 #include "Entity.h"
 #include "Components.h"
 #include "../Physics/PhysicsComponents.h"
+#include "../Renderer/Light.h"
 
 
 namespace Engine {
@@ -14,6 +15,13 @@ namespace Engine {
 	class RenderingSystem : public OnUpdateSystem {
 	public:
 		void Update(float ts) override;
+	};
+
+	class LightsSystem : public OnUpdateSystem {
+	public:
+		void Update(float ts) override;
+	private:
+		LightUBOData data;
 	};
 
 	class MainCameraSetupSystem : public OnUpdateSystem {

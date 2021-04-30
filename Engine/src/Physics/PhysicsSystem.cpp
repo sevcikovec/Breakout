@@ -33,7 +33,7 @@ namespace Engine {
 	void PhysicsSystem::Update(float ts)
 	{
 		currentTime += ts;
-		float step = 0.02f;
+		float step = ts;
 		if (currentTime >= step) {
 			physicsWorld.Reset();
 			this->collectionSystem->Update(step);

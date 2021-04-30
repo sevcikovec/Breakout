@@ -54,6 +54,20 @@ namespace Engine {
 		}
 	}
 
+	void LightsSystem::Update(float ts) {
+		
+		int lightsCount = 0;
+		auto view = ecs->GetView<LightComponent, TransformComponent>();
+		while (view.MoveNext()) {
+			auto& transform = view.GetComponent<TransformComponent>();
+			auto& light = view.GetComponent<LightComponent>();
+			data.lights[lightsCount] = { transform.position, light.ambient, light.diffuse, light.specular };
+			lightsCount++;
+		}
+		data.currentLights = lightsCount;
+		Renderer::SetLights(data);
+	}
+
 	void AABBVisualizationSystem::Update(float ts) {
 
 		if (!Input::IsKeyDown(KeyCode::B)) {

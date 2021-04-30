@@ -60,4 +60,10 @@ namespace Engine {
 			DestroyScript = [](ScriptComponent* nsc) { delete nsc->Instance; nsc->Instance = nullptr; };
 		}
 	};
+
+	struct LightComponent {
+		Vec3 ambient;
+		Vec3 diffuse;
+		Vec3 specular;
+	};
 }

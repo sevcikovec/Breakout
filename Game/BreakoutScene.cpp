@@ -19,6 +19,9 @@ BreakoutScene::BreakoutScene() : Scene("Main scene")
 	auto blockSystem = RegisterOnCollisionSystem<BlockSystem>();
 	auto ballBounceSystem = RegisterOnCollisionSystem<BounceSystem>();
 
+
+	auto lightMoveSysem = RegisterSystem<LightMoveSystem>();
+
 	// add camera
 	{
 		Entity cameraEntity = CreateEntity("Main camera");
@@ -38,6 +41,17 @@ BreakoutScene::BreakoutScene() : Scene("Main scene")
 		cameraComponent.primary = true;
 	}
 
+	// add light
+	{
+		Entity lightEntity = CreateEntity("Main Light");
+		auto& transform = lightEntity.AddComponent<TransformComponent>();
+		transform.position = { 0,4,0 };
+		auto& light = lightEntity.AddComponent<LightComponent>();
+		light.diffuse = {1.f,1.f,1.f };
+		light.ambient = { 0.5f,0.5f,0.5f };
+		light.specular = { 1 };
+	}
+
 
 	
 	const char* vertexShader = "..\\..\\..\\..\\Engine\\resources\\shaders\\vert.glsl";
@@ -51,16 +65,17 @@ BreakoutScene::BreakoutScene() : Scene("Main scene")
 	
 	// generate ball
 	{
-
+		
 		float radius = 0.2;
 		MeshGenerator::GenerateSphere(radius, 20, 20, vertices, indices);
 		auto ballMeshVAO = GetVertexArray(vertices, indices);
 
 		auto ballMaterial = CreateRef<Material>();
 		ballMaterial->SetShader(shader);
-		ballMaterial->SetProperty("color", Vec3{ .7f, .0f, 0 });
+		ballMaterial->SetProperty("color", Vec3{ .7f, .7f, 0 });
 
 		auto ball1 = CreateBall(ballMaterial, ballMeshVAO, radius, { 0.f, radius, 3.0f }, { 0, 0, -2});
+		
 		//auto ball2 = CreateBall(ballMaterial, ballMeshVAO, radius, { -3.f, 0.1f, 0.3f }, { 2, 0, 0 });
 		
 		//CreateBall(ballMaterial, ballMeshVAO, radius, { 0.f, 0.1f, 3.4f }, { 6, 0, 2 });
@@ -71,6 +86,8 @@ BreakoutScene::BreakoutScene() : Scene("Main scene")
 			CreateBall(ballMaterial, ballMeshVAO, radius, { ((rand() % 70) - 35) / 10.f, 0.1f, ((rand() % 70) - 35) / 10.f }, { 0, 0, 40 });
 		}*/
 	}
+
+
 	
 	// generate wall
 	{
@@ -89,7 +106,7 @@ BreakoutScene::BreakoutScene() : Scene("Main scene")
 		float radius = (innerRadius + outerRadius) / 2;
 		float widthAngle = 360/numberInRow;
 		float height = .5f;
-		MeshGenerator::GenerateArk(innerRadius, outerRadius, widthAngle, height, 50, true, vertices, indices);
+		MeshGenerator::GenerateArk(innerRadius, outerRadius, widthAngle, height, 10, true, vertices, indices);
 		auto aabb = MeshGenerator::GetAABB(vertices);
 		auto vertexArray = GetVertexArray(vertices, indices);
 
@@ -105,6 +122,7 @@ BreakoutScene::BreakoutScene() : Scene("Main scene")
 			}
 		}
 	}
+	
 	/*
 	// generate outer wall
 	{
@@ -130,14 +148,14 @@ BreakoutScene::BreakoutScene() : Scene("Main scene")
 	{
 		auto playerArchMaterial = CreateRef<Material>();
 		playerArchMaterial->SetShader(shader);
-		playerArchMaterial->SetProperty("color", Vec3{ .0f, .0f, .7f });
+		playerArchMaterial->SetProperty("color", Vec3{ .7f, .0f, .0f });
 
 		float innerRadius = 6.f;
 		float outerRadius = 6.5f;
 		float playerRadius = (innerRadius + outerRadius) / 2;
-		float angleWidth = 45.f;
+		float angleWidth = 40.f;
 		float height = 0.5f;
-		MeshGenerator::GenerateArk(innerRadius, outerRadius, angleWidth, height, 50, true, vertices, indices);
+		MeshGenerator::GenerateArk(innerRadius, outerRadius, angleWidth, height, 15, true, vertices, indices);
 		auto aabb = MeshGenerator::GetAABB(vertices);
 		auto playerMeshVAO = GetVertexArray(vertices, indices);
 		auto& player1 = CreatePlayerArch(playerArchMaterial, playerMeshVAO, angleWidth, 0, playerRadius, innerRadius, outerRadius, height, aabb);
@@ -186,7 +204,7 @@ Ref<VertexArray> BreakoutScene::GetVertexArray(std::vector<float>& vertices, std
 	auto vb1 = VertexBuffer::Create(vertices.data(), vertices.size());
 	vb1->SetLayout(
 		{
-			{ LayoutShaderType::Float3 }
+			{ LayoutShaderType::Float3, LayoutShaderType::Float3  }
 		});
 
 	auto ib = IndexBuffer::Create(indices.data(), indices.size());

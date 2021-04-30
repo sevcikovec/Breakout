@@ -45,7 +45,6 @@ void BallSystem::Update(float ts) {
 		auto& rb = view.GetComponent<Rigidbody>();
 		rb.velocity.Normalize();
 		rb.velocity.Mul(5);
-		std::cout << rb.velocity << std::endl;
 	}
 }
 
@@ -80,16 +79,30 @@ void BounceSystem::Update(float ts)
 		auto& playerComponent = ecs->GetComponent<PlayerComponent>(collisionEvent.otherEntity);
 		
 		rb.velocity += playerComponent.movementDelta.Normalized() * 2;
-		/*
-		float currentSpeed = velocity.velocity.Mag();
-		Vec3 newVelocity;
-		// if there is at most 90 deg angle between velocity and collision normal, don't reflect but add force in direction of collision normal
-		if (Vec3::Dot(velocity.velocity, collisionEvent.collisionNormal) > 0)
-			newVelocity = (velocity.velocity.Normalized() + collisionEvent.collisionNormal);
-		else
-			newVelocity = Vec3::Reflect(velocity.velocity, collisionEvent.collisionNormal);
-		newVelocity.Normalize();
-		newVelocity.Mul(currentSpeed);
-		velocity.velocity = newVelocity;*/
+	}
+}
+
+void LightMoveSystem::Update(float ts)
+{
+	auto view = ecs->GetView<LightComponent, TransformComponent>();
+	while (view.MoveNext()) {
+		auto& transform = view.GetComponent<TransformComponent>();
+
+		Vec3 move{ 0 };
+		float moveDelta = 4 * ts;
+		if (Input::IsKeyDown(KeyCode::LEFT)) {
+			move.x -= moveDelta;
+		}
+		if (Input::IsKeyDown(KeyCode::RIGHT)) {
+			move.x += moveDelta;
+		}
+		if (Input::IsKeyDown(KeyCode::UP)) {
+			move.z -= moveDelta;
+		}
+		if (Input::IsKeyDown(KeyCode::DOWN)) {
+			move.z += moveDelta;
+		}
+
+		transform.position += move;
 	}
 }

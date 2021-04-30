@@ -22,3 +22,7 @@ class BounceSystem : public Engine::ACollisionListenerSystem {
 
 	void Update(float ts) override;
 };
+
+class LightMoveSystem : public Engine::OnUpdateSystem {
+	void Update(float ts) override;
+};

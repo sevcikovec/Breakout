@@ -21,8 +21,8 @@ namespace Engine {
 		float subRadius = (outerRadius - innerRadius) / 2;
 
 		float centerXOffset = center ? (innerRadius + subRadius) * cos(ToRadians(0)) : 0;
-		int backVerticesOffset = (resolution + 1) * 2;
-
+		int backVerticesOffset = (resolution + 1) * 4;
+		
 		// add all vertices and inner and outer sides
 		for (int side = 0; side < 2; side++) {
 			float currentRadius = side == 0 ? innerRadius : outerRadius;
@@ -31,80 +31,147 @@ namespace Engine {
 
 				Vec2 cartesianCoors = PolarToCartesian({ currentRadius, startAngle + currentAngle});
 
+				Vec3 normal = { cartesianCoors.x, 0, cartesianCoors.y };
+				if (side == 0) normal.Mul(-1);
+				normal.Normalize();
+
 				// add lower part
 				vertices.push_back(cartesianCoors.x - centerXOffset); // x coord
 				vertices.push_back(0); // y coord
 				vertices.push_back(cartesianCoors.y); // z coord
+				vertices.push_back(normal.x);
+				vertices.push_back(normal.y);
+				vertices.push_back(normal.z);
+				
 				// add upper part
 				vertices.push_back(cartesianCoors.x - centerXOffset); // x coord
 				vertices.push_back(height); // y coord
 				vertices.push_back(cartesianCoors.y); // z coord
+				vertices.push_back(normal.x);
+				vertices.push_back(normal.y);
+				vertices.push_back(normal.z);
+
+
+				// add lower part for bottom face
+				vertices.push_back(cartesianCoors.x - centerXOffset); // x coord
+				vertices.push_back(0); // y coord
+				vertices.push_back(cartesianCoors.y); // z coord
+				vertices.push_back(0);
+				vertices.push_back(-1);
+				vertices.push_back(0);
+
+				// add upper part for upper face
 				
+				vertices.push_back(cartesianCoors.x - centerXOffset); // x coord
+				vertices.push_back(height); // y coord
+				vertices.push_back(cartesianCoors.y); // z coord
+				vertices.push_back(0);
+				vertices.push_back(1);
+				vertices.push_back(0);
+
 				// add indices for inner and outer sides
 				if (i > 0) { 
 					// inner side
 					
 					if (side == 0) {
 						// first triangle
-						indices.push_back((i) * 2 + 1);
-						indices.push_back((i - 1) * 2 + 1);
-						indices.push_back((i - 1) * 2);
+						indices.push_back((i) * 4 + 1);
+						indices.push_back((i - 1) * 4 + 1);
+						indices.push_back((i - 1) * 4);
 						// second triangle
-						indices.push_back(i * 2);
-						indices.push_back(i * 2 + 1);
-						indices.push_back((i - 1) * 2);
+						indices.push_back(i * 4);
+						indices.push_back(i * 4 + 1);
+						indices.push_back((i - 1) * 4);
 					}
 					else {
 						// first triangle
-						indices.push_back((i - 1) * 2 + backVerticesOffset);
-						indices.push_back((i - 1) * 2 + 1 + backVerticesOffset);
-						indices.push_back((i) * 2 + 1 + backVerticesOffset);
+						indices.push_back((i - 1) * 4 + backVerticesOffset);
+						indices.push_back((i - 1) * 4 + 1 + backVerticesOffset);
+						indices.push_back((i) * 4 + 1 + backVerticesOffset);
 						// second triangle
-						indices.push_back((i - 1) * 2 + backVerticesOffset);
-						indices.push_back(i * 2 + 1 + backVerticesOffset);
-						indices.push_back(i * 2 + backVerticesOffset);
+						indices.push_back((i - 1) * 4 + backVerticesOffset);
+						indices.push_back(i * 4 + 1 + backVerticesOffset);
+						indices.push_back(i * 4 + backVerticesOffset);
 					}
 				}
 			}
 		}
 		
-		// add indices for sides
-		indices.push_back(backVerticesOffset + 1);
-		indices.push_back(backVerticesOffset);
-		indices.push_back(0);
-
-		indices.push_back(0);
-		indices.push_back(1);
-		indices.push_back(backVerticesOffset + 1);
-
-		indices.push_back(resolution * 2);
-		indices.push_back(resolution * 2 + backVerticesOffset);
-		indices.push_back(resolution * 2 + backVerticesOffset + 1);
-		
-		indices.push_back(resolution * 2 + backVerticesOffset + 1);
-		indices.push_back(resolution * 2 + 1);
-		indices.push_back(resolution * 2);
-		
 		// add indices top and bottom
 		for (int i = 1; i < resolution + 1; i++) {
 			// bottom
 			
-			indices.push_back((i - 1) * 2);
-			indices.push_back((i - 1) * 2 + backVerticesOffset);
-			indices.push_back(i * 2 + backVerticesOffset);
+			indices.push_back((i - 1) * 4 + 2);
+			indices.push_back((i - 1) * 4 + 2 + backVerticesOffset);
+			indices.push_back(i * 4 + 2 + backVerticesOffset);
 			
-			indices.push_back(i * 2 + backVerticesOffset);
-			indices.push_back(i * 2);
-			indices.push_back((i - 1) * 2);
+			indices.push_back(i * 4 + 2 + backVerticesOffset);
+			indices.push_back(i * 4 + 2);
+			indices.push_back((i - 1) * 4 + 2);
 			
 			// top
-			indices.push_back(i * 2 + backVerticesOffset + 1);
-			indices.push_back((i - 1) * 2 + backVerticesOffset + 1);
-			indices.push_back((i - 1) * 2 + 1);
+			indices.push_back(i * 4 + backVerticesOffset + 1 + 2);
+			indices.push_back((i - 1) * 4 + backVerticesOffset + 1 + 2);
+			indices.push_back((i - 1) * 4 + 1 + 2);
 
-			indices.push_back((i - 1) * 2 + 1);
-			indices.push_back(i * 2 + 1);
-			indices.push_back(i * 2 + backVerticesOffset + 1);
+			indices.push_back((i - 1) * 4 + 1 + 2);
+			indices.push_back(i * 4 + 1 + 2);
+			indices.push_back(i * 4 + backVerticesOffset + 1 + 2);
+		}
+
+		{
+			for (int leftRight = 0; leftRight < 2; leftRight++) {
+				for (int side = 0; side < 2; side++) {
+
+					int mult = leftRight == 0 ? 1 : -1;
+
+					float currentRadius = side == 0 ? innerRadius : outerRadius;
+					// add right side 
+					Vec2 cartesianCoors = PolarToCartesian({ currentRadius, mult * startAngle });
+
+					Vec3 posOnCircle = { cartesianCoors.x, 0, cartesianCoors.y };
+
+					Vec3 normal = Vec3::Right(posOnCircle, { 0,1,0 });
+					normal.Mul(-mult);
+					normal.Normalize();
+
+					// add lower part
+					vertices.push_back(cartesianCoors.x - centerXOffset); // x coord
+					vertices.push_back(0); // y coord
+					vertices.push_back(cartesianCoors.y); // z coord
+					vertices.push_back(normal.x);
+					vertices.push_back(normal.y);
+					vertices.push_back(normal.z);
+
+					// add upper part
+					vertices.push_back(cartesianCoors.x - centerXOffset); // x coord
+					vertices.push_back(height); // y coord
+					vertices.push_back(cartesianCoors.y); // z coord
+					vertices.push_back(normal.x);
+					vertices.push_back(normal.y);
+					vertices.push_back(normal.z);
+				}			
+				int currVertCount = vertices.size()/6;
+				if (leftRight == 1) {
+					indices.push_back(currVertCount-4);
+					indices.push_back(currVertCount-2);
+					indices.push_back(currVertCount-3);
+
+					indices.push_back(currVertCount - 3);
+					indices.push_back(currVertCount - 2);
+					indices.push_back(currVertCount - 1);
+				}
+				else {
+					indices.push_back(currVertCount - 4);
+					indices.push_back(currVertCount - 3);
+					indices.push_back(currVertCount - 2);
+
+					indices.push_back(currVertCount - 3);
+					indices.push_back(currVertCount - 1);
+					indices.push_back(currVertCount - 2);
+				}
+			}
+
 		}
 	}
 
@@ -116,6 +183,9 @@ namespace Engine {
 		vertices.push_back(0);
 		vertices.push_back(0);
 		vertices.push_back(0);
+		vertices.push_back(0.f);
+		vertices.push_back(1.f);
+		vertices.push_back(0.f);
 		float currentAngle = 0;
 		float angleStep = 360.f / resolution;
 		for (size_t i = 0; i < resolution + 1U; i++)
@@ -125,8 +195,11 @@ namespace Engine {
 			Vec2 cartesianCoors = PolarToCartesian({radius, currentAngle});
 			
 			vertices.push_back(cartesianCoors.x);
-			vertices.push_back(0);
+			vertices.push_back(0.f);
 			vertices.push_back(cartesianCoors.y);
+			vertices.push_back(0.f);
+			vertices.push_back(1.f);
+			vertices.push_back(0.f);
 
 			// add indices
 			if (i > 1) {
@@ -157,11 +230,17 @@ namespace Engine {
 		vertices.push_back(0);
 		vertices.push_back(radius);
 		vertices.push_back(0);
+		vertices.push_back(0);
+		vertices.push_back(1);
+		vertices.push_back(0);
+
 		// add bottom vertex
 		vertices.push_back(0);
 		vertices.push_back(-radius);
 		vertices.push_back(0);
-		
+		vertices.push_back(0);
+		vertices.push_back(-1);
+		vertices.push_back(0);
 
 		for (size_t x = 0; x < resolutionHorizontal; x++)
 		{
@@ -173,6 +252,11 @@ namespace Engine {
 				vertices.push_back(coords.x);
 				vertices.push_back(coords.y);
 				vertices.push_back(coords.z);
+
+				auto norm = coords.Normalized();
+				vertices.push_back(norm.x);
+				vertices.push_back(norm.y);
+				vertices.push_back(norm.z);
 
 				// add indices
 				if (x > 0) {
@@ -235,7 +319,7 @@ namespace Engine {
 		aabb.xMin =  FLT_MAX;
 		aabb.yMin =  FLT_MAX;
 		aabb.zMin =  FLT_MAX;
-		for (size_t i = 0; i < vertices.size(); i += 3)
+		for (size_t i = 0; i < vertices.size(); i += 6)
 		{
 			aabb.xMin = std::min(aabb.xMin, vertices[i]);
 			aabb.yMin = std::min(aabb.yMin, vertices[i+1]);

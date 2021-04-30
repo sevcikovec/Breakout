@@ -52,6 +52,7 @@ namespace Engine {
 
 		void InitRenderingSystems();
 		Ref<RenderingSystem> renderingSystem;
+		Ref<LightsSystem> lightsSystem;
 		Ref<MainCameraSetupSystem> mainCameraSetupSystem;
 		Ref<AABBVisualizationSystem> aabbVisSystem;
 

@@ -1,7 +1,14 @@
 #version 430 core
 
 layout (location = 0) in vec3 pos;
-//layout (location = 1) in vec3 color; 
+layout (location = 1) in vec3 normal;
+
+
+out VertexData
+{
+	vec3 normal_ws;
+	vec3 position_ws;
+} outData;
 
 uniform mat4 modelMat;
 
@@ -10,7 +17,6 @@ layout (std140, binding = 0) uniform CameraData
 {
 	mat4 viewProjection;
     vec3 eyePos;
-
 };
 
 //out vec3 vertexColor; 
@@ -18,6 +24,9 @@ layout (std140, binding = 0) uniform CameraData
 void main()
 {
     //vertexColor = color;
+    outData.position_ws = vec3(modelMat * vec4(pos, 1.0));
+    outData.normal_ws = mat3(transpose(inverse(modelMat))) * normal;
+
     gl_Position =  viewProjection * modelMat * vec4(pos, 1.0); 
 }
 

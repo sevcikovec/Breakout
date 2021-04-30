@@ -4,6 +4,7 @@
 #include "VertexArray.h"
 #include "UniformBuffer.h"
 #include "Material.h"
+#include "Light.h"
 
 
 namespace Engine {
@@ -15,9 +16,13 @@ namespace Engine {
 
 		static void Clear();
 
-		static void SetCamera(CameraUBOData cameraData);
+		static void SetCamera(const CameraUBOData& cameraData);
+
+		static void SetLights(const LightUBOData& lightsData);
 
 	private:
 		static Unique<UniformBuffer<CameraUBOData>> cameraUBO;
+
+		static Unique<LightDataUBO> lightsUBO;
 	};
 }
