@@ -112,3 +112,11 @@
     Nothing commited
 
 </details>
+
+<summary>Week 9</summary>
+
+    Added lights
+    
+    Added normals to generated meshes
+
+</details>
