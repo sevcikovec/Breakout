@@ -24,5 +24,7 @@ namespace Engine {
 		static Unique<UniformBuffer<CameraUBOData>> cameraUBO;
 
 		static Unique<LightDataUBO> lightsUBO;
+
+		static Unique<Texture> whiteTexture;
 	};
 }

@@ -12,7 +12,7 @@ public:
 	void OnUpdate(float frameTimeMS);
 
 private:
-	Engine::Ref<Engine::VertexArray> GetVertexArray(std::vector<float>& vertices, std::vector<uint32_t>& indices);
+	Engine::Ref<Engine::VertexArray> GetVertexArray(std::vector<float>& vertices, std::vector<uint32_t>& indices, const Engine::BufferLayout& bufferLayout);
 
 	Engine::Entity CreatePlayerArch(Engine::Ref<Engine::Material> material, Engine::Ref<Engine::VertexArray> vertexArray, float angleWidth, float startingAngle, float radius, float innerRadius, float outerRadius, float height, Engine::AABB_local aabb);
 	

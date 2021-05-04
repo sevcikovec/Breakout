@@ -20,4 +20,24 @@ namespace Engine {
 			it.second->ApplyProperty(shader);
 		}
 	}
+
+	void Material::SetTexture(Ref<Texture> texture) {
+		this->texture = texture;
+	}
+
+	bool Material::HasTextures() {
+		return texture != nullptr;
+	}
+
+	void Material::BindTextures() {
+		if (texture != nullptr) {
+			texture->Bind();
+		}
+	}
+
+	void Material::UnbindTextures() {
+		if (texture != nullptr) {
+			texture->Unbind();
+		}
+	}
 }

@@ -1,4 +1,5 @@
 #pragma once
+#include "Texture.h"
 #include "Shader.h"
 #include "../Utils.h"
 #include <vector>
@@ -54,8 +55,18 @@ namespace Engine {
 		void ClearProperties();
 
 		void BindProperties();
+		
+		void SetTexture(Ref<Texture> texture);
+
+		bool HasTextures();
+
+		void BindTextures();
+
+		void UnbindTextures();
 	private:
-		Ref<Shader> shader;
+		Ref<Shader> shader = nullptr;
+
+		Ref<Texture> texture = nullptr;
 
 		std::unordered_map<std::string, Ref<IMaterialProperty>> properties{};
 	};

@@ -102,6 +102,12 @@ void LightMoveSystem::Update(float ts)
 		if (Input::IsKeyDown(KeyCode::DOWN)) {
 			move.z += moveDelta;
 		}
+		if (Input::IsKeyDown(KeyCode::C)) {
+			move.y -= moveDelta;
+		}
+		if (Input::IsKeyDown(KeyCode::V)) {
+			move.y += moveDelta;
+		}
 
 		transform.position += move;
 	}

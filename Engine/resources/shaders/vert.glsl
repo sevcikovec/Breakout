@@ -2,12 +2,14 @@
 
 layout (location = 0) in vec3 pos;
 layout (location = 1) in vec3 normal;
+layout (location = 2) in vec2 tex_coord;
 
 
 out VertexData
 {
 	vec3 normal_ws;
 	vec3 position_ws;
+    vec2 tex_coord;
 } outData;
 
 uniform mat4 modelMat;
@@ -23,7 +25,7 @@ layout (std140, binding = 0) uniform CameraData
   
 void main()
 {
-    //vertexColor = color;
+    outData.tex_coord = tex_coord;
     outData.position_ws = vec3(modelMat * vec4(pos, 1.0));
     outData.normal_ws = mat3(transpose(inverse(modelMat))) * normal;
 

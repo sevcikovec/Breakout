@@ -4,6 +4,7 @@ in VertexData
 {
 	vec3 normal_ws;
 	vec3 position_ws;
+	vec2 tex_coord;
 } inData;
 
 
@@ -29,6 +30,8 @@ layout (std140, binding = 1) uniform LightsData
 	int lights_count;
 	Light lights[10];
 };
+
+layout (binding = 0) uniform sampler2D color_tex;
 
 
 
@@ -59,7 +62,9 @@ void main() {
 		amb += a;	dif += d;	spe += s;
 	}
 
-	vec3 final_light = color * amb + color * dif + vec3(1.) * spe;
+	vec3 texColor = texture(color_tex, inData.tex_coord).xyz;
+
+	vec3 final_light = texColor * color * amb + texColor * color * dif + vec3(1.) * spe;
 
 	final_color = vec4(final_light, 1);
 

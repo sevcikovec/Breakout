@@ -6,6 +6,7 @@
 #include "Renderer/Material.h"
 #include "Physics/PhysicsComponents.h"
 #include "Components/BreakoutComponents.h"
+#include "Renderer/Texture.h"
 
 using namespace Engine;
 
@@ -68,7 +69,7 @@ BreakoutScene::BreakoutScene() : Scene("Main scene")
 		
 		float radius = 0.2;
 		MeshGenerator::GenerateSphere(radius, 20, 20, vertices, indices);
-		auto ballMeshVAO = GetVertexArray(vertices, indices);
+		auto ballMeshVAO = GetVertexArray(vertices, indices, { LayoutShaderType::Float3, LayoutShaderType::Float3 });
 
 		auto ballMaterial = CreateRef<Material>();
 		ballMaterial->SetShader(shader);
@@ -108,7 +109,7 @@ BreakoutScene::BreakoutScene() : Scene("Main scene")
 		float height = .5f;
 		MeshGenerator::GenerateArk(innerRadius, outerRadius, widthAngle, height, 10, true, vertices, indices);
 		auto aabb = MeshGenerator::GetAABB(vertices);
-		auto vertexArray = GetVertexArray(vertices, indices);
+		auto vertexArray = GetVertexArray(vertices, indices, { LayoutShaderType::Float3, LayoutShaderType::Float3 });
 
 		//for (int i = rows-1; i >= 0; i--) {
 		for (int i = 0; i < rows; i++) {
@@ -157,21 +158,26 @@ BreakoutScene::BreakoutScene() : Scene("Main scene")
 		float height = 0.5f;
 		MeshGenerator::GenerateArk(innerRadius, outerRadius, angleWidth, height, 15, true, vertices, indices);
 		auto aabb = MeshGenerator::GetAABB(vertices);
-		auto playerMeshVAO = GetVertexArray(vertices, indices);
+		auto playerMeshVAO = GetVertexArray(vertices, indices, { LayoutShaderType::Float3, LayoutShaderType::Float3 });
 		auto& player1 = CreatePlayerArch(playerArchMaterial, playerMeshVAO, angleWidth, 0, playerRadius, innerRadius, outerRadius, height, aabb);
 		auto& player2 = CreatePlayerArch(playerArchMaterial, playerMeshVAO, angleWidth, 120, playerRadius, innerRadius, outerRadius, height, aabb);
 		auto& player3 = CreatePlayerArch(playerArchMaterial, playerMeshVAO, angleWidth, 240, playerRadius, innerRadius, outerRadius, height, aabb);
 	}
 	
+	const char* textureFilename = "..\\..\\..\\..\\Engine\\resources\\Lenna.png";
+	auto texture = CreateRef<Texture>(textureFilename);
+
+
 	// generate floor
 	{
 		float radius = 7;
 		auto platformMaterial = CreateRef<Material>();
 		platformMaterial->SetShader(shader);
-		platformMaterial->SetProperty("color", Vec3{ .7f, .5f, 0 });
+		platformMaterial->SetProperty("color", Vec3{ 1.f, 1.f, 1.f });
+		platformMaterial->SetTexture(texture);
 
 		MeshGenerator::GenerateCircle(radius, 50, vertices, indices);
-		auto platformVAO = GetVertexArray(vertices, indices);
+		auto platformVAO = GetVertexArray(vertices, indices, { LayoutShaderType::Float3, LayoutShaderType::Float3, LayoutShaderType::Float2 });
 		Entity platformEntity = CreateEntity("Platform entity");
 		auto& transform = platformEntity.AddComponent<TransformComponent>();
 		transform.scale = { 1.f, 1.f, 1.f };
@@ -199,12 +205,12 @@ void BreakoutScene::OnUpdate(float frameTimeMS)
 	Scene::OnUpdate(frameTimeMS);
 }
 
-Ref<VertexArray> BreakoutScene::GetVertexArray(std::vector<float>& vertices, std::vector<uint32_t>& indices)
+Ref<VertexArray> BreakoutScene::GetVertexArray(std::vector<float>& vertices, std::vector<uint32_t>& indices, const BufferLayout& bufferLayout)
 {
 	auto vb1 = VertexBuffer::Create(vertices.data(), vertices.size());
 	vb1->SetLayout(
 		{
-			{ LayoutShaderType::Float3, LayoutShaderType::Float3  }
+			bufferLayout
 		});
 
 	auto ib = IndexBuffer::Create(indices.data(), indices.size());

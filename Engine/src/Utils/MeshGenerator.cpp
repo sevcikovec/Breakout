@@ -180,12 +180,17 @@ namespace Engine {
 		indices.clear();
 		
 		// add center vertex
+		// pos
 		vertices.push_back(0);
 		vertices.push_back(0);
 		vertices.push_back(0);
+		// normal
 		vertices.push_back(0.f);
 		vertices.push_back(1.f);
 		vertices.push_back(0.f);
+		// tex coord
+		vertices.push_back(0.5f);
+		vertices.push_back(0.5f);
 		float currentAngle = 0;
 		float angleStep = 360.f / resolution;
 		for (size_t i = 0; i < resolution + 1U; i++)
@@ -193,13 +198,19 @@ namespace Engine {
 			currentAngle = i * angleStep;
 
 			Vec2 cartesianCoors = PolarToCartesian({radius, currentAngle});
-			
+			// pos
 			vertices.push_back(cartesianCoors.x);
 			vertices.push_back(0.f);
 			vertices.push_back(cartesianCoors.y);
+			// normal
 			vertices.push_back(0.f);
 			vertices.push_back(1.f);
 			vertices.push_back(0.f);
+
+			Vec2 cartesianTexCoors = PolarToCartesian({ 0.5f, currentAngle });
+			// tex coord
+			vertices.push_back(cartesianTexCoors.x + 0.5f);
+			vertices.push_back(cartesianTexCoors.y + 0.5f);
 
 			// add indices
 			if (i > 1) {
