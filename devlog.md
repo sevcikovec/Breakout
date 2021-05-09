@@ -122,3 +122,12 @@
     Added normals to generated meshes
 
 </details>
+
+
+<details>
+
+<summary>Week 10</summary>
+
+    Added textures
+
+</details>
