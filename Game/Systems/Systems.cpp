@@ -57,7 +57,10 @@ void BlockSystem::SetEntities()
 void BlockSystem::Update(float ts)
 {
 	for (const auto& collisionEvent : collisionEvents) {		
-		if (!ecs->HasComponent<DestroyTag>(collisionEvent.collidingEntity))
+		auto& block = ecs->GetComponent<BlockComponent>(collisionEvent.collidingEntity);
+		block.durability -= 1;
+
+		if (block.durability <= 0 && !ecs->HasComponent<DestroyTag>(collisionEvent.collidingEntity))
 			ecs->AddComponent<DestroyTag>(collisionEvent.collidingEntity);
 	}
 }

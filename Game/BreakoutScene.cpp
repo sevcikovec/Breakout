@@ -120,6 +120,8 @@ BreakoutScene::BreakoutScene() : Scene("Main scene")
 				auto& rb = block.AddComponent<Rigidbody>();
 				rb.restitution = .1f;
 				rb.mass = 1.f;
+				rb.constraintMoveX = true;
+				rb.constraintMoveZ = true;
 			}
 		}
 	}
@@ -259,6 +261,7 @@ Engine::Entity BreakoutScene::CreateBlockArch(Engine::Ref<Engine::Material> play
 	Entity entity = CreateArch(playerArchMaterial, playerMeshVAO, angleWidth, startingAngle, radius, innerRadius, outerRadius, height, yPos, aabb);
 
 	auto& block = entity.AddComponent<BlockComponent>();
+	block.durability = 1;
 
 	return entity;
 }

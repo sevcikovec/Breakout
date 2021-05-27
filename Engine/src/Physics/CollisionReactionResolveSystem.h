@@ -80,6 +80,12 @@ namespace Engine {
 				if (object.hasRigidbody) {
 					auto& rb = ecs->GetComponent<Rigidbody>(object.entity);
 					rb = object.rigidbody;
+
+
+					if (rb.constraintMoveX) rb.velocity.x = 0;
+					if (rb.constraintMoveY) rb.velocity.y = 0;
+					if (rb.constraintMoveZ) rb.velocity.z = 0;
+
 					transform.position += rb.velocity * ts;
 				}
 			}

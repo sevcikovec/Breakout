@@ -5,6 +5,7 @@ struct BallComponent {
 };
 
 struct BlockComponent {
+	int durability = 1;
 
 };
 

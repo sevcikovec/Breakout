@@ -19,19 +19,9 @@ namespace Engine {
 				if (object.rigidbody.useGravity)
 					force += gravity * object.rigidbody.mass;
 
-				object.rigidbody.velocity += force / object.rigidbody.mass * ts;
+				auto& velocity = object.rigidbody.velocity;
 
-				//float speed = velocity.velocity.Mag();
-
-				//if (velocity.constraintMoveX) velocity.velocity.x = 0;
-				//if (velocity.constraintMoveY) velocity.velocity.y = 0;
-				//if (velocity.constraintMoveZ) velocity.velocity.z = 0;
-
-				//velocity.velocity.Normalize();
-				//velocity.velocity.Mul(speed);
-
-				//object.transform.position += object.velocity.velocity * ts;
-				
+				velocity += force / object.rigidbody.mass * ts;			
 			}
 		}
 	};
