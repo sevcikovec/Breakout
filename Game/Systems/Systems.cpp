@@ -115,3 +115,21 @@ void LightMoveSystem::Update(float ts)
 		transform.position += move;
 	}
 }
+
+void OuterEdgeSystem::SetEntities()
+{
+	SetCollisionEntityColliding<BallComponent>();
+	SetCollisionEntityOther<OuterEdgeComponent>();
+}
+
+void OuterEdgeSystem::Update(float ts)
+{
+	// collision reaction with outer edge
+	for (const auto& collisionEvent : collisionEvents) {
+
+		auto& BallComponent = ecs->GetComponent<Rigidbody>(collisionEvent.collidingEntity);
+
+		if (!ecs->HasComponent<DestroyTag>(collisionEvent.collidingEntity))
+			ecs->AddComponent<DestroyTag>(collisionEvent.collidingEntity);
+	}
+}

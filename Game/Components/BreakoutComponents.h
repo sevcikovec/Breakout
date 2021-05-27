@@ -9,6 +9,10 @@ struct BlockComponent {
 
 };
 
+struct OuterEdgeComponent {
+
+};
+
 struct PlayerComponent {
 	float moveSpeed = 5;
 	float radius = 4;

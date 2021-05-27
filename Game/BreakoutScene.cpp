@@ -19,6 +19,7 @@ BreakoutScene::BreakoutScene() : Scene("Main scene")
 
 	auto blockSystem = RegisterOnCollisionSystem<BlockSystem>();
 	auto ballBounceSystem = RegisterOnCollisionSystem<BounceSystem>();
+	auto outerEdgeSystem = RegisterOnCollisionSystem<OuterEdgeSystem>();
 
 
 	auto lightMoveSysem = RegisterSystem<LightMoveSystem>();
@@ -126,25 +127,26 @@ BreakoutScene::BreakoutScene() : Scene("Main scene")
 		}
 	}
 	
-	/*
+	
 	// generate outer wall
 	{
 		auto outerWallMaterial = CreateRef<Material>();
 		outerWallMaterial->SetShader(shader);
 		outerWallMaterial->SetProperty("color", Vec3{ .7f, .7f, .7f });
 
-		float innerRadius = 5.5f;
-		float outerRadius = 6.f;
+		float innerRadius = 7.5f;
+		float outerRadius = 9.f;
 		float playerRadius = (innerRadius + outerRadius) / 2;
 		float angleWidth = 360.f;
 		float height = 1.f;
 		MeshGenerator::GenerateArk(innerRadius, outerRadius, angleWidth, height, 50, true, vertices, indices);
 		auto aabb = MeshGenerator::GetAABB(vertices);
-		auto playerMeshVAO = GetVertexArray(vertices, indices);
+		auto playerMeshVAO = GetVertexArray(vertices, indices, { LayoutShaderType::Float3, LayoutShaderType::Float3 });
 		auto& wall = CreateArch(outerWallMaterial, playerMeshVAO, angleWidth, 0, playerRadius, innerRadius, outerRadius, height, 0.0f, aabb);
-		//wall.RemoveComponent<MeshComponent>();
+		wall.RemoveComponent<MeshComponent>();
+		auto& outerEdgeComponent = wall.AddComponent<OuterEdgeComponent>();
 	}
-	*/
+	
 
 	
 	// generate player

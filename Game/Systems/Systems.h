@@ -23,6 +23,12 @@ class BounceSystem : public Engine::ACollisionListenerSystem {
 	void Update(float ts) override;
 };
 
+class OuterEdgeSystem : public Engine::ACollisionListenerSystem {
+	void SetEntities() override;
+
+	void Update(float ts) override;
+};
+
 class LightMoveSystem : public Engine::OnUpdateSystem {
 	void Update(float ts) override;
 };
