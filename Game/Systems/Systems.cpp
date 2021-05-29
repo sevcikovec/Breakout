@@ -1,8 +1,10 @@
 #include "Systems.h"
 #include "../Components/BreakoutComponents.h"
 #include <Core/Input.h>
-#include "Math/Coordinates.h"
+#include <Math/Coordinates.h>
+#include <Utils/MeshGenerator.h>
 #include <iostream>
+
 
 using namespace Engine;
 
@@ -42,9 +44,10 @@ void BallSystem::Update(float ts) {
 	auto view = ecs->GetView<BallComponent, TransformComponent, Rigidbody>();
 	while (view.MoveNext()) {
 		auto& transform = view.GetComponent<TransformComponent>();
+		auto& ballComponent = view.GetComponent<BallComponent>();
 		auto& rb = view.GetComponent<Rigidbody>();
 		rb.velocity.Normalize();
-		rb.velocity.Mul(5);
+		rb.velocity.Mul(ballComponent.speed);
 	}
 }
 
@@ -118,7 +121,7 @@ void LightMoveSystem::Update(float ts)
 
 void OuterEdgeSystem::SetEntities()
 {
-	SetCollisionEntityColliding<BallComponent>();
+	SetCollisionEntityColliding<DestroyOnLeavingCircleTag>();
 	SetCollisionEntityOther<OuterEdgeComponent>();
 }
 
@@ -132,4 +135,78 @@ void OuterEdgeSystem::Update(float ts)
 		if (!ecs->HasComponent<DestroyTag>(collisionEvent.collidingEntity))
 			ecs->AddComponent<DestroyTag>(collisionEvent.collidingEntity);
 	}
+}
+
+
+void BallSpawnerSystem::Init(ECS* ecs) {
+	OnUpdateSystem::Init(ecs);
+
+	radius = 0.2;
+	std::vector<float> vertices;
+	std::vector<uint32_t> indices;
+	MeshGenerator::GenerateSphere(radius, 20, 20, vertices, indices);
+
+	auto vb1 = VertexBuffer::Create(vertices.data(), vertices.size());
+	vb1->SetLayout(
+		{
+			{ LayoutShaderType::Float3, LayoutShaderType::Float3 }
+		});
+
+	auto ib = IndexBuffer::Create(indices.data(), indices.size());
+
+	ballVAO = VertexArray::Create();
+	ballVAO->SetIndexBuffer(ib);
+	ballVAO->SetVertexBuffer(vb1);
+
+
+	ballMaterial = CreateRef<Material>();
+	ballMaterial->SetProperty("color", Vec3{ .7f, .7f, 0 });
+}
+
+
+void BallSpawnerSystem::Update(float ts)
+{
+	auto ballView = ecs->GetView<BallComponent, TagComponent>();
+	if (!ballView.MoveNext()) {
+		CreateBall({ 0, 0, 3 }, { 0, 0, -2 });
+	}
+	
+}
+
+void BallSpawnerSystem::SetShader(Engine::Ref<Engine::Shader> shader)
+{
+	ballMaterial->SetShader(shader);
+}
+
+void BallSpawnerSystem::CreateBall(Engine::Vec3 position, Engine::Vec3 velocity)
+{
+	Entity ballEntity(ecs->CreateEntity(), ecs);
+	TagComponent& tag = ballEntity.AddComponent<TagComponent>();
+	ballEntity.AddComponent<BallComponent>();
+	auto& transform = ballEntity.AddComponent<TransformComponent>();
+	position.y = radius;
+	transform.position = position;
+
+	auto& mesh = ballEntity.AddComponent<MeshComponent>();
+	mesh.material = ballMaterial;
+	mesh.vao = ballVAO;
+	auto& platformAABB = ballEntity.AddComponent<AABB_local>();
+	platformAABB.xMin = -radius;
+	platformAABB.yMin = -radius;
+	platformAABB.zMin = -radius;
+	platformAABB.xMax = radius;
+	platformAABB.yMax = radius;
+	platformAABB.zMax = radius;
+
+	auto& rbComponent = ballEntity.AddComponent<Rigidbody>();
+	rbComponent.velocity = velocity;
+	rbComponent.constraintMoveY = true;
+	rbComponent.useGravity = false;
+	rbComponent.restitution = 1.f;
+	rbComponent.mass = 0.2f;
+
+	auto& sphereCollider = ballEntity.AddComponent<SphereCollider>();
+	sphereCollider.radius = radius;
+
+	ballEntity.AddComponent<DestroyOnLeavingCircleTag>();
 }

@@ -1,6 +1,7 @@
 #pragma once
 #include <Scene/Systems.h>
 #include "Physics/ACollisionListenerSystem.h"
+#include <functional>
 
 
 class PlayerMovementSystem : public Engine::OnUpdateSystem {
@@ -32,3 +33,22 @@ class OuterEdgeSystem : public Engine::ACollisionListenerSystem {
 class LightMoveSystem : public Engine::OnUpdateSystem {
 	void Update(float ts) override;
 };
+
+class BallSpawnerSystem : public Engine::OnUpdateSystem {
+public:
+	void Init(Engine::ECS* ecs) override;
+
+	void Update(float ts) override;
+
+	void SetShader(Engine::Ref<Engine::Shader> shader);
+private:
+
+	void CreateBall(Engine::Vec3 position, Engine::Vec3 velocity);
+	
+	Engine::Ref<Engine::VertexArray> ballVAO;
+
+	Engine::Ref<Engine::Material> ballMaterial;
+
+	float radius;
+};
+

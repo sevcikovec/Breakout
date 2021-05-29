@@ -123,10 +123,8 @@ namespace Engine {
 
 		template<typename T>
 		T& AddComponent(EntityID entity) {
-			const char* typeName = typeid(T).name();
-			if (componentPools.find(typeName) == componentPools.end()) {
-				componentPools.insert({ typeName, CreateRef<ComponentPool<T>>() });
-				componentTypes.insert({ typeName, nextComponentType++ });
+			if (!IsComponentRegistered<T>()) {
+				RegisterComponent<T>();
 			}
 			return GetComponentPool<T>()->CreateComponent(entity);
 		}

@@ -6,29 +6,31 @@
 namespace Engine {
 	class Entity {
 	public:
+		Entity(const EntityID& id, ECS* ecs);
+
 		template<typename T>
 		T& AddComponent() {
-			T& component = scene->ecs.AddComponent<T>(id);
+			T& component = ecs->AddComponent<T>(id);
 			return component;
 		}
 
 		template<typename T>
 		T& GetComponent()
 		{
-			T& component = scene->ecs.GetComponent<T>(id);
+			T& component = ecs->GetComponent<T>(id);
 			return component;
 		}
 
 		template<typename T>
 		bool HasComponent()
 		{
-			return scene->ecs.HasComponent<T>(id);
+			return ecs->HasComponent<T>(id);
 		}
 
 		template<typename T>
 		void RemoveComponent()
 		{
-			scene->ecs.RemoveComponent<T>(id);
+			ecs->RemoveComponent<T>(id);
 		}
 
 		size_t operator==(const Entity& other) const {
@@ -40,15 +42,11 @@ namespace Engine {
 		}
 
 	private:
-		friend class Scene;
-
-		Entity(const EntityID& id, Scene* scene);
-
 		std::string name;
 
 		EntityID id;
 
-		Scene* scene = nullptr;
+		ECS* ecs = nullptr;
 	};
 }
 

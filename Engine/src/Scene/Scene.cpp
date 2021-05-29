@@ -14,7 +14,7 @@ namespace Engine {
 
 	Entity Scene::CreateEntity(const std::string& name)
 	{
-		Entity entity(ecs.CreateEntity(), this);
+		Entity entity(ecs.CreateEntity(), &ecs);
 		TagComponent& tag = entity.AddComponent<TagComponent>();
 		tag.name = name;
 
@@ -23,7 +23,7 @@ namespace Engine {
 
 	Entity Scene::GetEntity(EntityID entityID)
 	{
-		return { entityID, this };
+		return { entityID, &ecs };
 	}
 
 
@@ -40,7 +40,7 @@ namespace Engine {
 			if (!scriptComponent.Instance) {
 				scriptComponent.InstantiateScript(&scriptComponent);
 
-				scriptComponent.Instance->entity = Entity{ view.GetEntity(), this };
+				scriptComponent.Instance->entity = Entity{ view.GetEntity(), &ecs };
 				scriptComponent.Instance->OnCreate();
 			}
 			scriptComponent.Instance->OnUpdate(ts);

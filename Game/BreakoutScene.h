@@ -19,6 +19,4 @@ private:
 	Engine::Entity CreateArch(Engine::Ref<Engine::Material> material, Engine::Ref<Engine::VertexArray> vertexArray, float angleWidth, float startingAngle, float radius, float innerRadius, float outerRadius, float height, float yPos, Engine::AABB_local aabb);
 
 	Engine::Entity CreateBlockArch(Engine::Ref<Engine::Material> material, Engine::Ref<Engine::VertexArray> vertexArray, float angleWidth, float startingAngle, float radius, float innerRadius, float outerRadius, float height, float yPos, Engine::AABB_local aabb);
-
-	Engine::Entity CreateBall(Engine::Ref<Engine::Material> material, Engine::Ref<Engine::VertexArray> vertexArray, float radius, Engine::Vec3 position, Engine::Vec3 rigidbody);
 };
