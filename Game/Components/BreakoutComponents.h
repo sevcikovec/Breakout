@@ -61,3 +61,7 @@ struct CameraAnimationComponent {
 
 	Engine::EntityID cameraEntity;
 };
+
+struct EndGameEvent {
+
+};

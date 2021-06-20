@@ -30,6 +30,7 @@ BreakoutScene::BreakoutScene() : Scene("Main scene")
 	RegisterSystem<CameraMovementController>();
 	RegisterSystem<TransformAnimationSystem>();
 
+	RegisterSystem<EndGameSystem>();
 	RegisterSystem<ShowInfoSystem>();
 
 	// add game manager
@@ -38,7 +39,7 @@ BreakoutScene::BreakoutScene() : Scene("Main scene")
 		
 		auto& managerComponent = managerEntity.AddComponent<GameManagerComponent>();
 
-		managerComponent.playerLives = 5;
+		managerComponent.playerLives = 3;
 		managerComponent.totalScore = 0;
 	}
 
@@ -95,11 +96,11 @@ BreakoutScene::BreakoutScene() : Scene("Main scene")
 	
 	const char* vertexShader = "..\\..\\..\\..\\Engine\\resources\\shaders\\vert.glsl";
 	const char* fragmentShader = "..\\..\\..\\..\\Engine\\resources\\shaders\\frag.glsl";
-	auto shader = CreateRef<Shader>(vertexShader, fragmentShader);
+	auto shader = Shader::CreateShader("default", vertexShader, fragmentShader);
 
 	const char* textVertexShader = "..\\..\\..\\..\\Engine\\resources\\shaders\\text_vert.glsl";
 	const char* textFragmentShader = "..\\..\\..\\..\\Engine\\resources\\shaders\\text_frag.glsl";
-	auto textShader = CreateRef<Shader>(textVertexShader, textFragmentShader);
+	auto textShader = Shader::CreateShader("text", textVertexShader, textFragmentShader);
 
 	// add GUI
 	{
@@ -123,7 +124,7 @@ BreakoutScene::BreakoutScene() : Scene("Main scene")
 
 
 
-		auto font = FontLoader::LoadFont("..\\..\\..\\..\\Engine\\resources\\font\\font.ttf");
+		auto font = FontLoader::LoadFont("default", "..\\..\\..\\..\\Engine\\resources\\font\\font.ttf");
 
 		
 		Entity scoreTextEntity = CreateEntity("Score text");

@@ -8,33 +8,15 @@
 
 namespace Engine {
 
-    Font::Font(Ref<Texture> atlas, FontEntry* fontEntries, int numOfEntries)
-    {
-        for (size_t i = 0; i < numOfEntries; i++)
-        {
-            entries[fontEntries[i].character] = fontEntries[i];
-        }
+    std::unordered_map<std::string, Ref<Font>> FontLoader::fonts;
 
-        fontAtlas = atlas;
-    }
-
-    FontEntry& Font::GetCharEntry(unsigned char c) 
-    {
-        return entries[c];
-    }
-
-    Ref<Texture> Font::GetAtlasTexture() 
-    {
-        return fontAtlas;
-    }
-
-    Ref<Font> FontLoader::LoadFont(const char* fontPath)
+    Ref<Font> FontLoader::LoadFont(const std::string& fontname, const std::string& fontPath)
     {
         /* load font file */
         long size;
         unsigned char* fontBuffer;
 
-        FILE* fontFile = fopen(fontPath, "rb");
+        FILE* fontFile = fopen(fontPath.c_str(), "rb");
         fseek(fontFile, 0, SEEK_END);
         size = ftell(fontFile); /* how long is the file ? */
         fseek(fontFile, 0, SEEK_SET); /* reset */
@@ -44,14 +26,7 @@ namespace Engine {
         fread(fontBuffer, size, 1, fontFile);
         fclose(fontFile);
 
-        // prepare font texture
-        //float sdf_size = 32.0;          // the larger this is, the better large font sizes look
-        //float pixel_dist_scale = 64.0;  // trades off precision w/ ability to handle *smaller* sizes
-        //int onedge_value = 128;
-        //int w, h, xoff, yoff;
-
-       
-
+        // prepare font texture    
         stbtt_fontinfo fontInfo;
         stbtt_InitFont(&fontInfo, fontBuffer, 0);
         unsigned char temp_bitmap[512 * 512];
@@ -100,12 +75,37 @@ namespace Engine {
 
         fontRef->maxHeightDistance = maxDistance;
 
-        stbi_write_png("out.png", 512, 512, 1, temp_bitmap, 512);
-
         stbtt_PackEnd(&packContext);
         free(fontBuffer);
 
+        fonts.insert({ fontname, fontRef });
+
         return fontRef;
+    }
+
+    Ref<Font> FontLoader::GetFont(const std::string& fontname) {
+        return fonts[fontname];
+    }
+
+
+    Font::Font(Ref<Texture> atlas, FontEntry* fontEntries, int numOfEntries)
+    {
+        for (size_t i = 0; i < numOfEntries; i++)
+        {
+            entries[fontEntries[i].character] = fontEntries[i];
+        }
+
+        fontAtlas = atlas;
+    }
+
+    FontEntry& Font::GetCharEntry(unsigned char c)
+    {
+        return entries[c];
+    }
+
+    Ref<Texture> Font::GetAtlasTexture()
+    {
+        return fontAtlas;
     }
 
     float Font::GetScaleForSize(int fontSize) {

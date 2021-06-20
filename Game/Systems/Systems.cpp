@@ -182,22 +182,31 @@ void BallSpawnerSystem::Init(ECS* ecs) {
 
 void BallSpawnerSystem::Update(float ts)
 {
-	auto ballView = ecs->GetView<BallComponent, TagComponent>();
-	if (!ballView.MoveNext()) {
-		// no ball remaining, remove live
-		auto managerView = ecs->GetView<GameManagerComponent>();
-		if (managerView.MoveNext()) {
-			auto& managerComponent = managerView.GetComponent<GameManagerComponent>();
-			
+	auto managerView = ecs->GetView<GameManagerComponent>();
+	if (managerView.MoveNext()) {
+		auto& managerComponent = managerView.GetComponent<GameManagerComponent>();
+		if (managerComponent.isGameOver) return;
+
+		auto ballView = ecs->GetView<BallComponent, TagComponent>();
+		if (!ballView.MoveNext()) {
+			// no ball remaining, remove life
 			managerComponent.playerLives -= 1;
 
 			auto& livesChengedEvent = ecs->AddComponent<LivesChangedEvent>(ecs->CreateEntity());
 			livesChengedEvent.lives = managerComponent.playerLives;
-		}
 
-		CreateBall({ 0, 0, 3 }, { 0, 0, -2 });
+			if (managerComponent.playerLives > 0) {
+				CreateBall({ 0, 0, 3 }, { 0, 0, -2 });
+			}
+			else {
+				managerComponent.isGameOver = true;
+				auto& livesChengedEvent = ecs->AddComponent<EndGameEvent>(ecs->CreateEntity());
+			}
+			
+		}
 	}
 }
+
 
 void BallSpawnerSystem::SetShader(Engine::Ref<Engine::Shader> shader)
 {
@@ -270,8 +279,6 @@ void ShowInfoSystem::Update(float ts)
 			scoreText.text->SetText("Score: " + std::to_string(scoreChangedEvent.score), 50);
 		}
 	}
-	
-	
 }
 
 void TransformAnimationSystem::Update(float ts)
@@ -318,15 +325,50 @@ void CameraMovementController::Update(float ts)
 			transformAnimation.endPosition = cameraAnimationComponent.targetPosition;
 			transformAnimation.endRotation = cameraAnimationComponent.targetRotation;
 			transformAnimation.remainingDurationSec = 0.5f;
-			if (ecs->HasComponent<TransformAnimationComponent>(cameraAnimationComponent.cameraEntity)) {
-				auto& c = ecs->GetComponent<TransformAnimationComponent>(cameraAnimationComponent.cameraEntity);
-				c = transformAnimation;
-			}
-			else {
+			if (!ecs->HasComponent<TransformAnimationComponent>(cameraAnimationComponent.cameraEntity)) {
 				auto& c = ecs->AddComponent<TransformAnimationComponent>(cameraAnimationComponent.cameraEntity);
 				c = transformAnimation;
 			}
 
 		}
+	}
+}
+
+void EndGameSystem::Update(float ts)
+{
+	auto view = ecs->GetView<EndGameEvent>();
+	if (view.MoveNext()){
+		ecs->AddComponent<DestroyTag>(view.GetEntity());
+
+		auto textShader = Engine::Shader::GetShader("text");
+
+		auto font = Engine::FontLoader::GetFont("default");
+		auto text = CreateRef<Text>(font);
+		text->SetText("Game Over", 75);
+
+		EntityID endGameTextEntity = ecs->CreateEntity();
+
+		// get canvas
+		EntityID canvasEntityId;
+		auto canvasView = ecs->GetView<CanvasComponent>();
+		if (!view.MoveNext()) {
+			canvasEntityId = canvasView.GetEntity();
+		}
+
+		auto& textTransform = ecs->AddComponent<RectTransform>(endGameTextEntity);
+		textTransform.parentCanvasEntity = canvasEntityId;
+		textTransform.position = { 125, 0, 0 };
+		textTransform.size = { 0, 0 };
+		textTransform.scale = { 1, 1, 1 };
+
+
+		auto material = CreateRef<Material>();
+		material->SetShader(textShader);
+		material->SetProperty("color", Vec3{ 0 });
+		material->SetTexture(font->GetAtlasTexture());
+
+		auto& textComponent = ecs->AddComponent<TextComponent>(endGameTextEntity);
+		textComponent.material = material;
+		textComponent.text = text;
 	}
 }

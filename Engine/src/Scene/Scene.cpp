@@ -92,9 +92,7 @@ namespace Engine {
 		guiRenderingSystem->Init(&ecs);
 
 
-		const char* vertexShader = "..\\..\\..\\..\\Engine\\resources\\shaders\\vert.glsl";
-		const char* fragmentShader = "..\\..\\..\\..\\Engine\\resources\\shaders\\frag.glsl";
-		auto shader = CreateRef<Shader>(vertexShader, fragmentShader);
+		auto shader = Shader::GetShader("default");
 
 		auto aabbMat = CreateRef<Material>();
 		aabbMat->SetShader(shader);

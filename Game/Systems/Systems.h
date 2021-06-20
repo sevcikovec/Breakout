@@ -64,3 +64,7 @@ class TransformAnimationSystem : public Engine::OnUpdateSystem {
 class CameraMovementController : public Engine::OnUpdateSystem {
 	void Update(float ts) override;
 };
+
+class EndGameSystem : public Engine::OnUpdateSystem {
+	void Update(float ts) override;
+};

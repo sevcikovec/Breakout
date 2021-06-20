@@ -2,6 +2,8 @@
 #include <string>
 #include <GL\glew.h>
 #include "../Math/Mat4.h"
+#include "../../Utils.h"
+#include <unordered_map>
 
 namespace Engine {
 
@@ -29,12 +31,15 @@ namespace Engine {
 			SetUniformMat4(name, value);
 		}
 
+		static Ref<Shader> CreateShader(const std::string& name, const std::string& vertexFilePath, const std::string& fragmentFilePath);
+		static Ref<Shader> GetShader(const std::string& name);
 
 	private:
 		bool Compile(const std::string& code, GLenum shaderType);
 		uint32_t programID;
 		std::string ReadFile(const std::string& filepath);
 
+		static std::unordered_map<std::string, Ref<Shader>> shaders;
 	};
 
 }

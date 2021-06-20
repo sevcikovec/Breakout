@@ -5,6 +5,22 @@
 
 namespace Engine {
 
+	std::unordered_map<std::string, Ref<Shader>> Shader::shaders;
+
+	Ref<Shader> Shader::CreateShader(const std::string& name, const std::string& vertexFilePath, const std::string& fragmentFilePath)
+	{
+		auto shader = CreateRef<Shader>(vertexFilePath, fragmentFilePath);
+
+		shaders.insert({ name, shader });
+
+		return shader;
+	}
+
+	Ref<Shader> Shader::GetShader(const std::string& name)
+	{
+		return shaders[name];
+	}
+
 	Shader::Shader(const std::string& vertexFilePath, const std::string& fragmentFilePath)
 	{
 		std::string vertex = ReadFile(vertexFilePath);
@@ -40,8 +56,6 @@ namespace Engine {
 		GLint location = glGetUniformLocation(programID, name.c_str());
 		glUniformMatrix4fv(location, 1, GL_FALSE, value.GetPtr());
 	}
-
-	
 
 	bool Shader::Compile(const std::string& code, GLenum shaderType)
 	{

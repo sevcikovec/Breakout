@@ -33,8 +33,9 @@ namespace Engine {
 
 	class FontLoader {
 	public:
-		static Ref<Font> LoadFont(const char* fontPath);
+		static Ref<Font> LoadFont(const std::string& fontName, const std::string& fontPath);
+		static Ref<Font> GetFont(const std::string& fontName);
 	private:
-
+		static std::unordered_map<std::string, Ref<Font>> fonts;
 	};
 }
