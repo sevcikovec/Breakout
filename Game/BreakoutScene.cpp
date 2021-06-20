@@ -27,6 +27,9 @@ BreakoutScene::BreakoutScene() : Scene("Main scene")
 	auto lightMoveSystem = RegisterSystem<LightMoveSystem>();
 	auto ballManagerSystem = RegisterSystem<BallSpawnerSystem>();
 
+	auto blockSpawningSystem = RegisterSystem<BlockSpawningSystem>();
+	blockSpawningSystem->SetScene(this);
+
 	RegisterSystem<CameraMovementController>();
 	RegisterSystem<TransformAnimationSystem>();
 
@@ -39,7 +42,7 @@ BreakoutScene::BreakoutScene() : Scene("Main scene")
 		
 		auto& managerComponent = managerEntity.AddComponent<GameManagerComponent>();
 
-		managerComponent.playerLives = 3;
+		managerComponent.playerLives = 4;
 		managerComponent.totalScore = 0;
 	}
 
@@ -86,14 +89,14 @@ BreakoutScene::BreakoutScene() : Scene("Main scene")
 	}
 
 
-	
-	const char* vertexShader = "assets\\resources\\shaders\\vert.glsl";
-	const char* fragmentShader = "assets\\resources\\shaders\\frag.glsl";
-	auto shader = Shader::CreateShader("default", vertexShader, fragmentShader);
 
 	const char* textVertexShader = "assets\\resources\\shaders\\text_vert.glsl";
 	const char* textFragmentShader = "assets\\resources\\shaders\\text_frag.glsl";
 	auto textShader = Shader::CreateShader("text", textVertexShader, textFragmentShader);
+	
+	const char* vertexShader = "assets\\resources\\shaders\\vert.glsl";
+	const char* fragmentShader = "assets\\resources\\shaders\\frag.glsl";
+	auto shader = Shader::CreateShader("defaultShader", vertexShader, fragmentShader);
 
 	// add GUI
 	{
@@ -182,42 +185,24 @@ BreakoutScene::BreakoutScene() : Scene("Main scene")
 	std::vector<float> vertices;
 	std::vector<uint32_t> indices;	
 	
-	// generate wall
-	{
-		auto material1 = CreateRef<Material>();
-		material1->SetShader(shader);
-		material1->SetProperty("color", Vec3{ .7f, .7f, .0f });
-		auto material2 = CreateRef<Material>();
-		material2->SetShader(shader);
-		material2->SetProperty("color", Vec3{ .0f, .7f, .7f });
 
+	// generate data for blocks
+	{
 		float numberInRow = 12;
 		int rows = 3;
 
 		float innerRadius = 1.f;
 		float outerRadius = 1.5f;
 		float radius = (innerRadius + outerRadius) / 2;
-		float widthAngle = 360/numberInRow;
+		float widthAngle = 360 / numberInRow;
 		float height = .5f;
-		MeshGenerator::GenerateArk(innerRadius, outerRadius, widthAngle, height, 10, true, vertices, indices);
-		auto aabb = MeshGenerator::GetAABB(vertices);
-		auto vertexArray = GetVertexArray(vertices, indices, { LayoutShaderType::Float3, LayoutShaderType::Float3 });
 
-		//for (int i = rows-1; i >= 0; i--) {
-		for (int i = 0; i < rows; i++) {
-			for (size_t j = 0; j < numberInRow; j++)
-			{
-				auto& block = CreateBlockArch((j + i) % 2 ? material1 : material2, vertexArray, widthAngle, widthAngle * j, radius, innerRadius, outerRadius, height, height * i + i * 0.f -0.f, aabb);
-				//if (i != 0)
-				auto& rb = block.AddComponent<Rigidbody>();
-				rb.restitution = .1f;
-				rb.mass = 1.f;
-				rb.constraintMoveX = true;
-				rb.constraintMoveZ = true;
-			}
-		}
+		MeshGenerator::GenerateArk(innerRadius, outerRadius, widthAngle, height, 10, true, vertices, indices);
+		blockAABB = MeshGenerator::GetAABB(vertices);
+		blockVertexArray = GetVertexArray(vertices, indices, { LayoutShaderType::Float3, LayoutShaderType::Float3 });
+
+		SpawnBlocks();
 	}
-	
 	
 	// generate outer wall
 	{
@@ -352,9 +337,42 @@ Engine::Entity BreakoutScene::CreateBlockArch(Engine::Ref<Engine::Material> play
 	Entity entity = CreateArch(playerArchMaterial, playerMeshVAO, angleWidth, startingAngle, radius, innerRadius, outerRadius, height, yPos, aabb);
 
 	auto& block = entity.AddComponent<BlockComponent>();
-	block.durability = 1;
+	block.durability = 2;
 
 	return entity;
+}
+
+void BreakoutScene::SpawnBlocks()
+{
+	// generate wall
+	{
+		auto shader = Shader::GetShader("defaultShader");
+
+		float numberInRow = 12;
+		int rows = 3;
+
+		float innerRadius = 1.f;
+		float outerRadius = 1.5f;
+		float radius = (innerRadius + outerRadius) / 2;
+		float widthAngle = 360 / numberInRow;
+		float height = .5f;
+
+		for (int i = 0; i < rows; i++) {
+			for (size_t j = 0; j < numberInRow; j++)
+			{
+				auto material = CreateRef<Material>();
+				material->SetShader(shader);
+				material->SetProperty("color", (j + i) % 2 ? Vec3{ .0f, .7f, .7f } : Vec3{ .7f, .7f, .0f });
+
+				auto& block = CreateBlockArch(material, blockVertexArray, widthAngle, widthAngle * j, radius, innerRadius, outerRadius, height, height * i + i * 0.f - 0.f, blockAABB);
+				auto& rb = block.AddComponent<Rigidbody>();
+				rb.restitution = .1f;
+				rb.mass = 1.f;
+				rb.constraintMoveX = true;
+				rb.constraintMoveZ = true;
+			}
+		}
+	}
 }
 
 

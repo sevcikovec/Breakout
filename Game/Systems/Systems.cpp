@@ -65,6 +65,9 @@ void BlockSystem::Update(float ts)
 		auto& block = ecs->GetComponent<BlockComponent>(collisionEvent.collidingEntity);
 		block.durability -= 1;
 
+		auto& mesh = ecs->GetComponent<MeshComponent>(collisionEvent.collidingEntity);
+		mesh.material->SetProperty("color", Vec3{ .3f, .3f, .3f });
+
 		if (block.durability <= 0 && !ecs->HasComponent<DestroyTag>(collisionEvent.collidingEntity)) {
 			ecs->AddComponent<DestroyTag>(collisionEvent.collidingEntity);
 			scoreChange += block.score;
@@ -368,4 +371,17 @@ void EndGameSystem::Update(float ts)
 		textComponent.material = material;
 		textComponent.text = text;
 	}
+}
+
+void BlockSpawningSystem::Update(float ts)
+{
+	auto view = ecs->GetView<BlockComponent>();
+	if (!view.MoveNext()) {
+		scene->SpawnBlocks();
+	}
+}
+
+void BlockSpawningSystem::SetScene(BreakoutScene* scene)
+{
+	this->scene = scene;
 }

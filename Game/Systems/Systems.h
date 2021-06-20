@@ -2,6 +2,7 @@
 #include <Scene/Systems.h>
 #include "Physics/ACollisionListenerSystem.h"
 #include <functional>
+#include "../BreakoutScene.h"
 
 
 class PlayerMovementSystem : public Engine::OnUpdateSystem {
@@ -67,4 +68,13 @@ class CameraMovementController : public Engine::OnUpdateSystem {
 
 class EndGameSystem : public Engine::OnUpdateSystem {
 	void Update(float ts) override;
+};
+
+class BlockSpawningSystem : public Engine::OnUpdateSystem {
+public:
+	void Update(float ts) override;
+
+	void SetScene(BreakoutScene* scene);
+private:
+	BreakoutScene* scene;
 };
