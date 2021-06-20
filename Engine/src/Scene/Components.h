@@ -71,7 +71,6 @@ namespace Engine {
 	struct TextComponent {
 		Ref<Text> text;
 		Ref<Material> material;
-		Ref<Camera> camera;
 	};
 
 	struct CanvasComponent {

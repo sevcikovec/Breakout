@@ -8,6 +8,12 @@ namespace Engine {
 		glBindBuffer(GL_ARRAY_BUFFER, rendererID);
 		glBufferData(GL_ARRAY_BUFFER, size * sizeof(float), vertices, GL_STATIC_DRAW);
 	}
+
+	void VertexBuffer::BufferData(float* vertices, uint32_t size) {
+		glBindBuffer(GL_ARRAY_BUFFER, rendererID);
+		glBufferData(GL_ARRAY_BUFFER, size * sizeof(float), vertices, GL_STATIC_DRAW);
+	}
+
 	VertexBuffer::~VertexBuffer()
 	{
 		glDeleteBuffers(1, &rendererID);

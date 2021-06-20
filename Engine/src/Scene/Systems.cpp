@@ -45,7 +45,6 @@ namespace Engine {
 			
 			mesh.material->GetShader()->Bind();
 			mesh.material->GetShader()->SetUniformMat4("modelMat", transform.GetTransformMatrix());
-			mesh.vao->Bind();
 			while ((err = glGetError()) != GL_NO_ERROR)
 			{
 				std::cout << err << std::endl;
@@ -170,11 +169,11 @@ namespace Engine {
 				std::cout << err << std::endl;
 			}
 
-			
-
 			text.material->GetShader()->Bind();
 			text.material->GetShader()->SetUniformMat4("modelMat", transform.GetTransformMatrix());
 			Renderer::Submit(text.material, text.text->GetVAO());
 		}
+
+		glDisable(GL_BLEND);
 	}
 }

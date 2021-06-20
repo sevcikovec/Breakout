@@ -82,6 +82,8 @@ namespace Engine {
 		else {
 			auto indexBuffer = textVA->GetIndexBuffer();
 			indexBuffer->BufferData(indices.data(), indices.size());
+			auto vertexBuffer = textVA->GetVertexBuffer();
+			vertexBuffer->BufferData(vertices.data(), vertices.size());
 		}		
 	}
 	Ref<VertexArray> Text::GetVAO()

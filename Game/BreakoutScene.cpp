@@ -27,6 +27,17 @@ BreakoutScene::BreakoutScene() : Scene("Main scene")
 	auto lightMoveSystem = RegisterSystem<LightMoveSystem>();
 	auto ballManagerSystem = RegisterSystem<BallSpawnerSystem>();
 
+	RegisterSystem<ShowInfoSystem>();
+
+	// add game manager
+	{
+		Entity managerEntity = CreateEntity("Game manager");
+		
+		auto& managerComponent = managerEntity.AddComponent<GameManagerComponent>();
+
+		managerComponent.playerLives = 5;
+		managerComponent.totalScore = 0;
+	}
 
 	// add camera
 	{
@@ -55,7 +66,7 @@ BreakoutScene::BreakoutScene() : Scene("Main scene")
 	{
 		Entity lightEntity = CreateEntity("Main Light");
 		auto& transform = lightEntity.AddComponent<TransformComponent>();
-		transform.position = { 0,4,0 };
+		transform.position = { 3,4,0 };
 		auto& light = lightEntity.AddComponent<LightComponent>();
 		light.diffuse = {1.f,1.f,1.f };
 		light.ambient = { 0.5f,0.5f,0.5f };
@@ -95,27 +106,62 @@ BreakoutScene::BreakoutScene() : Scene("Main scene")
 
 
 		auto font = FontLoader::LoadFont("..\\..\\..\\..\\Engine\\resources\\font\\font.ttf");
-		auto text = CreateRef<Text>(font);
-		text->SetText("Score: 50", 50);
 
-
-		Entity textEntity = CreateEntity("Test text");
 		
-		auto& textTransform = textEntity.AddComponent<RectTransform>();
-		textTransform.parentCanvasEntity = screenCanvas.GetID();
-		textTransform.position = { 10, 180, 0 };
-		textTransform.size = { 0, 0 };
-		textTransform.scale = { 1, 1, 1 };
+		Entity scoreTextEntity = CreateEntity("Score text");
+		
+		// setup score text
+		{
+			auto text = CreateRef<Text>(font);
+			text->SetText("Score: 0", 50);
+
+			auto& textTransform = scoreTextEntity.AddComponent<RectTransform>();
+			textTransform.parentCanvasEntity = screenCanvas.GetID();
+			textTransform.position = { 10, 180, 0 };
+			textTransform.size = { 0, 0 };
+			textTransform.scale = { 1, 1, 1 };
 
 
-		auto material = CreateRef<Material>();
-		material->SetShader(textShader);
-		material->SetProperty("color", Vec3{ 0.f, 1.0f, .0f });
-		material->SetTexture(font->GetAtlasTexture());
+			auto material = CreateRef<Material>();
+			material->SetShader(textShader);
+			material->SetProperty("color", Vec3{ 0.f, 1.0f, .0f });
+			material->SetTexture(font->GetAtlasTexture());
 
-		auto& textComponent = textEntity.AddComponent<TextComponent>();
-		textComponent.material = material;
-		textComponent.text = text;
+			auto& textComponent = scoreTextEntity.AddComponent<TextComponent>();
+			textComponent.material = material;
+			textComponent.text = text;
+		}
+		
+
+		Entity livesTextEntity = CreateEntity("Lives text");
+		// setup lives text
+		{
+			auto text = CreateRef<Text>(font);
+			text->SetText("Lives: 5", 50);
+
+			auto& textTransform = livesTextEntity.AddComponent<RectTransform>();
+			textTransform.parentCanvasEntity = screenCanvas.GetID();
+			textTransform.position = { 450, 180, 0 };
+			textTransform.size = { 0, 0 };
+			textTransform.scale = { 1, 1, 1 };
+
+
+			auto material = CreateRef<Material>();
+			material->SetShader(textShader);
+			material->SetProperty("color", Vec3{ .7f, .2f, .2f });
+			material->SetTexture(font->GetAtlasTexture());
+
+			auto& textComponent = livesTextEntity.AddComponent<TextComponent>();
+			textComponent.material = material;
+			textComponent.text = text;
+		}
+
+
+		// add references to text entities
+		Entity guiReferences = CreateEntity("Gui references");
+		auto& guiReferencesComponent = guiReferences.AddComponent<GUIReferencesComponent>();
+		guiReferencesComponent.scoreTextEntity = scoreTextEntity.GetID();
+		guiReferencesComponent.livesTextEntity = livesTextEntity.GetID();
 	}
 
 
@@ -125,7 +171,6 @@ BreakoutScene::BreakoutScene() : Scene("Main scene")
 	std::vector<uint32_t> indices;	
 	
 	// generate wall
-	if (0)
 	{
 		auto material1 = CreateRef<Material>();
 		material1->SetShader(shader);
@@ -205,7 +250,6 @@ BreakoutScene::BreakoutScene() : Scene("Main scene")
 	const char* textureFilename = "..\\..\\..\\..\\Engine\\resources\\Lenna.png";
 	auto texture = CreateRef<Texture>(textureFilename);
 	// generate floor
-	if (0)
 	{
 		float radius = 7;
 		auto platformMaterial = CreateRef<Material>();

@@ -123,6 +123,7 @@ namespace Engine {
 	class VertexBuffer {
 	public:
 		VertexBuffer(float* vertices, uint32_t size);
+		void BufferData(float* vertices, uint32_t size);
 		~VertexBuffer();
 
 		void Bind() const;

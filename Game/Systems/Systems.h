@@ -52,3 +52,7 @@ private:
 	float radius;
 };
 
+
+class ShowInfoSystem : public Engine::OnUpdateSystem {
+	void Update(float ts) override;
+};

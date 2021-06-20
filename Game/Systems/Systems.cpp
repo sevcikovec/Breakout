@@ -59,12 +59,28 @@ void BlockSystem::SetEntities()
 
 void BlockSystem::Update(float ts)
 {
+	int scoreChange = 0;
+
 	for (const auto& collisionEvent : collisionEvents) {		
 		auto& block = ecs->GetComponent<BlockComponent>(collisionEvent.collidingEntity);
 		block.durability -= 1;
 
-		if (block.durability <= 0 && !ecs->HasComponent<DestroyTag>(collisionEvent.collidingEntity))
+		if (block.durability <= 0 && !ecs->HasComponent<DestroyTag>(collisionEvent.collidingEntity)) {
 			ecs->AddComponent<DestroyTag>(collisionEvent.collidingEntity);
+			scoreChange += block.score;
+		}
+	}
+
+	if (scoreChange > 0) {
+
+		auto managerView = ecs->GetView<GameManagerComponent>();
+		if (managerView.MoveNext()) {
+			auto& managerComponent = managerView.GetComponent<GameManagerComponent>();
+			managerComponent.totalScore += scoreChange;
+
+			auto& scoreChangedevent = ecs->AddComponent<ScoreChangedEvent>(ecs->CreateEntity());
+			scoreChangedevent.score = managerComponent.totalScore;
+		}
 	}
 }
 
@@ -168,9 +184,19 @@ void BallSpawnerSystem::Update(float ts)
 {
 	auto ballView = ecs->GetView<BallComponent, TagComponent>();
 	if (!ballView.MoveNext()) {
+		// no ball remaining, remove live
+		auto managerView = ecs->GetView<GameManagerComponent>();
+		if (managerView.MoveNext()) {
+			auto& managerComponent = managerView.GetComponent<GameManagerComponent>();
+			
+			managerComponent.playerLives -= 1;
+
+			auto& livesChengedEvent = ecs->AddComponent<LivesChangedEvent>(ecs->CreateEntity());
+			livesChengedEvent.lives = managerComponent.playerLives;
+		}
+
 		CreateBall({ 0, 0, 3 }, { 0, 0, -2 });
 	}
-	
 }
 
 void BallSpawnerSystem::SetShader(Engine::Ref<Engine::Shader> shader)
@@ -209,4 +235,41 @@ void BallSpawnerSystem::CreateBall(Engine::Vec3 position, Engine::Vec3 velocity)
 	sphereCollider.radius = radius;
 
 	ballEntity.AddComponent<DestroyOnLeavingCircleTag>();
+}
+
+void ShowInfoSystem::Update(float ts)
+{
+	auto guiView = ecs->GetView<GUIReferencesComponent>();
+	if (!guiView.MoveNext())
+		return;
+	auto& guiInfoComponent = guiView.GetComponent<GUIReferencesComponent>();
+
+	auto livesEventView = ecs->GetView<LivesChangedEvent>();
+	if (livesEventView.MoveNext()) {
+		auto& livesChangedEvent = livesEventView.GetComponent<LivesChangedEvent>();
+
+		auto livesEventEntity = livesEventView.GetEntity();
+		ecs->AddComponent<DestroyTag>(livesEventEntity);
+
+		if (ecs->HasComponent<TextComponent>(guiInfoComponent.livesTextEntity)) {
+			auto& scoreText = ecs->GetComponent<TextComponent>(guiInfoComponent.livesTextEntity);
+			scoreText.text->SetText("Lives: " + std::to_string(livesChangedEvent.lives), 50);
+		}
+	}
+	
+	 
+	auto scoreEventView = ecs->GetView<ScoreChangedEvent>();
+	if (scoreEventView.MoveNext()) {
+		auto& scoreChangedEvent = scoreEventView.GetComponent<ScoreChangedEvent>();
+		
+		auto entity = scoreEventView.GetEntity();
+		ecs->AddComponent<DestroyTag>(entity);
+
+		if (ecs->HasComponent<TextComponent>(guiInfoComponent.scoreTextEntity)) {
+			auto& scoreText = ecs->GetComponent<TextComponent>(guiInfoComponent.scoreTextEntity);
+			scoreText.text->SetText("Score: " + std::to_string(scoreChangedEvent.score), 50);
+		}
+	}
+	
+	
 }
