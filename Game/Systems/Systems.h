@@ -56,3 +56,11 @@ private:
 class ShowInfoSystem : public Engine::OnUpdateSystem {
 	void Update(float ts) override;
 };
+
+class TransformAnimationSystem : public Engine::OnUpdateSystem {
+	void Update(float ts) override;
+};
+
+class CameraMovementController : public Engine::OnUpdateSystem {
+	void Update(float ts) override;
+};

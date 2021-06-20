@@ -1,6 +1,7 @@
 #pragma once
 #include "Math/Vec3.h"
 #include "ECS/ComponentManager.h"
+#include "Core/Input.h"
 
 struct GameManagerComponent {
 	int playerLives;
@@ -43,4 +44,20 @@ struct LivesChangedEvent {
 struct GUIReferencesComponent {
 	Engine::EntityID livesTextEntity = -1;
 	Engine::EntityID scoreTextEntity = -1;
+};
+
+struct TransformAnimationComponent {
+	Engine::Vec3 endPosition;
+	Engine::Vec3 endRotation;
+
+	float remainingDurationSec;
+};
+
+struct CameraAnimationComponent {
+	Engine::Vec3 targetPosition;
+	Engine::Vec3 targetRotation;
+
+	Engine::KeyCode key;
+
+	Engine::EntityID cameraEntity;
 };

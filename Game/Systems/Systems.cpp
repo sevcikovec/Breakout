@@ -273,3 +273,60 @@ void ShowInfoSystem::Update(float ts)
 	
 	
 }
+
+void TransformAnimationSystem::Update(float ts)
+{
+	auto animationView = ecs->GetView<TransformComponent, TransformAnimationComponent>();
+	while (animationView.MoveNext()) {
+		auto& transform = animationView.GetComponent<TransformComponent>();
+		auto& animation = animationView.GetComponent<TransformAnimationComponent>();
+
+		auto toEnd = animation.endPosition - transform.position;
+		auto rotationDifference = animation.endRotation - transform.rotation;
+
+		float currentTimeStep = ts > animation.remainingDurationSec ? animation.remainingDurationSec : ts;
+
+		auto timeDelta = currentTimeStep / animation.remainingDurationSec;
+
+		auto moveDelta = toEnd * timeDelta;
+		auto rotationDelta = rotationDifference * timeDelta;
+
+
+		transform.position += moveDelta;
+		transform.rotation += rotationDelta;
+
+		animation.remainingDurationSec -= currentTimeStep;
+
+		if (animation.remainingDurationSec <= 0) {
+			ecs->RemoveComponent<TransformAnimationComponent>(animationView.GetEntity());
+		}
+	}
+}
+
+void CameraMovementController::Update(float ts)
+{
+	auto view = ecs->GetView<CameraAnimationComponent>();
+	while (view.MoveNext()) {
+		auto& cameraAnimationComponent = view.GetComponent<CameraAnimationComponent>();
+
+		if (!Input::IsKeyDown(cameraAnimationComponent.key)) {
+			continue;
+		}
+
+		if (ecs->HasComponent<TransformComponent>(cameraAnimationComponent.cameraEntity)) {
+			TransformAnimationComponent transformAnimation;
+			transformAnimation.endPosition = cameraAnimationComponent.targetPosition;
+			transformAnimation.endRotation = cameraAnimationComponent.targetRotation;
+			transformAnimation.remainingDurationSec = 0.5f;
+			if (ecs->HasComponent<TransformAnimationComponent>(cameraAnimationComponent.cameraEntity)) {
+				auto& c = ecs->GetComponent<TransformAnimationComponent>(cameraAnimationComponent.cameraEntity);
+				c = transformAnimation;
+			}
+			else {
+				auto& c = ecs->AddComponent<TransformAnimationComponent>(cameraAnimationComponent.cameraEntity);
+				c = transformAnimation;
+			}
+
+		}
+	}
+}

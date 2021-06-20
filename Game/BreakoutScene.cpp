@@ -27,6 +27,9 @@ BreakoutScene::BreakoutScene() : Scene("Main scene")
 	auto lightMoveSystem = RegisterSystem<LightMoveSystem>();
 	auto ballManagerSystem = RegisterSystem<BallSpawnerSystem>();
 
+	RegisterSystem<CameraMovementController>();
+	RegisterSystem<TransformAnimationSystem>();
+
 	RegisterSystem<ShowInfoSystem>();
 
 	// add game manager
@@ -43,10 +46,10 @@ BreakoutScene::BreakoutScene() : Scene("Main scene")
 	{
 		Entity cameraEntity = CreateEntity("Main camera");
 		auto& cameraTransform = cameraEntity.AddComponent<TransformComponent>();
-		//cameraTransform.position = { 0, 20,13.f };
-		//cameraTransform.rotation = { -60.f, 0,0 };
-		cameraTransform.position = { 0, 30,0.f };
-		cameraTransform.rotation = { -90.f, 0,0 };
+		cameraTransform.position = { 0, 20,13.f };
+		cameraTransform.rotation = { -60.f, 0,0 };
+		//cameraTransform.position = { 0, 30,0.f };
+		//cameraTransform.rotation = { -90.f, 0,0 };
 		//cameraTransform.position = { 0, 0,20.f };
 		//cameraTransform.rotation = { 0.f, 0,0 };
 		Ref<Camera> camera = CreateRef<Camera>();
@@ -58,6 +61,21 @@ BreakoutScene::BreakoutScene() : Scene("Main scene")
 		auto& cameraComponent = cameraEntity.AddComponent<CameraComponent>();
 		cameraComponent.camera = camera;
 		cameraComponent.primary = true;
+
+		// add camera controller
+		Entity cameraAnimationController1 = CreateEntity("Camera position 1");
+		auto& animationController1 = cameraAnimationController1.AddComponent<CameraAnimationComponent>();
+		animationController1.cameraEntity = cameraEntity.GetID();
+		animationController1.key = KeyCode::NUM_1;
+		animationController1.targetPosition = { 0, 20,13.f };
+		animationController1.targetRotation = { -60.f, 0.f, 0.f };
+
+		Entity cameraAnimationController2 = CreateEntity("Camera position 2");
+		auto& animationController2 = cameraAnimationController2.AddComponent<CameraAnimationComponent>();
+		animationController2.cameraEntity = cameraEntity.GetID();
+		animationController2.key = KeyCode::NUM_2;
+		animationController2.targetPosition = { -0.f, 30, 0.f };
+		animationController2.targetRotation = { -90.f, 0.f, 0.f };
 	}
 
 
