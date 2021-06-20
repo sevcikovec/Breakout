@@ -32,19 +32,6 @@ namespace Engine {
 
 		//std::cout << 1/ts << std::endl;
 		physicsSystem->Update(ts);
-
-
-		auto view = ecs.GetView<ScriptComponent>();
-		while (view.MoveNext()){
-			auto& scriptComponent = view.GetComponent<ScriptComponent>();
-			if (!scriptComponent.Instance) {
-				scriptComponent.InstantiateScript(&scriptComponent);
-
-				scriptComponent.Instance->entity = Entity{ view.GetEntity(), &ecs };
-				scriptComponent.Instance->OnCreate();
-			}
-			scriptComponent.Instance->OnUpdate(ts);
-		}
 		
 		for (auto& system : systems) {
 			system->Update(ts);
@@ -58,14 +45,6 @@ namespace Engine {
 			}
 
 			for (auto& entity : entitiesToDestroy) {
-
-				if (ecs.HasComponent<ScriptComponent>(entity))
-				{
-					auto& script = ecs.GetComponent<ScriptComponent>(entity);
-					script.Instance->OnDestroy();
-					script.DestroyScript(&script);
-				}
-
 				ecs.EntityDestroyed(entity);
 			}
 			entitiesToDestroy.clear();

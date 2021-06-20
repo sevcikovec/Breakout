@@ -47,17 +47,10 @@ BreakoutScene::BreakoutScene() : Scene("Main scene")
 	{
 		Entity cameraEntity = CreateEntity("Main camera");
 		auto& cameraTransform = cameraEntity.AddComponent<TransformComponent>();
-		cameraTransform.position = { 0, 20,13.f };
+		cameraTransform.position = { 0, 20, 13.f };
 		cameraTransform.rotation = { -60.f, 0,0 };
-		//cameraTransform.position = { 0, 30,0.f };
-		//cameraTransform.rotation = { -90.f, 0,0 };
-		//cameraTransform.position = { 0, 0,20.f };
-		//cameraTransform.rotation = { 0.f, 0,0 };
 		Ref<Camera> camera = CreateRef<Camera>();
 		camera->SetPerspective(.6f, 640, 480, 0.1f, 100.f);
-		//camera->SetViewport(640, 480);
-
-		//camera->SetOrthographic(0.0f, 640, 0.0f, 480, 0.1f, 100.f);
 
 		auto& cameraComponent = cameraEntity.AddComponent<CameraComponent>();
 		cameraComponent.camera = camera;
@@ -68,7 +61,7 @@ BreakoutScene::BreakoutScene() : Scene("Main scene")
 		auto& animationController1 = cameraAnimationController1.AddComponent<CameraAnimationComponent>();
 		animationController1.cameraEntity = cameraEntity.GetID();
 		animationController1.key = KeyCode::NUM_1;
-		animationController1.targetPosition = { 0, 20,13.f };
+		animationController1.targetPosition = { 0, 20, 13.f };
 		animationController1.targetRotation = { -60.f, 0.f, 0.f };
 
 		Entity cameraAnimationController2 = CreateEntity("Camera position 2");
@@ -266,7 +259,7 @@ BreakoutScene::BreakoutScene() : Scene("Main scene")
 		auto& player3 = CreatePlayerArch(playerArchMaterial, playerMeshVAO, angleWidth, 240, playerRadius, innerRadius, outerRadius, height, aabb);
 	}
 	
-	const char* textureFilename = "assets\\resources\\Lenna.png";
+	const char* textureFilename = "assets\\resources\\ground.png";
 	auto texture = CreateRef<Texture>(textureFilename);
 	// generate floor
 	{

@@ -153,7 +153,6 @@ void OuterEdgeSystem::Update(float ts)
 	}
 }
 
-
 void BallSpawnerSystem::Init(ECS* ecs) {
 	OnUpdateSystem::Init(ecs);
 
@@ -179,7 +178,6 @@ void BallSpawnerSystem::Init(ECS* ecs) {
 	ballMaterial->SetProperty("color", Vec3{ .7f, .7f, 0 });
 }
 
-
 void BallSpawnerSystem::Update(float ts)
 {
 	auto managerView = ecs->GetView<GameManagerComponent>();
@@ -196,7 +194,7 @@ void BallSpawnerSystem::Update(float ts)
 			livesChengedEvent.lives = managerComponent.playerLives;
 
 			if (managerComponent.playerLives > 0) {
-				CreateBall({ 0, 0, 3 }, { 0, 0, -2 });
+				CreateBall({ 0, 0, 3 }, { 0.1f, 0, -2 });
 			}
 			else {
 				managerComponent.isGameOver = true;
@@ -206,7 +204,6 @@ void BallSpawnerSystem::Update(float ts)
 		}
 	}
 }
-
 
 void BallSpawnerSystem::SetShader(Engine::Ref<Engine::Shader> shader)
 {

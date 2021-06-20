@@ -49,19 +49,6 @@ namespace Engine {
 		Ref<Camera> camera;
 	};
 
-	struct ScriptComponent {
-		ScriptableEntity* Instance = nullptr;
-
-		void (*InstantiateScript)(ScriptComponent*);
-		void (*DestroyScript)(ScriptComponent*);
-
-		template<typename T>
-		void Bind() {
-			InstantiateScript = [](ScriptComponent* nsc) { nsc->Instance = static_cast<ScriptableEntity*>(new T()); };
-			DestroyScript = [](ScriptComponent* nsc) { delete nsc->Instance; nsc->Instance = nullptr; };
-		}
-	};
-
 	struct LightComponent {
 		Vec3 ambient;
 		Vec3 diffuse;
