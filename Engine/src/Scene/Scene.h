@@ -55,6 +55,7 @@ namespace Engine {
 		Ref<LightsSystem> lightsSystem;
 		Ref<MainCameraSetupSystem> mainCameraSetupSystem;
 		Ref<AABBVisualizationSystem> aabbVisSystem;
+		Ref<GuiRenderingSystem> guiRenderingSystem;
 
 		void InitPhysicsSystems();
 		Ref<PhysicsSystem> physicsSystem;

@@ -7,6 +7,8 @@
 #include "Physics/PhysicsComponents.h"
 #include "Components/BreakoutComponents.h"
 #include "Renderer/Texture.h"
+#include "Renderer/Text/FontLoader.h"
+#include <Renderer/Text/Text.h>
 
 using namespace Engine;
 
@@ -30,20 +32,24 @@ BreakoutScene::BreakoutScene() : Scene("Main scene")
 	{
 		Entity cameraEntity = CreateEntity("Main camera");
 		auto& cameraTransform = cameraEntity.AddComponent<TransformComponent>();
-		cameraTransform.position = { 0, 20,13.f };
-		cameraTransform.rotation = { -60.f, 0,0 };
-		//cameraTransform.position = { 0, 30,0.f };
-		//cameraTransform.rotation = { -90.f, 0,0 };
+		//cameraTransform.position = { 0, 20,13.f };
+		//cameraTransform.rotation = { -60.f, 0,0 };
+		cameraTransform.position = { 0, 30,0.f };
+		cameraTransform.rotation = { -90.f, 0,0 };
 		//cameraTransform.position = { 0, 0,20.f };
 		//cameraTransform.rotation = { 0.f, 0,0 };
 		Ref<Camera> camera = CreateRef<Camera>();
-		camera->SetPerspective(.6f, 0.1f, 100.f);
-		camera->SetViewport(640, 480);
+		camera->SetPerspective(.6f, 640, 480, 0.1f, 100.f);
+		//camera->SetViewport(640, 480);
+
+		//camera->SetOrthographic(0.0f, 640, 0.0f, 480, 0.1f, 100.f);
 
 		auto& cameraComponent = cameraEntity.AddComponent<CameraComponent>();
 		cameraComponent.camera = camera;
 		cameraComponent.primary = true;
 	}
+
+
 
 	// add light
 	{
@@ -62,12 +68,64 @@ BreakoutScene::BreakoutScene() : Scene("Main scene")
 	const char* fragmentShader = "..\\..\\..\\..\\Engine\\resources\\shaders\\frag.glsl";
 	auto shader = CreateRef<Shader>(vertexShader, fragmentShader);
 
+	const char* textVertexShader = "..\\..\\..\\..\\Engine\\resources\\shaders\\text_vert.glsl";
+	const char* textFragmentShader = "..\\..\\..\\..\\Engine\\resources\\shaders\\text_frag.glsl";
+	auto textShader = CreateRef<Shader>(textVertexShader, textFragmentShader);
+
+	// add GUI
+	{
+		// add gui camera
+		Entity cameraEntity = CreateEntity("GUI camera");
+		auto& cameraTransform = cameraEntity.AddComponent<TransformComponent>();
+		Ref<Camera> camera = CreateRef<Camera>();
+		camera->SetOrthographic(0.0f, 640, 0.0f, 480, 0.1f, 100.f);
+
+		auto& cameraComponent = cameraEntity.AddComponent<CameraComponent>();
+		cameraComponent.camera = camera;
+	
+		// add canvas
+		Entity screenCanvas = CreateEntity("Screen canvas");
+		auto& canvasComponent = screenCanvas.AddComponent<CanvasComponent>();
+		canvasComponent.cameraEntity = cameraEntity.GetID();
+
+		auto& canvasTransform = screenCanvas.AddComponent<RectTransform>();
+		canvasTransform.parentCanvasEntity = -1;
+		canvasTransform.size = { 640, 480 };
+
+
+
+		auto font = FontLoader::LoadFont("..\\..\\..\\..\\Engine\\resources\\font\\font.ttf");
+		auto text = CreateRef<Text>(font);
+		text->SetText("Score: 50", 50);
+
+
+		Entity textEntity = CreateEntity("Test text");
+		
+		auto& textTransform = textEntity.AddComponent<RectTransform>();
+		textTransform.parentCanvasEntity = screenCanvas.GetID();
+		textTransform.position = { 10, 180, 0 };
+		textTransform.size = { 0, 0 };
+		textTransform.scale = { 1, 1, 1 };
+
+
+		auto material = CreateRef<Material>();
+		material->SetShader(textShader);
+		material->SetProperty("color", Vec3{ 0.f, 1.0f, .0f });
+		material->SetTexture(font->GetAtlasTexture());
+
+		auto& textComponent = textEntity.AddComponent<TextComponent>();
+		textComponent.material = material;
+		textComponent.text = text;
+	}
+
+
 	ballManagerSystem->SetShader(shader);
 
 	std::vector<float> vertices;
 	std::vector<uint32_t> indices;	
 	
 	// generate wall
+	if (0)
 	{
 		auto material1 = CreateRef<Material>();
 		material1->SetShader(shader);
@@ -146,9 +204,8 @@ BreakoutScene::BreakoutScene() : Scene("Main scene")
 	
 	const char* textureFilename = "..\\..\\..\\..\\Engine\\resources\\Lenna.png";
 	auto texture = CreateRef<Texture>(textureFilename);
-
-
 	// generate floor
+	if (0)
 	{
 		float radius = 7;
 		auto platformMaterial = CreateRef<Material>();

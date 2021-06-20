@@ -158,9 +158,9 @@ namespace Engine {
         float det = (*this)[0] * inv[0] + (*this)[1] * inv[4] + (*this)[2] * inv[8] + (*this)[3] * inv[12];
 
         if (det == 0)
-            det += .0000000001;
+            det += .0000000001f;
 
-        det = 1.0 / det;
+        det = 1.0f / det;
         Mat4 invOut(0);
         for (int i = 0; i < 16; i++)
             invOut[i] = inv[i] * det;
@@ -225,11 +225,11 @@ namespace Engine {
 
     Vec4 Multiply(Mat4 mat, Vec4 vec) {
         Vec4 res;
-        int i, j, k;
+        int i, j;
         for (i = 0; i < 4; i++) {
             res[i] = 0;
-            for (k = 0; k < 4; k++)
-                res[i] += mat(i, k) * vec[k];
+            for (j = 0; j < 4; j++)
+                res[i] += mat(i, j) * vec[j];
         }
         return res;
     }

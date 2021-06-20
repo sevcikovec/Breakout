@@ -8,9 +8,9 @@ namespace Engine{
 	public:
 		Camera();
 
-		void SetPerspective(float fov, float nearClip, float farClip);
+		void SetPerspective(float fov, float width, float height, float nearClip, float farClip);
 
-		void SetViewport(float width, float height);
+		void SetOrthographic(float left, float right, float bottom, float top, float nearClip, float farClip);
 
 		Mat4 GetProjection() const;
 
@@ -21,10 +21,17 @@ namespace Engine{
 
 		Mat4 projection;
 
-		float aspectRatio;
-		float fov;
+		bool orthographic;
+
 		float nearClip;
 		float farClip;
+		
+		// perspective
+		float aspectRatio;
+		float fov;
+
+		// orthographic
+		float left, right, bottom, top;
 	};
 
 

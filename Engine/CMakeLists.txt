@@ -5,6 +5,7 @@ project (Engine)
 # Include sub-projects.
 add_subdirectory ("Dependencies/lodepng")
 add_subdirectory ("Dependencies/glfw")
+add_subdirectory ("Dependencies/stb")
 
 
 # add sources
@@ -40,7 +41,8 @@ add_compile_definitions(GLEW_STATIC)
 target_link_libraries(Engine glfw)
 target_link_libraries(Engine OpenGL::GL)
 target_link_libraries(Engine lodepng)
+target_link_libraries(Engine stb)
 target_link_libraries(Engine glew32s)
 
 
-target_include_directories(Engine PUBLIC "Dependencies/lodepng/lodepng/include/" ${API})
+target_include_directories(Engine PUBLIC "Dependencies/lodepng/lodepng/include/" "Dependencies/stb/stb/" ${API})

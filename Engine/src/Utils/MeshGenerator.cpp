@@ -6,7 +6,7 @@
 #include <algorithm>
 
 namespace Engine {
-	void MeshGenerator::GenerateArk(float innerRadius, float outerRadius, float sectorAngleSize, float height, uint32_t resolution, bool center, std::vector<float>& vertices, std::vector<uint32_t>& indices)
+	void MeshGenerator::GenerateArk(float innerRadius, float outerRadius, float sectorAngleSize, float height, size_t resolution, bool center, std::vector<float>& vertices, std::vector<uint32_t>& indices)
 	{
 		assert(resolution > 1);
 		assert(innerRadius < outerRadius);
@@ -26,7 +26,7 @@ namespace Engine {
 		// add all vertices and inner and outer sides
 		for (int side = 0; side < 2; side++) {
 			float currentRadius = side == 0 ? innerRadius : outerRadius;
-			for (int i = 0; i < resolution + 1; i++) {
+			for (size_t i = 0; i < resolution + 1; i++) {
 				float currentAngle = angleOffset * i;
 
 				Vec2 cartesianCoors = PolarToCartesian({ currentRadius, startAngle + currentAngle});
@@ -98,7 +98,7 @@ namespace Engine {
 		}
 		
 		// add indices top and bottom
-		for (int i = 1; i < resolution + 1; i++) {
+		for (size_t i = 1; i < resolution + 1; i++) {
 			// bottom
 			
 			indices.push_back((i - 1) * 4 + 2);
@@ -193,7 +193,7 @@ namespace Engine {
 		vertices.push_back(0.5f);
 		float currentAngle = 0;
 		float angleStep = 360.f / resolution;
-		for (size_t i = 0; i < resolution + 1U; i++)
+		for (size_t i = 0; i < resolution + 1; i++)
 		{
 			currentAngle = i * angleStep;
 

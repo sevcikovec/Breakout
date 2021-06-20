@@ -11,7 +11,7 @@ namespace Engine {
 		lightsUBO = CreateUnique<LightDataUBO>();
 		
 		std::vector<unsigned char> whiteData{ (unsigned char)255, (unsigned char)255, (unsigned char)255,(unsigned char)255 };
-		whiteTexture = CreateUnique<Texture>(whiteData.data(), 1, 1);
+		whiteTexture = CreateUnique<Texture>(whiteData.data(), 1, 1, TextureFormat::RGBA);
 	}
 
 	void Renderer::Submit(const Ref<Material> material, const Ref<VertexArray> va)
@@ -23,7 +23,7 @@ namespace Engine {
 			material->BindTextures();
 		else
 			whiteTexture->Bind();
-
+		
 		va->Bind();
 
 		uint32_t count = va->GetIndexBuffer()->GetCount();

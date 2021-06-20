@@ -102,7 +102,7 @@ namespace Engine {
 		std::vector<BufferElement>::const_iterator begin() const { return elements.begin(); }
 		std::vector<BufferElement>::const_iterator end() const { return elements.end(); }
 
-		uint32_t GetStride() const { return stride; }
+		size_t GetStride() const { return stride; }
 
 	private:
 		void CalculateOffsetAndStride() {
@@ -140,6 +140,7 @@ namespace Engine {
 	class IndexBuffer {
 	public:
 		IndexBuffer(uint32_t* indices, uint32_t count);
+		void BufferData(uint32_t* indices, uint32_t count);
 		~IndexBuffer();
 
 		void Bind() const;

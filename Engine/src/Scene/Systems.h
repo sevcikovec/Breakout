@@ -37,4 +37,9 @@ namespace Engine {
 	private:
 		Ref<Material> material;
 	};
+
+	class GuiRenderingSystem : public OnUpdateSystem {
+	public:
+		void Update(float ts) override;
+	};
 }

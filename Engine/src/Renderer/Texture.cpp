@@ -4,7 +4,7 @@
 #include <GL\glew.h>
 
 namespace Engine {
-    Texture::Texture(unsigned char* pixels, const uint16_t width, const uint16_t height) {
+    Texture::Texture(unsigned char* pixels, const uint16_t width, const uint16_t height, TextureFormat format) {
         glGenTextures(1, &textureID);
         glBindTexture(GL_TEXTURE_2D, textureID);
 
@@ -15,7 +15,24 @@ namespace Engine {
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
 
-        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, pixels);
+        GLuint glFormat = GL_RGBA;
+
+        switch (format)
+        {
+        case TextureFormat::RGBA:
+            glFormat = GL_RGBA;
+            break;
+        case TextureFormat::RGB:
+            glFormat = GL_RGB;
+            break;
+        case TextureFormat::RED:
+            glFormat = GL_RED;
+            break;
+        default:
+            glFormat = GL_RGBA;
+        }
+
+        glTexImage2D(GL_TEXTURE_2D, 0, glFormat, width, height, 0, glFormat, GL_UNSIGNED_BYTE, pixels);
 
         glBindTexture(GL_TEXTURE_2D, 0);
     }

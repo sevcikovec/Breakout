@@ -74,6 +74,7 @@ namespace Engine {
 		mainCameraSetupSystem->Update(ts);
 		lightsSystem->Update(ts);
 		renderingSystem->Update(ts);
+		guiRenderingSystem->Update(ts);
 		aabbVisSystem->Update(ts);
 
 	}
@@ -87,6 +88,9 @@ namespace Engine {
 		lightsSystem->Init(&ecs);
 		aabbVisSystem = CreateRef<AABBVisualizationSystem>();
 		aabbVisSystem->Init(&ecs);
+		guiRenderingSystem = CreateRef<GuiRenderingSystem>();
+		guiRenderingSystem->Init(&ecs);
+
 
 		const char* vertexShader = "..\\..\\..\\..\\Engine\\resources\\shaders\\vert.glsl";
 		const char* fragmentShader = "..\\..\\..\\..\\Engine\\resources\\shaders\\frag.glsl";

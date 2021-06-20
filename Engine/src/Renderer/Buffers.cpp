@@ -30,6 +30,13 @@ namespace Engine {
 		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, rendererID);
 		glBufferData(GL_ELEMENT_ARRAY_BUFFER, count * sizeof(uint32_t), indices, GL_STATIC_DRAW);
 	}
+
+	void IndexBuffer::BufferData(uint32_t* indices, uint32_t count) {
+		this->count = count;
+		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, rendererID);
+		glBufferData(GL_ELEMENT_ARRAY_BUFFER, count * sizeof(uint32_t), indices, GL_STATIC_DRAW);
+	}
+
 	IndexBuffer::~IndexBuffer()
 	{
 		glDeleteBuffers(1, &rendererID);
