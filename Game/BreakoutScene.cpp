@@ -94,12 +94,12 @@ BreakoutScene::BreakoutScene() : Scene("Main scene")
 
 
 	
-	const char* vertexShader = "..\\..\\..\\..\\Engine\\resources\\shaders\\vert.glsl";
-	const char* fragmentShader = "..\\..\\..\\..\\Engine\\resources\\shaders\\frag.glsl";
+	const char* vertexShader = "assets\\resources\\shaders\\vert.glsl";
+	const char* fragmentShader = "assets\\resources\\shaders\\frag.glsl";
 	auto shader = Shader::CreateShader("default", vertexShader, fragmentShader);
 
-	const char* textVertexShader = "..\\..\\..\\..\\Engine\\resources\\shaders\\text_vert.glsl";
-	const char* textFragmentShader = "..\\..\\..\\..\\Engine\\resources\\shaders\\text_frag.glsl";
+	const char* textVertexShader = "assets\\resources\\shaders\\text_vert.glsl";
+	const char* textFragmentShader = "assets\\resources\\shaders\\text_frag.glsl";
 	auto textShader = Shader::CreateShader("text", textVertexShader, textFragmentShader);
 
 	// add GUI
@@ -124,7 +124,7 @@ BreakoutScene::BreakoutScene() : Scene("Main scene")
 
 
 
-		auto font = FontLoader::LoadFont("default", "..\\..\\..\\..\\Engine\\resources\\font\\font.ttf");
+		auto font = FontLoader::LoadFont("default", "assets\\resources\\font\\font.ttf");
 
 		
 		Entity scoreTextEntity = CreateEntity("Score text");
@@ -266,7 +266,7 @@ BreakoutScene::BreakoutScene() : Scene("Main scene")
 		auto& player3 = CreatePlayerArch(playerArchMaterial, playerMeshVAO, angleWidth, 240, playerRadius, innerRadius, outerRadius, height, aabb);
 	}
 	
-	const char* textureFilename = "..\\..\\..\\..\\Engine\\resources\\Lenna.png";
+	const char* textureFilename = "assets\\resources\\Lenna.png";
 	auto texture = CreateRef<Texture>(textureFilename);
 	// generate floor
 	{
